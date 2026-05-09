@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\PrintJob;
+use App\Services\PdfPageCounter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class KioskController extends Controller
@@ -19,17 +21,21 @@ class KioskController extends Controller
         return view('kiosk.upload');
     }
 
-    public function store(Request $request): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        PdfPageCounter $pdfPageCounter
+    ): RedirectResponse {
         $validated = $request->validate([
-            'document' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'document' => ['required', 'file', 'mimes:pdf', 'max:110000'],
         ]);
 
         $file = $validated['document'];
 
         $path = $file->store('print-jobs', 'local');
 
-        $pages = 1;
+        $fullPath = Storage::disk('local')->path($path);
+
+        $pages = $pdfPageCounter->count($fullPath);
         $pricePerPage = 1;
 
         $printJob = PrintJob::create([
@@ -81,7 +87,7 @@ class KioskController extends Controller
             'status' => 'printing',
         ]);
 
-        return redirect()->route('kiosk.home');
+        return redirect()->route('kiosk.printing', $printJob);
     }
 
     public function addCredit(
@@ -107,5 +113,12 @@ class KioskController extends Controller
         }
 
         return redirect()->route('kiosk.payment', $printJob);
+    }
+
+    public function printing(PrintJob $printJob): View
+    {
+        return view('kiosk.printing', [
+            'printJob' => $printJob,
+        ]);
     }
 }

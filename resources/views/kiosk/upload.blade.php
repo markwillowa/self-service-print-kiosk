@@ -39,5 +39,6 @@
         </button>
     </form>
 </main>
+@include('kiosk.partials.auto-reset', ['seconds' => 60])
 </body>
 </html>

@@ -21,3 +21,6 @@ Route::post(
 
 Route::post('/payment/{printJob}/print', [KioskController::class, 'print'])
     ->name('kiosk.print');
+
+Route::get('/printing/{printJob}', [KioskController::class, 'printing'])
+    ->name('kiosk.printing');
