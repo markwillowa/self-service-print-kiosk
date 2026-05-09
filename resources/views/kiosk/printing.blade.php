@@ -18,11 +18,11 @@
     </div>
 
     <h1 class="text-5xl font-bold mb-4">
-        Printing...
+        Queued for Printing
     </h1>
 
     <p class="text-2xl text-gray-600">
-        Please wait
+        Please wait... Your document is being prepared.
     </p>
 </main>
 </body>

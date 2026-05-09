@@ -84,7 +84,7 @@ class KioskController extends Controller
         }
 
         $printJob->update([
-            'status' => 'printing',
+            'status' => 'queued',
         ]);
 
         return redirect()->route('kiosk.printing', $printJob);
