@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'printer' => [
+        'mode' => env('PRINTER_MODE', 'dummy'),
+        'name' => env('PRINTER_NAME'),
+    ],
+
 ];
