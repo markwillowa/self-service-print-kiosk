@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
+use App\Services\FileConverter;
 use App\Services\PdfPageCounter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,32 +25,68 @@ class KioskController extends Controller
 
     public function store(
         Request $request,
-        PdfPageCounter $pdfPageCounter
+        PdfPageCounter $pdfPageCounter,
+        FileConverter $fileConverter
     ): RedirectResponse {
         $validated = $request->validate([
-            'document' => ['required', 'file', 'mimes:pdf', 'max:110000'],
+            'document' => [
+                'required',
+                'file',
+                'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,txt',
+                'max:102400',
+            ],
         ]);
 
         $file = $validated['document'];
 
-        $path = $file->store('print-jobs', 'local');
+        $originalPath = $file->store(
+            'print-jobs/original',
+            'local'
+        );
 
-        $fullPath = Storage::disk('local')->path($path);
+        $originalFullPath = Storage::disk('local')
+            ->path($originalPath);
 
-        $pages = $pdfPageCounter->count($fullPath);
+        $convertedPdfPath = $fileConverter
+            ->convertToPdf($originalFullPath);
+
+        $pages = $pdfPageCounter
+            ->count($convertedPdfPath);
+
         $pricePerPage = 1;
 
         $printJob = PrintJob::create([
             'original_filename' => $file->getClientOriginalName(),
-            'file_path' => $path,
+
+            'original_file_path' => $originalPath,
+
+            'converted_pdf_path' => 'print-jobs/converted/' .
+                basename($convertedPdfPath),
+
+            'original_extension' => strtolower(
+                $file->getClientOriginalExtension()
+            ),
+
+            'conversion_status' => 'completed',
+
+            'file_path' => 'print-jobs/converted/' .
+                basename($convertedPdfPath),
+
             'pages' => $pages,
+
             'price_per_page' => $pricePerPage,
+
             'total_amount' => $pages * $pricePerPage,
+
             'paid_amount' => 0,
+
             'status' => 'pending_payment',
         ]);
 
-        return redirect()->route('kiosk.payment', $printJob);
+        return redirect()->route(
+            'kiosk.preview',
+            $printJob
+        );
     }
 
     public function payment(PrintJob $printJob): View
@@ -134,5 +171,17 @@ class KioskController extends Controller
         return view('kiosk.status', [
             'printJob' => $printJob,
         ]);
+    }
+
+    public function preview(PrintJob $printJob): View
+    {
+        return view('kiosk.preview', [
+            'printJob' => $printJob,
+        ]);
+    }
+
+    public function confirm(PrintJob $printJob): RedirectResponse
+    {
+        return redirect()->route('kiosk.payment', $printJob);
     }
 }

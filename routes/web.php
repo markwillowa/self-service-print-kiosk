@@ -31,3 +31,15 @@ Route::get('/status/{printJob}', [KioskController::class, 'status'])
 
 Route::get('/admin', [AdminController::class, 'dashboard'])
     ->name('admin.dashboard');
+
+Route::get('/preview/{printJob}', [KioskController::class, 'preview'])
+    ->name('kiosk.preview');
+
+Route::post('/preview/{printJob}/confirm', [KioskController::class, 'confirm'])
+    ->name('kiosk.confirm');
+
+Route::get('/preview-file/{printJob}', function (\App\Models\PrintJob $printJob) {
+    return response()->file(
+        storage_path('app/' . $printJob->file_path)
+    );
+})->name('kiosk.preview-file');

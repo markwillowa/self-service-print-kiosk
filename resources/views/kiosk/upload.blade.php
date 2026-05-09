@@ -4,7 +4,7 @@
             <div class="text-5xl mb-2">📄</div>
 
             <h2 class="text-3xl font-black mb-2">
-                Upload your PDF
+                Upload your file
             </h2>
 
             <p class="text-base text-slate-600 mb-4">
@@ -28,7 +28,7 @@
                 <input
                     type="file"
                     name="document"
-                    accept="application/pdf"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.txt"
                     required
                     class="block w-full rounded-2xl bg-slate-100 p-4 text-base font-bold"
                 >

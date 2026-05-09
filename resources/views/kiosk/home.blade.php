@@ -8,7 +8,7 @@
             </h2>
 
             <p class="text-xl text-slate-600">
-                Upload a PDF, insert coins, and print instantly.
+                Upload a file, insert coins, and print instantly.
             </p>
         </div>
 
@@ -16,7 +16,7 @@
             <div class="space-y-4 mb-8 text-left">
                 <div class="flex items-center gap-4">
                     <span class="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center font-bold">1</span>
-                    <span class="text-xl font-bold">Upload PDF</span>
+                    <span class="text-xl font-bold">Upload file</span>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -26,7 +26,7 @@
 
                 <div class="flex items-center gap-4">
                     <span class="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center font-bold">3</span>
-                    <span class="text-xl font-bold">Print document</span>
+                    <span class="text-xl font-bold">Print document(s)</span>
                 </div>
             </div>
 
