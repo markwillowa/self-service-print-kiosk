@@ -11,3 +11,7 @@ Artisan::command('inspire', function () {
 Schedule::command('print:process-queue')
     ->everySecond()
     ->withoutOverlapping();
+
+Schedule::command('print:cleanup')
+    ->everyFiveMinutes()
+    ->withoutOverlapping();
