@@ -15,4 +15,9 @@ class PrintJob extends Model
         'paid_amount',
         'status',
     ];
+
+    public function creditTransactions()
+    {
+        return $this->hasMany(CreditTransaction::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditTransaction;
 use App\Models\PrintJob;
 use App\Services\PdfPageCounter;
 use Illuminate\Http\RedirectResponse;
@@ -103,6 +104,12 @@ class KioskController extends Controller
         }
 
         $printJob->increment('paid_amount', $amount);
+
+        CreditTransaction::create([
+            'print_job_id' => $printJob->id,
+            'amount' => $amount,
+            'source' => 'dummy',
+        ]);
 
         $printJob->refresh();
 
