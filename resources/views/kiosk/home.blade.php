@@ -1,21 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Piso Print</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="min-h-screen bg-gray-100 flex items-center justify-center">
-<main class="w-[800px] h-[480px] bg-white flex flex-col items-center justify-center text-center p-8">
-    <h1 class="text-5xl font-bold mb-4">Piso Print</h1>
-    <p class="text-2xl mb-8">₱1 per page</p>
+<x-kiosk-layout title="Piso Print">
+    <div class="h-full grid grid-cols-2 gap-8 items-center">
+        <div>
+            <div class="text-7xl mb-6">🖨️</div>
 
-    <a
-        href="{{ route('kiosk.upload') }}"
-        class="rounded-2xl bg-black text-white text-2xl font-bold px-10 py-5"
-    >
-        Start Printing
-    </a>
-</main>
-</body>
-</html>
+            <h2 class="text-5xl font-black leading-tight mb-4 text-slate-950">
+                Print your documents fast
+            </h2>
+
+            <p class="text-xl text-slate-600">
+                Upload a PDF, insert coins, and print instantly.
+            </p>
+        </div>
+
+        <div class="bg-white/80 rounded-[2rem] p-8 shadow-xl border border-white">
+            <div class="space-y-4 mb-8 text-left">
+                <div class="flex items-center gap-4">
+                    <span class="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center font-bold">1</span>
+                    <span class="text-xl font-bold">Upload PDF</span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span class="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center font-bold">2</span>
+                    <span class="text-xl font-bold">Insert coins</span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span class="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center font-bold">3</span>
+                    <span class="text-xl font-bold">Print document</span>
+                </div>
+            </div>
+
+            <a
+                href="{{ route('kiosk.upload') }}"
+                class="block w-full rounded-3xl bg-slate-950 text-white text-3xl font-black py-6 text-center shadow-xl active:scale-95 transition"
+            >
+                Start Printing
+            </a>
+        </div>
+    </div>
+</x-kiosk-layout>
