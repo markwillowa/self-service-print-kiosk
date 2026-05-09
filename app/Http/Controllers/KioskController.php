@@ -87,7 +87,7 @@ class KioskController extends Controller
             'status' => 'queued',
         ]);
 
-        return redirect()->route('kiosk.printing', $printJob);
+        return redirect()->route('kiosk.status', $printJob);
     }
 
     public function addCredit(
@@ -118,6 +118,13 @@ class KioskController extends Controller
     public function printing(PrintJob $printJob): View
     {
         return view('kiosk.printing', [
+            'printJob' => $printJob,
+        ]);
+    }
+
+    public function status(PrintJob $printJob): View
+    {
+        return view('kiosk.status', [
             'printJob' => $printJob,
         ]);
     }
