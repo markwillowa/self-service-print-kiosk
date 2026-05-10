@@ -325,10 +325,17 @@ class KioskController extends Controller
 
             $relativeFilteredPath = null;
         } else {
-            $selectedPages = $parser->parse(
-                $selection,
-                $printJob->pages
-            );
+            try {
+                $selectedPages = $parser->parse(
+                    $selection,
+                    $printJob->pages
+                );
+            } catch (RuntimeException $exception) {
+                return back()
+                    ->withErrors([
+                        'page_selection' => $exception->getMessage(),
+                    ]);
+            }
 
             $sourcePdf = Storage::disk('local')
                 ->path($printJob->converted_pdf_path);

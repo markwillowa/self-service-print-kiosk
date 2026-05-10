@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use RuntimeException;
+
 class PageSelectionParser
 {
     public function parse(
@@ -10,7 +12,10 @@ class PageSelectionParser
     ): array {
         $pages = [];
 
-        $parts = explode(',', str_replace(' ', '', $input));
+        $parts = explode(
+            ',',
+            str_replace(' ', '', $input)
+        );
 
         foreach ($parts as $part) {
             if (str_contains($part, '-')) {
@@ -19,7 +24,11 @@ class PageSelectionParser
                 $start = (int) $start;
                 $end = (int) $end;
 
-                if ($start > 0 && $end <= $maxPages && $start <= $end) {
+                if (
+                    $start > 0 &&
+                    $end <= $maxPages &&
+                    $start <= $end
+                ) {
                     $pages = array_merge(
                         $pages,
                         range($start, $end)
@@ -28,7 +37,10 @@ class PageSelectionParser
             } else {
                 $page = (int) $part;
 
-                if ($page > 0 && $page <= $maxPages) {
+                if (
+                    $page > 0 &&
+                    $page <= $maxPages
+                ) {
                     $pages[] = $page;
                 }
             }
@@ -37,6 +49,12 @@ class PageSelectionParser
         $pages = array_unique($pages);
 
         sort($pages);
+
+        if (count($pages) > 500) {
+            throw new RuntimeException(
+                'Too many selected pages.'
+            );
+        }
 
         return $pages;
     }

@@ -43,6 +43,12 @@ class FileValidationService
         'txt',
     ];
 
+    public function __construct(
+        private ImageValidationService $imageValidationService,
+        private PdfValidationService $pdfValidationService
+    ) {
+    }
+
     public function validate(UploadedFile $file): void
     {
         $extension = strtolower(
@@ -105,10 +111,48 @@ class FileValidationService
             );
         }
 
-        if ($extension === 'pdf') {
-            $this->validatePdfContents(
-                $file->getRealPath()
+        if (
+            in_array($extension, ['xlsx', 'xls'], true) &&
+            $file->getSize() > 25 * 1024 * 1024
+        ) {
+            throw new RuntimeException(
+                'Spreadsheet exceeds maximum size.'
             );
+        }
+
+        if (
+            in_array($extension, ['docx', 'doc'], true) &&
+            $file->getSize() > 50 * 1024 * 1024
+        ) {
+            throw new RuntimeException(
+                'Document exceeds maximum size.'
+            );
+        }
+
+        $path = $file->getRealPath();
+
+        if (! $path) {
+            throw new RuntimeException(
+                'Unable to access uploaded file.'
+            );
+        }
+
+        if (
+            in_array(
+                $extension,
+                ['jpg', 'jpeg', 'png'],
+                true
+            )
+        ) {
+            $this->imageValidationService
+                ->validate($path);
+        }
+
+        if ($extension === 'pdf') {
+            $this->pdfValidationService
+                ->validate($path);
+
+            $this->validatePdfContents($path);
         }
     }
 
