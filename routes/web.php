@@ -49,3 +49,8 @@ Route::get('/preview-file/{printJob}', function (\App\Models\PrintJob $printJob)
 
 Route::post('/preview/{printJob}/pages', [KioskController::class, 'updatePages'])
     ->name('kiosk.update-pages');
+
+Route::post(
+    '/preview/{printJob}/print-mode',
+    [KioskController::class, 'updatePrintMode']
+)->name('kiosk.update-print-mode');

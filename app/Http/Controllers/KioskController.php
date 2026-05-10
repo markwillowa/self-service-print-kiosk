@@ -93,7 +93,13 @@ class KioskController extends Controller
 
             'selected_pages_count' => $pages,
 
-            'price_per_page' => $pricePerPage,
+            'print_mode' => 'black',
+
+            'black_price_per_page' => 1,
+
+            'color_price_per_page' => 2,
+
+            'price_per_page' => 1,
 
             'total_amount' => $pages * $pricePerPage,
 
@@ -257,6 +263,34 @@ class KioskController extends Controller
             'total_amount' =>
                 $selectedPagesCount *
                 $printJob->price_per_page,
+        ]);
+
+        return back();
+    }
+
+    public function updatePrintMode(
+        Request $request,
+        PrintJob $printJob
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'print_mode' => ['required', 'in:black,color'],
+        ]);
+
+        $mode = $validated['print_mode'];
+
+        $pricePerPage =
+            $mode === 'color'
+                ? $printJob->color_price_per_page
+                : $printJob->black_price_per_page;
+
+        $printJob->update([
+            'print_mode' => $mode,
+
+            'price_per_page' => $pricePerPage,
+
+            'total_amount' =>
+                $printJob->selected_pages_count *
+                $pricePerPage,
         ]);
 
         return back();

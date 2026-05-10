@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class PrintJob extends Model
 {
     protected $fillable = [
+        'uuid',
         'original_filename',
         'original_file_path',
         'converted_pdf_path',
@@ -17,14 +20,31 @@ class PrintJob extends Model
         'selected_pages_count',
         'filtered_pdf_path',
         'pages',
+        'print_mode',
+        'black_price_per_page',
+        'color_price_per_page',
         'price_per_page',
         'total_amount',
         'paid_amount',
         'status',
     ];
 
-    public function creditTransactions()
+    public function creditTransactions(): HasMany
     {
         return $this->hasMany(CreditTransaction::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (PrintJob $printJob) {
+            if (! $printJob->uuid) {
+                $printJob->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 }
