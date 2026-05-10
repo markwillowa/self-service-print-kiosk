@@ -10,6 +10,7 @@ use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
 use App\Services\PdfPageCounter;
 use App\Services\PdfPageExtractor;
+use App\Services\PrintJobStateService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -193,23 +194,34 @@ class KioskController extends Controller
         return redirect()->route('kiosk.payment', $printJob);
     }
 
-    public function print(PrintJob $printJob): RedirectResponse
-    {
+    public function print(
+        PrintJob $printJob,
+        PrintJobStateService $stateService
+    ): RedirectResponse {
         abort_if(
             $printJob->expires_at &&
             now()->greaterThan($printJob->expires_at),
             403
         );
 
-        if ($printJob->status !== 'paid') {
-            return redirect()->route('kiosk.payment', $printJob);
+        abort_if(
+            $printJob->status !== 'paid',
+            403
+        );
+
+        try {
+            $stateService->transition(
+                $printJob,
+                'queued'
+            );
+        } catch (RuntimeException) {
+            abort(403);
         }
 
-        $printJob->update([
-            'status' => 'queued',
-        ]);
-
-        return redirect()->route('kiosk.status', $printJob);
+        return redirect()->route(
+            'kiosk.status',
+            $printJob
+        );
     }
 
     public function addCredit(
@@ -252,8 +264,9 @@ class KioskController extends Controller
         ]);
     }
 
-    public function status(PrintJob $printJob): RedirectResponse|View
-    {
+    public function status(
+        PrintJob $printJob
+    ): RedirectResponse|View {
         if (
             $printJob->status === 'cancelled' ||
             (
@@ -263,6 +276,8 @@ class KioskController extends Controller
         ) {
             return redirect()->route('kiosk.home');
         }
+
+        $this->refreshExpiration($printJob);
 
         return view('kiosk.status', [
             'printJob' => $printJob,

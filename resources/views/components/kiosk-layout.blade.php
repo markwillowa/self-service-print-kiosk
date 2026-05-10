@@ -11,10 +11,34 @@
     <title>{{ $title ?? 'Piso Print' }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        * {
+            touch-action: manipulation;
+
+            -webkit-user-select: none;
+
+            user-select: none;
+        }
+
+        html,
+        body {
+            overscroll-behavior: none;
+        }
+
+        html {
+            touch-action: manipulation;
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-slate-950 flex items-center justify-center overflow-hidden select-none">
+
+<body
+    draggable="false"
+    class="min-h-screen bg-slate-950 flex items-center justify-center overflow-hidden select-none touch-manipulation"
+>
 <main class="relative w-[1024px] h-[600px] overflow-hidden bg-gradient-to-br from-white via-slate-50 to-slate-200 shadow-2xl">
     <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-blue-200/30 blur-3xl"></div>
+
     <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-emerald-200/30 blur-3xl"></div>
 
     <section class="relative z-10 h-full flex flex-col p-8">
@@ -39,5 +63,7 @@
         </div>
     </section>
 </main>
+
+@include('kiosk.partials.kiosk-lockdown')
 </body>
 </html>

@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Models\PrintJob;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 use Throwable;
 
 class PrinterService
 {
     public function __construct(
-        private KioskSessionLock $kioskSessionLock
+        private KioskSessionLock $kioskSessionLock,
+        private PrintJobStateService $stateService
     ) {
     }
 
@@ -22,9 +24,14 @@ class PrinterService
             if ($mode === 'dummy') {
                 sleep(2);
 
-                $printJob->update([
-                    'status' => 'completed',
-                ]);
+                try {
+                    $this->stateService->transition(
+                        $printJob,
+                        'completed'
+                    );
+                } catch (RuntimeException) {
+                    return false;
+                }
 
                 $this->kioskSessionLock->unlock();
 
@@ -41,8 +48,9 @@ class PrinterService
         }
     }
 
-    private function printViaCups(PrintJob $printJob): bool
-    {
+    private function printViaCups(
+        PrintJob $printJob
+    ): bool {
         $path = Storage::disk('local')->path(
             $printJob->filtered_pdf_path
                 ?: $printJob->converted_pdf_path
@@ -84,9 +92,14 @@ class PrinterService
             return false;
         }
 
-        $printJob->update([
-            'status' => 'completed',
-        ]);
+        try {
+            $this->stateService->transition(
+                $printJob,
+                'completed'
+            );
+        } catch (RuntimeException) {
+            return false;
+        }
 
         $this->kioskSessionLock->unlock();
 

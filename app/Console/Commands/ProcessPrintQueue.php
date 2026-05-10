@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\PrintJob;
 use App\Services\PrinterService;
+use App\Services\PrintJobStateService;
 use Illuminate\Console\Command;
+use RuntimeException;
 
 class ProcessPrintQueue extends Command
 {
@@ -12,23 +14,35 @@ class ProcessPrintQueue extends Command
 
     protected $description = 'Process queued print jobs';
 
-    public function handle(PrinterService $printerService): void
+    public function handle(
+        PrinterService $printerService,
+        PrintJobStateService $stateService
+    ): void
     {
         $jobs = PrintJob::query()
             ->where('status', 'queued')
             ->get();
 
         foreach ($jobs as $job) {
-            $job->update([
-                'status' => 'printing',
-            ]);
+            try {
+                $stateService->transition(
+                    $job,
+                    'printing'
+                );
+            } catch (RuntimeException) {
+                continue;
+            }
 
             $success = $printerService->print($job);
 
             if (! $success) {
-                $job->update([
-                    'status' => 'failed',
-                ]);
+                try {
+                    $stateService->transition(
+                        $job,
+                        'failed'
+                    );
+                } catch (RuntimeException) {
+                }
             }
         }
     }
