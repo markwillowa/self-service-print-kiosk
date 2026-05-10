@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
 use App\Services\FileConverter;
+use App\Services\FileValidationService;
 use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
 use App\Services\PdfPageCounter;
@@ -14,12 +15,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
+use RuntimeException;
 
 class KioskController extends Controller
 {
     public function home(
         KioskSessionLock $kioskSessionLock
-    ): RedirectResponse|View {
+    ): RedirectResponse|View
+    {
         $activeJobUuid = $kioskSessionLock
             ->activeJobUuid();
 
@@ -50,7 +53,8 @@ class KioskController extends Controller
         Request $request,
         PdfPageCounter $pdfPageCounter,
         FileConverter $fileConverter,
-        KioskSessionLock $kioskSessionLock
+        KioskSessionLock $kioskSessionLock,
+        FileValidationService $fileValidationService
     ): RedirectResponse {
         $validated = $request->validate([
             'document' => [
@@ -62,6 +66,15 @@ class KioskController extends Controller
         ]);
 
         $file = $validated['document'];
+
+        try {
+            $fileValidationService->validate($file);
+        } catch (RuntimeException $exception) {
+            return back()
+                ->withErrors([
+                    'document' => $exception->getMessage(),
+                ]);
+        }
 
         $originalPath = $file->store(
             'print-jobs/original'
@@ -151,6 +164,8 @@ class KioskController extends Controller
         ) {
             return redirect()->route('kiosk.home');
         }
+
+        $this->refreshExpiration($printJob);
 
         return view('kiosk.payment', [
             'printJob' => $printJob,
@@ -265,6 +280,8 @@ class KioskController extends Controller
         ) {
             return redirect()->route('kiosk.home');
         }
+
+        $this->refreshExpiration($printJob);
 
         $previewUrl = URL::temporarySignedRoute(
             'kiosk.preview-file',
