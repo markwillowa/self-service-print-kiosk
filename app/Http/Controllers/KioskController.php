@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
 use App\Services\FileConverter;
+use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
 use App\Services\PdfPageCounter;
 use App\Services\PdfPageExtractor;
@@ -15,8 +16,27 @@ use Illuminate\View\View;
 
 class KioskController extends Controller
 {
-    public function home(): View
-    {
+    public function home(
+        KioskSessionLock $kioskSessionLock
+    ): RedirectResponse|View {
+        $activeJobUuid = $kioskSessionLock
+            ->activeJobUuid();
+
+        if ($activeJobUuid) {
+            $printJob = PrintJob::query()
+                ->where('uuid', $activeJobUuid)
+                ->first();
+
+            if ($printJob) {
+                return redirect()->route(
+                    'kiosk.preview',
+                    $printJob
+                );
+            }
+
+            $kioskSessionLock->unlock();
+        }
+
         return view('kiosk.home');
     }
 
@@ -28,7 +48,8 @@ class KioskController extends Controller
     public function store(
         Request $request,
         PdfPageCounter $pdfPageCounter,
-        FileConverter $fileConverter
+        FileConverter $fileConverter,
+        KioskSessionLock $kioskSessionLock
     ): RedirectResponse {
         $validated = $request->validate([
             'document' => [
@@ -109,6 +130,8 @@ class KioskController extends Controller
 
             'status' => 'pending_payment',
         ]);
+
+        $kioskSessionLock->lock($printJob);
 
         return redirect()->route(
             'kiosk.preview',

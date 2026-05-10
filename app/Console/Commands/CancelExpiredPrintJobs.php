@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\PrintJob;
+use App\Services\KioskSessionLock;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,8 +13,9 @@ class CancelExpiredPrintJobs extends Command
 
     protected $description = 'Cancel expired unpaid print jobs';
 
-    public function handle(): int
-    {
+    public function handle(
+        KioskSessionLock $kioskSessionLock
+    ): int {
         $jobs = PrintJob::query()
             ->whereIn('status', [
                 'pending_payment',
@@ -25,6 +27,7 @@ class CancelExpiredPrintJobs extends Command
         foreach ($jobs as $job) {
             $job->update([
                 'status' => 'cancelled',
+
                 'cancelled_at' => now(),
             ]);
 
@@ -42,6 +45,8 @@ class CancelExpiredPrintJobs extends Command
                 Storage::disk('local')
                     ->delete($job->filtered_pdf_path);
             }
+
+            $kioskSessionLock->unlock();
         }
 
         return self::SUCCESS;

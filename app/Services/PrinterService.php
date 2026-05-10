@@ -9,6 +9,11 @@ use Throwable;
 
 class PrinterService
 {
+    public function __construct(
+        private KioskSessionLock $kioskSessionLock
+    ) {
+    }
+
     public function print(PrintJob $printJob): bool
     {
         try {
@@ -20,6 +25,8 @@ class PrinterService
                 $printJob->update([
                     'status' => 'completed',
                 ]);
+
+                $this->kioskSessionLock->unlock();
 
                 return true;
             }
@@ -36,16 +43,41 @@ class PrinterService
 
     private function printViaCups(PrintJob $printJob): bool
     {
-        $path = Storage::disk('local')->path($printJob->file_path);
+        $path = Storage::disk('local')->path(
+            $printJob->filtered_pdf_path
+                ?: $printJob->converted_pdf_path
+        );
 
         $printerName = config('services.printer.name');
 
-        $command = $printerName
-            ? ['lp', '-d', $printerName, $path]
-            : ['lp', $path];
+        $command = [
+            'lp',
+        ];
+
+        if ($printerName) {
+            $command[] = '-d';
+            $command[] = $printerName;
+        }
+
+        if (
+            $printJob->page_selection &&
+            $printJob->page_selection !== 'all'
+        ) {
+            $command[] = '-P';
+            $command[] = $printJob->page_selection;
+        }
+
+        if ($printJob->print_mode === 'black') {
+            $command[] = '-o';
+            $command[] = 'ColorModel=Gray';
+        }
+
+        $command[] = $path;
 
         $process = new Process($command);
-        $process->setTimeout(120);
+
+        $process->setTimeout(300);
+
         $process->run();
 
         if (! $process->isSuccessful()) {
@@ -55,6 +87,8 @@ class PrinterService
         $printJob->update([
             'status' => 'completed',
         ]);
+
+        $this->kioskSessionLock->unlock();
 
         return true;
     }
