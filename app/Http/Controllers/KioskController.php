@@ -12,6 +12,7 @@ use App\Services\PdfPageExtractor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 
 class KioskController extends Controller
@@ -265,8 +266,17 @@ class KioskController extends Controller
             return redirect()->route('kiosk.home');
         }
 
+        $previewUrl = URL::temporarySignedRoute(
+            'kiosk.preview-file',
+            now()->addMinutes(5),
+            [
+                'printJob' => $printJob,
+            ]
+        );
+
         return view('kiosk.preview', [
             'printJob' => $printJob,
+            'previewUrl' => $previewUrl,
         ]);
     }
 

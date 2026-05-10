@@ -39,6 +39,10 @@ Route::post('/preview/{printJob}/confirm', [KioskController::class, 'confirm'])
     ->name('kiosk.confirm');
 
 Route::get('/preview-file/{printJob}', function (\App\Models\PrintJob $printJob) {
+    if (! request()->hasValidSignature()) {
+        abort(403);
+    }
+
     $path = $printJob->filtered_pdf_path
         ?: $printJob->converted_pdf_path;
 

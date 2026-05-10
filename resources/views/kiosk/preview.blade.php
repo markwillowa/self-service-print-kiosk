@@ -44,7 +44,7 @@
             </button>
 
             <iframe
-                src="{{ route('kiosk.preview-file', $printJob) }}#toolbar=0&navpanes=0&scrollbar=0"
+                src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0"
                 class="w-full h-full"
             ></iframe>
         </div>
@@ -160,7 +160,7 @@
         </button>
 
         <iframe
-            src="{{ route('kiosk.preview-file', $printJob) }}#toolbar=0&navpanes=0&scrollbar=0"
+            src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0"
             class="w-screen h-screen"
         ></iframe>
     </div>
