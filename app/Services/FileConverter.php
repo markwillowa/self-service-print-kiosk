@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 class FileConverter
@@ -21,6 +21,12 @@ class FileConverter
             'app/print-jobs/converted'
         );
 
+        if (! is_dir($outputDirectory)) {
+            mkdir($outputDirectory, 0777, true);
+        }
+
+        $beforeFiles = glob($outputDirectory . '/*.pdf');
+
         $process = new Process([
             'soffice',
             '--headless',
@@ -32,22 +38,27 @@ class FileConverter
         ]);
 
         $process->setTimeout(300);
+
         $process->run();
 
         if (! $process->isSuccessful()) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 $process->getErrorOutput()
             );
         }
 
-        $filenameWithoutExtension = Str::beforeLast(
-            basename($path),
-            '.'
-        );
+        sleep(1);
 
-        return $outputDirectory .
-            '/' .
-            $filenameWithoutExtension .
-            '.pdf';
+        $afterFiles = glob($outputDirectory . '/*.pdf');
+
+        $newFiles = array_diff($afterFiles, $beforeFiles);
+
+        if (empty($newFiles)) {
+            throw new RuntimeException(
+                'Converted PDF file not found.'
+            );
+        }
+
+        return array_values($newFiles)[0];
     }
 }

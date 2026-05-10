@@ -39,7 +39,13 @@ Route::post('/preview/{printJob}/confirm', [KioskController::class, 'confirm'])
     ->name('kiosk.confirm');
 
 Route::get('/preview-file/{printJob}', function (\App\Models\PrintJob $printJob) {
+    $path = $printJob->filtered_pdf_path
+        ?: $printJob->converted_pdf_path;
+
     return response()->file(
-        storage_path('app/' . $printJob->file_path)
+        Storage::disk('local')->path($path)
     );
 })->name('kiosk.preview-file');
+
+Route::post('/preview/{printJob}/pages', [KioskController::class, 'updatePages'])
+    ->name('kiosk.update-pages');

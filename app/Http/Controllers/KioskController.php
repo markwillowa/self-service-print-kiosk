@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
 use App\Services\FileConverter;
+use App\Services\PageSelectionParser;
 use App\Services\PdfPageCounter;
+use App\Services\PdfPageExtractor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -40,18 +42,33 @@ class KioskController extends Controller
         $file = $validated['document'];
 
         $originalPath = $file->store(
-            'print-jobs/original',
-            'local'
+            'print-jobs/original'
         );
 
         $originalFullPath = Storage::disk('local')
             ->path($originalPath);
 
-        $convertedPdfPath = $fileConverter
-            ->convertToPdf($originalFullPath);
+        $extension = strtolower(
+            $file->getClientOriginalExtension()
+        );
+
+        if ($extension === 'pdf') {
+            $finalPdfPath = $originalFullPath;
+
+            $relativePdfPath = $originalPath;
+        } else {
+            $convertedPdfPath = $fileConverter
+                ->convertToPdf($originalFullPath);
+
+            $finalPdfPath = $convertedPdfPath;
+
+            $relativePdfPath =
+                'print-jobs/converted/' .
+                basename($convertedPdfPath);
+        }
 
         $pages = $pdfPageCounter
-            ->count($convertedPdfPath);
+            ->count($finalPdfPath);
 
         $pricePerPage = 1;
 
@@ -60,19 +77,21 @@ class KioskController extends Controller
 
             'original_file_path' => $originalPath,
 
-            'converted_pdf_path' => 'print-jobs/converted/' .
-                basename($convertedPdfPath),
+            'converted_pdf_path' => $relativePdfPath,
 
-            'original_extension' => strtolower(
-                $file->getClientOriginalExtension()
-            ),
+            'filtered_pdf_path' => null,
+
+            'original_extension' => $extension,
 
             'conversion_status' => 'completed',
 
-            'file_path' => 'print-jobs/converted/' .
-                basename($convertedPdfPath),
+            'file_path' => $relativePdfPath,
 
             'pages' => $pages,
+
+            'page_selection' => 'all',
+
+            'selected_pages_count' => $pages,
 
             'price_per_page' => $pricePerPage,
 
@@ -183,5 +202,63 @@ class KioskController extends Controller
     public function confirm(PrintJob $printJob): RedirectResponse
     {
         return redirect()->route('kiosk.payment', $printJob);
+    }
+
+    public function updatePages(
+        Request $request,
+        PrintJob $printJob,
+        PageSelectionParser $parser,
+        PdfPageExtractor $extractor
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'page_selection' => ['nullable', 'string'],
+        ]);
+
+        $selection = strtolower(
+            trim($validated['page_selection'] ?? '')
+        );
+
+        if ($selection === '' || $selection === 'all') {
+            $selectedPages = range(1, $printJob->pages);
+
+            $selection = 'all';
+
+            $relativeFilteredPath = null;
+        } else {
+            $selectedPages = $parser->parse(
+                $selection,
+                $printJob->pages
+            );
+
+            $sourcePdf = Storage::disk('local')
+                ->path($printJob->converted_pdf_path);
+
+            $filteredPdf = $extractor->extract(
+                $sourcePdf,
+                $selection
+            );
+
+            $relativeFilteredPath =
+                'print-jobs/filtered/' .
+                basename($filteredPdf);
+        }
+
+        $selectedPagesCount = count($selectedPages);
+
+        abort_if($selectedPagesCount === 0, 422);
+
+        $printJob->update([
+            'page_selection' => $selection,
+
+            'selected_pages_count' => $selectedPagesCount,
+
+            'filtered_pdf_path' => $relativeFilteredPath,
+
+            'total_amount' =>
+                $selectedPagesCount *
+                $printJob->price_per_page,
+        ]);
+
+        return back();
     }
 }
