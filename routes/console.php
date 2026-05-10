@@ -15,3 +15,7 @@ Schedule::command('print:process-queue')
 Schedule::command('print:cleanup')
     ->everyFiveMinutes()
     ->withoutOverlapping();
+
+Schedule::command('print:cancel-expired')
+    ->everyMinute()
+    ->withoutOverlapping();

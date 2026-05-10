@@ -27,6 +27,8 @@ class PrintJob extends Model
         'total_amount',
         'paid_amount',
         'status',
+        'expires_at',
+        'cancelled_at',
     ];
 
     public function creditTransactions(): HasMany

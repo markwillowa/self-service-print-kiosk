@@ -73,6 +73,8 @@ class KioskController extends Controller
         $pricePerPage = 1;
 
         $printJob = PrintJob::create([
+            'expires_at' => now()->addMinutes(5),
+
             'original_filename' => $file->getClientOriginalName(),
 
             'original_file_path' => $originalPath,
@@ -114,8 +116,18 @@ class KioskController extends Controller
         );
     }
 
-    public function payment(PrintJob $printJob): View
+    public function payment(PrintJob $printJob): RedirectResponse|View
     {
+        if (
+            $printJob->status === 'cancelled' ||
+            (
+                $printJob->expires_at &&
+                now()->greaterThan($printJob->expires_at)
+            )
+        ) {
+            return redirect()->route('kiosk.home');
+        }
+
         return view('kiosk.payment', [
             'printJob' => $printJob,
         ]);
@@ -137,11 +149,19 @@ class KioskController extends Controller
             ]);
         }
 
+        $this->refreshExpiration($printJob);
+
         return redirect()->route('kiosk.payment', $printJob);
     }
 
     public function print(PrintJob $printJob): RedirectResponse
     {
+        abort_if(
+            $printJob->expires_at &&
+            now()->greaterThan($printJob->expires_at),
+            403
+        );
+
         if ($printJob->status !== 'paid') {
             return redirect()->route('kiosk.payment', $printJob);
         }
@@ -181,6 +201,8 @@ class KioskController extends Controller
             ]);
         }
 
+        $this->refreshExpiration($printJob);
+
         return redirect()->route('kiosk.payment', $printJob);
     }
 
@@ -191,15 +213,35 @@ class KioskController extends Controller
         ]);
     }
 
-    public function status(PrintJob $printJob): View
+    public function status(PrintJob $printJob): RedirectResponse|View
     {
+        if (
+            $printJob->status === 'cancelled' ||
+            (
+                $printJob->expires_at &&
+                now()->greaterThan($printJob->expires_at)
+            )
+        ) {
+            return redirect()->route('kiosk.home');
+        }
+
         return view('kiosk.status', [
             'printJob' => $printJob,
         ]);
     }
 
-    public function preview(PrintJob $printJob): View
+    public function preview(PrintJob $printJob): RedirectResponse|View
     {
+        if (
+            $printJob->status === 'cancelled' ||
+            (
+                $printJob->expires_at &&
+                now()->greaterThan($printJob->expires_at)
+            )
+        ) {
+            return redirect()->route('kiosk.home');
+        }
+
         return view('kiosk.preview', [
             'printJob' => $printJob,
         ]);
@@ -207,6 +249,8 @@ class KioskController extends Controller
 
     public function confirm(PrintJob $printJob): RedirectResponse
     {
+        $this->refreshExpiration($printJob);
+
         return redirect()->route('kiosk.payment', $printJob);
     }
 
@@ -265,6 +309,8 @@ class KioskController extends Controller
                 $printJob->price_per_page,
         ]);
 
+        $this->refreshExpiration($printJob);
+
         return back();
     }
 
@@ -293,6 +339,15 @@ class KioskController extends Controller
                 $pricePerPage,
         ]);
 
+        $this->refreshExpiration($printJob);
+
         return back();
+    }
+
+    private function refreshExpiration(PrintJob $printJob): void
+    {
+        $printJob->update([
+            'expires_at' => now()->addMinutes(5),
+        ]);
     }
 }
