@@ -48,7 +48,10 @@
                     Self-Service Kiosk
                 </p>
 
-                <h1 class="text-4xl font-black text-slate-950">
+                <h1
+                    id="adminUnlockLogo"
+                    class="text-4xl font-black text-slate-950"
+                >
                     Piso Print
                 </h1>
             </div>
@@ -63,6 +66,108 @@
         </div>
     </section>
 </main>
+
+<div
+    id="adminPinModal"
+    class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50"
+>
+    <div class="w-[420px] rounded-[2rem] bg-white p-8 shadow-2xl">
+        <h2 class="text-3xl font-black text-center mb-6">
+            Admin Access
+        </h2>
+
+        <form
+            method="POST"
+            action="{{ route('admin.unlock') }}"
+            autocomplete="off"
+            class="space-y-5"
+        >
+            @csrf
+
+            <input
+                type="password"
+                name="pin_code"
+                placeholder="Enter PIN"
+                required
+                autofocus
+                class="w-full rounded-3xl bg-slate-100 px-5 py-5 text-2xl font-black text-center"
+            >
+
+            <button
+                type="submit"
+                class="w-full rounded-3xl bg-slate-950 text-white py-5 text-2xl font-black"
+            >
+                Unlock
+            </button>
+
+            <button
+                type="button"
+                onclick="closeAdminModal()"
+                class="w-full rounded-3xl bg-slate-200 text-slate-900 py-5 text-xl font-black"
+            >
+                Cancel
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let adminTapCount = 0;
+
+    let adminTapTimer;
+
+    const adminLogo = document.getElementById(
+        'adminUnlockLogo'
+    );
+
+    adminLogo?.addEventListener('click', () => {
+        adminTapCount++;
+
+        clearTimeout(adminTapTimer);
+
+        adminTapTimer = setTimeout(() => {
+            adminTapCount = 0;
+        }, 2000);
+
+        if (adminTapCount >= 5) {
+            adminTapCount = 0;
+
+            openAdminModal();
+        }
+    });
+
+    function openAdminModal() {
+        document
+            .getElementById('adminPinModal')
+            .classList
+            .remove('hidden');
+
+        document
+            .getElementById('adminPinModal')
+            .classList
+            .add('flex');
+    }
+
+    function closeAdminModal() {
+        document
+            .getElementById('adminPinModal')
+            .classList
+            .remove('flex');
+
+        document
+            .getElementById('adminPinModal')
+            .classList
+            .add('hidden');
+    }
+
+    document
+        .getElementById('adminPinModal')
+        ?.addEventListener('click', (event) => {
+            if (event.target.id === 'adminPinModal') {
+                closeAdminModal();
+            }
+        });
+</script>
 
 @include('kiosk.partials.kiosk-lockdown')
 </body>
