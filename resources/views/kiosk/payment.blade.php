@@ -14,7 +14,7 @@
             <div class="flex items-center gap-3 shrink-0">
                 <a
                     href="{{ route('kiosk.preview', $printJob) }}"
-                    class="rounded-3xl bg-white px-6 py-4 text-lg font-black shadow-xl border border-slate-200"
+                    class="rounded-3xl bg-slate-200 px-6 py-4 text-lg font-black shadow-xl border border-slate-200"
                 >
                     Back
                 </a>
@@ -27,7 +27,7 @@
 
                     <button
                         type="submit"
-                        class="rounded-3xl bg-white px-6 py-4 text-lg font-black shadow-xl border border-slate-200"
+                        class="rounded-3xl bg-slate-200 px-6 py-4 text-lg font-black shadow-xl border border-slate-200"
                     >
                         Cancel
                     </button>

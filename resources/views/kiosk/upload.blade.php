@@ -35,15 +35,14 @@
                     Refresh
                 </button>
 
-                <button
-                    onclick="history.back()"
-                    type="button"
-                    class="flex items-center gap-2 rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-900"
+                <a
+                    href="{{ route('kiosk.transfer') }}"
+                    class="flex items-center gap-2 rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-900 active:scale-95 transition"
                 >
                     <x-heroicon-o-arrow-left class="w-4 h-4" />
 
                     Back
-                </button>
+                </a>
             </div>
         </div>
 
