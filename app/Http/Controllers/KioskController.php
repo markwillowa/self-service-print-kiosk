@@ -11,6 +11,7 @@ use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
 use App\Services\PdfPageCounter;
 use App\Services\PdfPageExtractor;
+use App\Services\PrintJobFactory;
 use App\Services\PrintJobStateService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -53,10 +54,8 @@ class KioskController extends Controller
 
     public function store(
         Request $request,
-        PdfPageCounter $pdfPageCounter,
-        FileConverter $fileConverter,
-        KioskSessionLock $kioskSessionLock,
-        FileValidationService $fileValidationService
+        PrintJobFactory $printJobFactory,
+        KioskSessionLock $kioskSessionLock
     ): RedirectResponse {
         $validated = $request->validate([
             'document' => [
@@ -67,85 +66,10 @@ class KioskController extends Controller
             ],
         ]);
 
-        $file = $validated['document'];
-
-        try {
-            $fileValidationService->validate($file);
-        } catch (RuntimeException $exception) {
-            return back()
-                ->withErrors([
-                    'document' => $exception->getMessage(),
-                ]);
-        }
-
-        $originalPath = $file->store(
-            'print-jobs/original'
-        );
-
-        $originalFullPath = Storage::disk('local')
-            ->path($originalPath);
-
-        $extension = strtolower(
-            $file->getClientOriginalExtension()
-        );
-
-        if ($extension === 'pdf') {
-            $finalPdfPath = $originalFullPath;
-
-            $relativePdfPath = $originalPath;
-        } else {
-            $convertedPdfPath = $fileConverter
-                ->convertToPdf($originalFullPath);
-
-            $finalPdfPath = $convertedPdfPath;
-
-            $relativePdfPath =
-                'print-jobs/converted/' .
-                basename($convertedPdfPath);
-        }
-
-        $pages = $pdfPageCounter
-            ->count($finalPdfPath);
-
-        $pricePerPage = 1;
-
-        $printJob = PrintJob::create([
-            'expires_at' => now()->addMinutes(5),
-
-            'original_filename' => $file->getClientOriginalName(),
-
-            'original_file_path' => $originalPath,
-
-            'converted_pdf_path' => $relativePdfPath,
-
-            'filtered_pdf_path' => null,
-
-            'original_extension' => $extension,
-
-            'conversion_status' => 'completed',
-
-            'file_path' => $relativePdfPath,
-
-            'pages' => $pages,
-
-            'page_selection' => 'all',
-
-            'selected_pages_count' => $pages,
-
-            'print_mode' => 'black',
-
-            'black_price_per_page' => 1,
-
-            'color_price_per_page' => 2,
-
-            'price_per_page' => 1,
-
-            'total_amount' => $pages * $pricePerPage,
-
-            'paid_amount' => 0,
-
-            'status' => 'pending_payment',
-        ]);
+        $printJob = $printJobFactory
+            ->createFromUploadedFile(
+                $validated['document']
+            );
 
         $kioskSessionLock->lock($printJob);
 
@@ -424,5 +348,18 @@ class KioskController extends Controller
         $printJob->update([
             'expires_at' => now()->addMinutes(5),
         ]);
+    }
+
+    public function cancel(
+        PrintJob $printJob,
+        KioskSessionLock $kioskSessionLock
+    ): RedirectResponse {
+        $printJob->update([
+            'status' => 'cancelled',
+        ]);
+
+        $kioskSessionLock->unlock();
+
+        return redirect()->route('kiosk.home');
     }
 }

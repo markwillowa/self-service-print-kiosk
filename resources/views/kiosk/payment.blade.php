@@ -1,6 +1,6 @@
 <x-kiosk-layout title="Insert Coins">
-    <div class="h-full flex flex-col">
-        <div class="flex justify-between items-start mb-5">
+    <div class="max-w-6xl mx-auto w-full flex flex-col gap-5">
+        <div class="flex justify-between items-start">
             <div class="min-w-0">
                 <h2 class="text-4xl font-black">
                     Insert Coins
@@ -11,15 +11,31 @@
                 </p>
             </div>
 
-            <a
-                href="{{ route('kiosk.home') }}"
-                class="rounded-3xl bg-slate-200 px-6 py-4 text-lg font-black shrink-0"
-            >
-                Cancel
-            </a>
+            <div class="flex items-center gap-3 shrink-0">
+                <a
+                    href="{{ route('kiosk.preview', $printJob) }}"
+                    class="rounded-3xl bg-white px-6 py-4 text-lg font-black shadow-xl border border-slate-200"
+                >
+                    Back
+                </a>
+
+                <form
+                    method="POST"
+                    action="{{ route('kiosk.cancel', $printJob) }}"
+                >
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="rounded-3xl bg-slate-200 px-6 py-4 text-lg font-black"
+                    >
+                        Cancel
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-5 mb-5">
+        <div class="grid grid-cols-3 gap-5">
             @foreach ([
                 ['Pages', $printJob->selected_pages_count],
                 ['Total', '₱' . $printJob->total_amount],
@@ -38,12 +54,15 @@
         </div>
 
         @if ($printJob->status === 'paid')
-            <div class="rounded-[2.5rem] bg-emerald-100 p-8 text-center shadow-xl flex-1 flex flex-col items-center justify-center">
-                <p class="text-4xl font-black text-emerald-700 mb-6">
+            <div class="rounded-[2.5rem] bg-emerald-100 p-10 text-center shadow-xl">
+                <p class="text-4xl font-black text-emerald-700 mb-8">
                     Payment Complete
                 </p>
 
-                <form method="POST" action="{{ route('kiosk.print', $printJob) }}">
+                <form
+                    method="POST"
+                    action="{{ route('kiosk.print', $printJob) }}"
+                >
                     @csrf
 
                     <button
@@ -55,8 +74,8 @@
                 </form>
             </div>
         @else
-            <div class="rounded-[2.5rem] bg-white/90 p-8 shadow-xl flex-1 flex flex-col justify-center">
-                <p class="text-center text-3xl font-black mb-6">
+            <div class="rounded-[2.5rem] bg-white/90 p-8 shadow-xl">
+                <p class="text-center text-3xl font-black mb-8">
                     Remaining:
                     ₱{{ max($printJob->total_amount - $printJob->paid_amount, 0) }}
                 </p>
@@ -71,7 +90,7 @@
 
                             <button
                                 type="submit"
-                                class="w-full rounded-[2rem] bg-slate-950 text-white text-5xl font-black py-10 shadow-2xl active:scale-95 transition"
+                                class="w-full rounded-[2rem] bg-slate-950 text-white text-4xl font-black py-5 shadow-2xl active:scale-95 transition"
                             >
                                 ₱{{ $amount }}
                             </button>

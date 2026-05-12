@@ -15,6 +15,7 @@ class PrintJob extends Model
         'converted_pdf_path',
         'original_extension',
         'conversion_status',
+        'source',
         'file_path',
         'page_selection',
         'selected_pages_count',

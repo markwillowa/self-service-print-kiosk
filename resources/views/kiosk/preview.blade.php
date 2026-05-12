@@ -126,12 +126,19 @@
                     </button>
                 </form>
 
-                <a
-                    href="{{ route('kiosk.home') }}"
-                    class="rounded-3xl bg-slate-200 px-6 h-16 text-base font-black text-center whitespace-nowrap flex items-center justify-center"
+                <form
+                    method="POST"
+                    action="{{ route('kiosk.cancel', $printJob) }}"
                 >
-                    Cancel
-                </a>
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="rounded-3xl bg-slate-200 px-6 h-16 text-base font-black text-center whitespace-nowrap flex items-center justify-center"
+                    >
+                        Cancel
+                    </button>
+                </form>
 
                 <form method="POST" action="{{ route('kiosk.confirm', $printJob) }}">
                     @csrf

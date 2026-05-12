@@ -188,7 +188,7 @@ class FileValidationService
         string $filename
     ): bool {
         return preg_match(
-                '/[^A-Za-z0-9\\-_\\.\\s]/',
+                '/[\\x00-\\x1F\\x7F]/u',
                 $filename
             ) === 1;
     }

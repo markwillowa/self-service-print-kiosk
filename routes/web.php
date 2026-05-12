@@ -129,4 +129,9 @@ Route::middleware('kiosk.registered')->group(function () {
         '/preview/{printJob}/print-mode',
         [KioskController::class, 'updatePrintMode']
     )->name('kiosk.update-print-mode');
+
+    Route::post(
+        '/kiosk/{printJob}/cancel',
+        [KioskController::class, 'cancel']
+    )->name('kiosk.cancel');
 });
