@@ -8,19 +8,58 @@ use Illuminate\Support\Facades\Storage;
 
 class CleanupPrintJobs extends Command
 {
-    protected $signature = 'print:cleanup';
+    protected $signature = 'pisoprint:cleanup';
 
-    protected $description = 'Delete old completed or failed print job files';
+    protected $description =
+        'Delete old print jobs and files';
 
     public function handle(): int
     {
         $jobs = PrintJob::query()
-            ->whereIn('status', ['completed', 'failed', 'cancelled'])
-            ->where('updated_at', '<=', now()->subMinutes(10))
+            ->where(function ($query) {
+                $query
+                    ->whereIn('status', [
+                        'completed',
+                        'cancelled',
+                        'failed',
+                    ])
+                    ->where(
+                        'updated_at',
+                        '<=',
+                        now()->subHour()
+                    );
+            })
+            ->orWhere(function ($query) {
+                $query
+                    ->where('status', 'pending_payment')
+                    ->where(
+                        'updated_at',
+                        '<=',
+                        now()->subMinutes(30)
+                    );
+            })
             ->get();
 
         foreach ($jobs as $job) {
-            Storage::disk('local')->delete($job->file_path);
+            $paths = [
+                $job->original_file_path,
+                $job->converted_pdf_path,
+                $job->filtered_pdf_path,
+            ];
+
+            foreach ($paths as $path) {
+                if (
+                    $path &&
+                    Storage::disk('local')->exists($path)
+                ) {
+                    Storage::disk('local')->delete($path);
+                }
+            }
+
+            $this->info(
+                'Deleted print job: ' .
+                $job->original_filename
+            );
 
             $job->delete();
         }

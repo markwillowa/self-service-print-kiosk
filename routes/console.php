@@ -12,10 +12,10 @@ Schedule::command('print:process-queue')
     ->everySecond()
     ->withoutOverlapping();
 
-Schedule::command('print:cleanup')
-    ->everyFiveMinutes()
-    ->withoutOverlapping();
+Schedule::command(
+    'pisoprint:cancel-expired'
+)->everyMinute();
 
-Schedule::command('print:cancel-expired')
-    ->everyMinute()
-    ->withoutOverlapping();
+Schedule::command(
+    'pisoprint:cleanup'
+)->everyFiveMinutes();
