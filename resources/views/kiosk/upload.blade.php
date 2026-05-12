@@ -1,4 +1,6 @@
 <x-kiosk-layout title="Uploaded Files">
+    <meta http-equiv="refresh" content="5">
+
     <div class="h-full flex flex-col">
         <div class="flex items-center justify-between mb-5">
             <div>
@@ -11,14 +13,38 @@
                 </p>
             </div>
 
-            <a
-                href="{{ route('kiosk.home') }}"
-                class="flex items-center gap-2 rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-900"
-            >
-                <x-heroicon-o-arrow-left class="w-4 h-4" />
+            <div class="flex items-center gap-3">
+                <button
+                    onclick="
+                        const icon = document.getElementById('refresh-icon');
 
-                Back
-            </a>
+                        icon.classList.add('animate-spin');
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 400);
+    "
+                    type="button"
+                    class="flex items-center gap-2 rounded-2xl bg-white border border-slate-200 px-5 py-3 text-sm font-black text-slate-900 shadow-lg active:scale-95 transition"
+                >
+                    <x-heroicon-o-arrow-path
+                        id="refresh-icon"
+                        class="w-4 h-4"
+                    />
+
+                    Refresh
+                </button>
+
+                <button
+                    onclick="history.back()"
+                    type="button"
+                    class="flex items-center gap-2 rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-900"
+                >
+                    <x-heroicon-o-arrow-left class="w-4 h-4" />
+
+                    Back
+                </button>
+            </div>
         </div>
 
         <div class="flex-1 overflow-hidden">
@@ -46,7 +72,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 text-sm font-black shrink-0">
+                        <div class="flex items-center gap-2 rounded-xl bg-slate-950 text-white px-4 py-2 text-sm font-black shrink-0">
                             <x-heroicon-o-arrow-right class="w-4 h-4" />
 
                             Select

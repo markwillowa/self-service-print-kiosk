@@ -50,7 +50,6 @@ class KioskController extends Controller
     public function upload(): View
     {
         $printJobs = PrintJob::query()
-            ->where('source', 'upload')
             ->where('status', 'pending_payment')
             ->latest()
             ->take(20)
