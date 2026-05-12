@@ -362,4 +362,25 @@ class KioskController extends Controller
 
         return redirect()->route('kiosk.home');
     }
+
+    public function connect(): View
+    {
+        return view('kiosk.connect', [
+            'wifiSsid' => 'PisoPrint',
+
+            'wifiPassword' => '12345678',
+
+            'uploadUrl' => url('/upload'),
+
+            'wifiQr' =>
+                'WIFI:T:WPA;S:PisoPrint;P:12345678;;',
+        ]);
+    }
+
+    public function transfer(): View
+    {
+        return view('kiosk.transfer', [
+            'uploadUrl' => url('/upload'),
+        ]);
+    }
 }

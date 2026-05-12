@@ -27,7 +27,7 @@
 
                     <button
                         type="submit"
-                        class="rounded-3xl bg-slate-200 px-6 py-4 text-lg font-black"
+                        class="rounded-3xl bg-white px-6 py-4 text-lg font-black shadow-xl border border-slate-200"
                     >
                         Cancel
                     </button>

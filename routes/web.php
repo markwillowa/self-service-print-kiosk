@@ -134,4 +134,14 @@ Route::middleware('kiosk.registered')->group(function () {
         '/kiosk/{printJob}/cancel',
         [KioskController::class, 'cancel']
     )->name('kiosk.cancel');
+
+    Route::get(
+        '/connect',
+        [KioskController::class, 'connect']
+    )->name('kiosk.connect');
+
+    Route::get(
+        '/transfer',
+        [KioskController::class, 'transfer']
+    )->name('kiosk.transfer');
 });
