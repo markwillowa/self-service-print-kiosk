@@ -72,6 +72,11 @@ Route::middleware([
         [KioskController::class, 'store']
     )->name('kiosk.store');
 
+    Route::post(
+        '/upload/{printJob}/select',
+        [KioskController::class, 'selectUploadedFile']
+    )->name('kiosk.select-upload');
+
     Route::get(
         '/payment/{printJob}',
         [KioskController::class, 'payment']

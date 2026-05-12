@@ -50,7 +50,11 @@ class KioskController extends Controller
     public function upload(): View
     {
         $printJobs = PrintJob::query()
-            ->where('status', 'pending_payment')
+            ->whereNotIn('status', [
+                'completed',
+                'cancelled',
+                'failed',
+            ])
             ->latest()
             ->take(20)
             ->get();
@@ -58,6 +62,26 @@ class KioskController extends Controller
         return view('kiosk.upload', [
             'printJobs' => $printJobs,
         ]);
+    }
+
+    public function selectUploadedFile(
+        PrintJob $printJob,
+        KioskSessionLock $kioskSessionLock
+    ): RedirectResponse {
+        if (
+            $printJob->status === 'cancelled'
+        ) {
+            return redirect()->route('kiosk.upload');
+        }
+
+        $kioskSessionLock->lock($printJob);
+
+        $this->refreshExpiration($printJob);
+
+        return redirect()->route(
+            'kiosk.preview',
+            $printJob
+        );
     }
 
     public function store(
