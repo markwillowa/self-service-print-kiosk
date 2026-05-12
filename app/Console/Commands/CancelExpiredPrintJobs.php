@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 class CancelExpiredPrintJobs extends Command
 {
     protected $signature =
-        'pisoprint:cancel-expired';
+        'print:cancel-expired';
 
     protected $description =
         'Cancel expired print jobs';

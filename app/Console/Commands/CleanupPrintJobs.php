@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CleanupPrintJobs extends Command
 {
-    protected $signature = 'pisoprint:cleanup';
+    protected $signature = 'print:cleanup';
 
     protected $description =
         'Delete old print jobs and files';
