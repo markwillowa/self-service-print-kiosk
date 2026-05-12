@@ -43,7 +43,12 @@ class PrinterService
             }
 
             return false;
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            logger()->error('Failed to print job', [
+                'print_job_id' => $printJob->id,
+                'exception' => $exception,
+            ]);
+
             return false;
         }
     }
@@ -89,6 +94,12 @@ class PrinterService
         $process->run();
 
         if (! $process->isSuccessful()) {
+            logger()->error('CUPS print failed', [
+                'command' => $command,
+                'output' => $process->getOutput(),
+                'error_output' => $process->getErrorOutput(),
+            ]);
+
             return false;
         }
 

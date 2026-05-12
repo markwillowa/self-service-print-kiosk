@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessPrintJob;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
 use App\Services\FileConverter;
@@ -214,6 +215,8 @@ class KioskController extends Controller
                 $printJob,
                 'queued'
             );
+
+            ProcessPrintJob::dispatch($printJob);
         } catch (RuntimeException) {
             abort(403);
         }
