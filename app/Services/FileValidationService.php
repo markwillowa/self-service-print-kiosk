@@ -77,8 +77,7 @@ class FileValidationService
             str_contains($originalName, '.php') ||
             str_contains($originalName, '.exe') ||
             str_contains($originalName, '.sh') ||
-            str_contains($originalName, '.bat') ||
-            str_contains($originalName, '.js')
+            str_contains($originalName, '.bat')
         ) {
             throw new RuntimeException(
                 'Dangerous filename detected.'
@@ -151,36 +150,6 @@ class FileValidationService
         if ($extension === 'pdf') {
             $this->pdfValidationService
                 ->validate($path);
-
-            $this->validatePdfContents($path);
-        }
-    }
-
-    private function validatePdfContents(
-        string $path
-    ): void {
-        $contents = file_get_contents($path);
-
-        if ($contents === false) {
-            throw new RuntimeException(
-                'Unable to read PDF.'
-            );
-        }
-
-        $dangerousPatterns = [
-            '/JavaScript',
-            '/JS',
-            '/Launch',
-            '/OpenAction',
-            '/EmbeddedFile',
-        ];
-
-        foreach ($dangerousPatterns as $pattern) {
-            if (str_contains($contents, $pattern)) {
-                throw new RuntimeException(
-                    'Dangerous PDF content detected.'
-                );
-            }
         }
     }
 

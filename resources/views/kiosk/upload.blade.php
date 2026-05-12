@@ -1,62 +1,74 @@
-<x-kiosk-layout title="Upload File">
-    <div class="h-full flex items-center justify-center">
-        <div class="w-full max-w-2xl bg-white/90 rounded-[2.5rem] p-8 shadow-2xl border border-white">
-            <div class="text-center mb-6">
-                <x-heroicon-o-document-text class="w-20 h-20 mx-auto mb-2 text-slate-900" />
+<x-kiosk-layout title="Uploaded Files">
+    <div class="h-full flex flex-col">
+        <div class="flex items-center justify-between mb-5">
+            <div>
+                <h1 class="text-4xl font-black text-slate-950 mb-1">
+                    Uploaded Files
+                </h1>
 
-                <h2 class="text-4xl font-black mb-2">
-                    Upload your file
-                </h2>
-
-                <p class="text-base text-slate-600">
-                    Supports PDF, Word, Excel, PowerPoint, Images, and Text Files
-                </p>
-
-                <p class="text-sm text-slate-500 mt-1">
-                    Maximum file size: 100MB
+                <p class="text-sm text-slate-500">
+                    Select a file uploaded from your phone
                 </p>
             </div>
 
-            @if ($errors->any())
-                <div class="mb-4 rounded-3xl bg-red-100 text-red-700 p-4 text-base font-black">
-                    {{ $errors->first() }}
-                </div>
-            @endif
-
-            <form
-                method="POST"
-                action="{{ route('kiosk.store') }}"
-                enctype="multipart/form-data"
-                class="space-y-5"
+            <a
+                href="{{ route('kiosk.home') }}"
+                class="flex items-center gap-2 rounded-2xl bg-slate-200 px-5 py-3 text-sm font-black text-slate-900"
             >
-                @csrf
+                <x-heroicon-o-arrow-left class="w-4 h-4" />
 
-                <input
-                    type="file"
-                    name="document"
-                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.txt"
-                    required
-                    class="block w-full rounded-3xl bg-slate-100 p-5 text-base font-black"
-                >
+                Back
+            </a>
+        </div>
 
-                <div class="grid grid-cols-2 gap-4">
+        <div class="flex-1 overflow-hidden">
+            <div class="bg-white/90 rounded-[2rem] border border-white shadow-2xl h-full overflow-y-auto p-4">
+                @forelse ($printJobs as $printJob)
                     <a
-                        href="{{ route('kiosk.home') }}"
-                        class="rounded-3xl bg-slate-200 text-slate-900 text-xl font-black py-4 text-center"
+                        href="{{ route('kiosk.preview', $printJob) }}"
+                        class="flex items-center justify-between rounded-2xl bg-slate-50 border border-slate-200 p-4 mb-3 active:scale-[0.99] transition"
                     >
-                        Back
-                    </a>
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center shrink-0">
+                                <x-heroicon-o-document-text class="w-7 h-7" />
+                            </div>
 
-                    <button
-                        type="submit"
-                        class="rounded-3xl bg-slate-950 text-white text-xl font-black py-4 active:scale-95 transition"
-                    >
-                        Continue
-                    </button>
-                </div>
-            </form>
+                            <div class="min-w-0">
+                                <div class="text-lg font-black text-slate-900 truncate">
+                                    {{ $printJob->original_filename }}
+                                </div>
+
+                                <div class="text-xs text-slate-500 mt-1">
+                                    {{ $printJob->pages }} pages
+                                    •
+                                    {{ strtoupper($printJob->original_extension) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 text-sm font-black shrink-0">
+                            <x-heroicon-o-arrow-right class="w-4 h-4" />
+
+                            Select
+                        </div>
+                    </a>
+                @empty
+                    <div class="h-full flex flex-col items-center justify-center text-center">
+                        <x-heroicon-o-inbox class="w-20 h-20 text-slate-300 mb-4" />
+
+                        <h2 class="text-2xl font-black text-slate-700 mb-2">
+                            No Uploaded Files
+                        </h2>
+
+                        <p class="text-sm text-slate-500 max-w-sm">
+                            Upload a document from your phone first
+                            using the PisoPrint Wi-Fi upload page.
+                        </p>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 
-    @include('kiosk.partials.auto-reset', ['seconds' => 60])
+    @include('kiosk.partials.auto-reset', ['seconds' => 90])
 </x-kiosk-layout>

@@ -49,7 +49,16 @@ class KioskController extends Controller
 
     public function upload(): View
     {
-        return view('kiosk.upload');
+        $printJobs = PrintJob::query()
+            ->where('source', 'upload')
+            ->where('status', 'pending_payment')
+            ->latest()
+            ->take(20)
+            ->get();
+
+        return view('kiosk.upload', [
+            'printJobs' => $printJobs,
+        ]);
     }
 
     public function store(
