@@ -119,8 +119,10 @@ Route::middleware([
                 abort(403);
             }
 
-            $path = $printJob->filtered_pdf_path
-                ?: $printJob->converted_pdf_path;
+            $path =
+                $printJob->preview_pdf_path
+                    ?: $printJob->filtered_pdf_path
+                    ?: $printJob->converted_pdf_path;
 
             return response()->file(
                 Storage::disk('local')->path($path)
@@ -129,14 +131,9 @@ Route::middleware([
     )->name('kiosk.preview-file');
 
     Route::post(
-        '/preview/{printJob}/pages',
-        [KioskController::class, 'updatePages']
-    )->name('kiosk.update-pages');
-
-    Route::post(
-        '/preview/{printJob}/print-mode',
-        [KioskController::class, 'updatePrintMode']
-    )->name('kiosk.update-print-mode');
+        '/preview/{printJob}/settings',
+        [KioskController::class, 'updateSettings']
+    )->name('kiosk.update-settings');
 
     Route::post(
         '/kiosk/{printJob}/cancel',

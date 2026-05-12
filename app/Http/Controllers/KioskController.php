@@ -11,6 +11,7 @@ use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
 use App\Services\PdfPageCounter;
 use App\Services\PdfPageExtractor;
+use App\Services\PdfPreviewGenerator;
 use App\Services\PrintJobFactory;
 use App\Services\PrintJobStateService;
 use Illuminate\Http\RedirectResponse;
@@ -278,14 +279,18 @@ class KioskController extends Controller
         return redirect()->route('kiosk.payment', $printJob);
     }
 
-    public function updatePages(
+    public function updateSettings(
         Request $request,
         PrintJob $printJob,
         PageSelectionParser $parser,
-        PdfPageExtractor $extractor
+        PdfPageExtractor $extractor,
+        PdfPreviewGenerator $previewGenerator
     ): RedirectResponse {
         $validated = $request->validate([
             'page_selection' => ['nullable', 'string'],
+            'print_mode' => ['required', 'in:black,color'],
+            'orientation' => ['required', 'in:portrait,landscape'],
+            'paper_size' => ['required', 'in:short,long'],
         ]);
 
         $selection = strtolower(
@@ -293,23 +298,22 @@ class KioskController extends Controller
         );
 
         if ($selection === '' || $selection === 'all') {
-            $selectedPages = range(1, $printJob->pages);
-
             $selection = 'all';
 
+            $selectedPages = range(
+                1,
+                $printJob->pages
+            );
+
             $relativeFilteredPath = null;
+
+            $workingPdf = Storage::disk('local')
+                ->path($printJob->converted_pdf_path);
         } else {
-            try {
-                $selectedPages = $parser->parse(
-                    $selection,
-                    $printJob->pages
-                );
-            } catch (RuntimeException $exception) {
-                return back()
-                    ->withErrors([
-                        'page_selection' => $exception->getMessage(),
-                    ]);
-            }
+            $selectedPages = $parser->parse(
+                $selection,
+                $printJob->pages
+            );
 
             $sourcePdf = Storage::disk('local')
                 ->path($printJob->converted_pdf_path);
@@ -322,51 +326,46 @@ class KioskController extends Controller
             $relativeFilteredPath =
                 'print-jobs/filtered/' .
                 basename($filteredPdf);
+
+            $workingPdf = $filteredPdf;
         }
 
-        $selectedPagesCount = count($selectedPages);
+        $pricePerPage =
+            $validated['print_mode'] === 'color'
+                ? $printJob->color_price_per_page
+                : $printJob->black_price_per_page;
 
-        abort_if($selectedPagesCount === 0, 422);
+        $previewPdf = $previewGenerator->generate(
+            sourcePath: $workingPdf,
+
+            printMode: $validated['print_mode'],
+
+            orientation: $validated['orientation'],
+
+            paperSize: $validated['paper_size']
+        );
 
         $printJob->update([
             'page_selection' => $selection,
 
-            'selected_pages_count' => $selectedPagesCount,
+            'selected_pages_count' => count($selectedPages),
 
             'filtered_pdf_path' => $relativeFilteredPath,
 
-            'total_amount' =>
-                $selectedPagesCount *
-                $printJob->price_per_page,
-        ]);
+            'preview_pdf_path' =>
+                'print-jobs/previews/' .
+                basename($previewPdf),
 
-        $this->refreshExpiration($printJob);
+            'print_mode' => $validated['print_mode'],
 
-        return back();
-    }
+            'orientation' => $validated['orientation'],
 
-    public function updatePrintMode(
-        Request $request,
-        PrintJob $printJob
-    ): RedirectResponse {
-        $validated = $request->validate([
-            'print_mode' => ['required', 'in:black,color'],
-        ]);
-
-        $mode = $validated['print_mode'];
-
-        $pricePerPage =
-            $mode === 'color'
-                ? $printJob->color_price_per_page
-                : $printJob->black_price_per_page;
-
-        $printJob->update([
-            'print_mode' => $mode,
+            'paper_size' => $validated['paper_size'],
 
             'price_per_page' => $pricePerPage,
 
             'total_amount' =>
-                $printJob->selected_pages_count *
+                count($selectedPages) *
                 $pricePerPage,
         ]);
 

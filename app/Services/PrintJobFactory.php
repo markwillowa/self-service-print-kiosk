@@ -66,6 +66,12 @@ class PrintJobFactory
             )
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | Convert To PDF
+        |--------------------------------------------------------------------------
+        */
+
         if ($extension === 'pdf') {
             $finalPdfPath = $path;
 
@@ -81,13 +87,46 @@ class PrintJobFactory
                 basename($convertedPdfPath);
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Count Pages
+        |--------------------------------------------------------------------------
+        */
+
         $pages = $this->pdfPageCounter
             ->count($finalPdfPath);
 
-        $pricePerPage = 1;
+        /*
+        |--------------------------------------------------------------------------
+        | Default Pricing
+        |--------------------------------------------------------------------------
+        */
+
+        $blackPricePerPage = 1;
+
+        $colorPricePerPage = 2;
+
+        $defaultMode = 'black';
+
+        $pricePerPage =
+            $defaultMode === 'color'
+                ? $colorPricePerPage
+                : $blackPricePerPage;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Print Job
+        |--------------------------------------------------------------------------
+        */
 
         return PrintJob::create([
             'expires_at' => now()->addMinutes(5),
+
+            /*
+            |--------------------------------------------------------------------------
+            | File Information
+            |--------------------------------------------------------------------------
+            */
 
             'original_filename' => $originalFilename,
 
@@ -97,11 +136,19 @@ class PrintJobFactory
 
             'filtered_pdf_path' => null,
 
+            'preview_pdf_path' => null,
+
             'original_extension' => $extension,
 
             'conversion_status' => 'completed',
 
             'file_path' => $relativePdfPath,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Page Settings
+            |--------------------------------------------------------------------------
+            */
 
             'pages' => $pages,
 
@@ -109,17 +156,40 @@ class PrintJobFactory
 
             'selected_pages_count' => $pages,
 
-            'print_mode' => 'black',
+            /*
+            |--------------------------------------------------------------------------
+            | Print Settings
+            |--------------------------------------------------------------------------
+            */
 
-            'black_price_per_page' => 1,
+            'print_mode' => $defaultMode,
 
-            'color_price_per_page' => 2,
+            'orientation' => 'portrait',
 
-            'price_per_page' => 1,
+            'paper_size' => 'short',
 
-            'total_amount' => $pages * $pricePerPage,
+            /*
+            |--------------------------------------------------------------------------
+            | Pricing
+            |--------------------------------------------------------------------------
+            */
+
+            'black_price_per_page' => $blackPricePerPage,
+
+            'color_price_per_page' => $colorPricePerPage,
+
+            'price_per_page' => $pricePerPage,
+
+            'total_amount' =>
+                $pages * $pricePerPage,
 
             'paid_amount' => 0,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Status
+            |--------------------------------------------------------------------------
+            */
 
             'status' => 'pending_payment',
 

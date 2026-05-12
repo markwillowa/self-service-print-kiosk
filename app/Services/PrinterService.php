@@ -56,10 +56,21 @@ class PrinterService
     private function printViaCups(
         PrintJob $printJob
     ): bool {
-        $path = Storage::disk('local')->path(
-            $printJob->filtered_pdf_path
-                ?: $printJob->converted_pdf_path
-        );
+        $relativePath =
+            $printJob->preview_pdf_path
+                ?: $printJob->filtered_pdf_path
+                ?: $printJob->converted_pdf_path;
+
+        $path = Storage::disk('local')
+            ->path($relativePath);
+
+        if (! file_exists($path)) {
+            logger()->error('Print file not found', [
+                'path' => $path,
+            ]);
+
+            return false;
+        }
 
         $printerName = config('services.printer.name');
 
@@ -72,20 +83,63 @@ class PrinterService
             $command[] = $printerName;
         }
 
-        if (
-            $printJob->page_selection &&
-            $printJob->page_selection !== 'all'
-        ) {
-            $command[] = '-P';
-            $command[] = $printJob->page_selection;
+        /*
+        |--------------------------------------------------------------------------
+        | Orientation
+        |--------------------------------------------------------------------------
+        */
+
+        if ($printJob->orientation === 'landscape') {
+            $command[] = '-o';
+            $command[] = 'orientation-requested=4';
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Paper Size
+        |--------------------------------------------------------------------------
+        */
+
+        $media =
+            $printJob->paper_size === 'long'
+                ? 'legal'
+                : 'letter';
+
+        $command[] = '-o';
+        $command[] = 'media=' . $media;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Print Mode
+        |--------------------------------------------------------------------------
+        */
 
         if ($printJob->print_mode === 'black') {
             $command[] = '-o';
             $command[] = 'ColorModel=Gray';
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Scaling
+        |--------------------------------------------------------------------------
+        */
+
+        $command[] = '-o';
+        $command[] = 'fit-to-page';
+
+        /*
+        |--------------------------------------------------------------------------
+        | File
+        |--------------------------------------------------------------------------
+        */
+
         $command[] = $path;
+
+        logger()->info('Printing via CUPS', [
+            'command' => $command,
+            'print_job_id' => $printJob->id,
+        ]);
 
         $process = new Process($command);
 
