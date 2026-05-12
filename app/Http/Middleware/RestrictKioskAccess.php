@@ -13,8 +13,8 @@ class RestrictKioskAccess
         Closure $next
     ): Response {
         $allowedRoutes = [
-            'kiosk.upload',
-            'kiosk.store',
+            'kiosk.mobile-upload',
+            'kiosk.mobile-store',
         ];
 
         if (

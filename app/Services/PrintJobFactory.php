@@ -24,8 +24,13 @@ class PrintJobFactory
         $this->fileValidationService
             ->validate($file);
 
-        $originalPath = $file->store(
-            'print-jobs/original'
+        $sanitizedFilename = FilenameSanitizer::sanitize(
+            $file->getClientOriginalName()
+        );
+
+        $originalPath = $file->storeAs(
+            'print-jobs/original',
+            $sanitizedFilename
         );
 
         $originalFullPath = Storage::disk('local')
@@ -33,10 +38,11 @@ class PrintJobFactory
 
         return $this->createFromPath(
             path: $originalFullPath,
-            originalFilename: FilenameSanitizer::sanitize(
-                $file->getClientOriginalName()
-            ),
+
+            originalFilename: $sanitizedFilename,
+
             originalPath: $originalPath,
+
             source: $source
         );
     }
