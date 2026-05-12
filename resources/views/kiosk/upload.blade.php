@@ -2,7 +2,7 @@
     <div class="h-full flex items-center justify-center">
         <div class="w-full max-w-2xl bg-white/90 rounded-[2.5rem] p-8 shadow-2xl border border-white">
             <div class="text-center mb-6">
-                <div class="text-6xl mb-2">📄</div>
+                <x-heroicon-o-document-text class="w-20 h-20 mx-auto mb-2 text-slate-900" />
 
                 <h2 class="text-4xl font-black mb-2">
                     Upload your file
