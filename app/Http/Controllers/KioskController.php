@@ -380,7 +380,37 @@ class KioskController extends Controller
     public function transfer(): View
     {
         return view('kiosk.transfer', [
-            'uploadUrl' => url('/upload'),
+            'uploadUrl' => url('/mobile-upload'),
         ]);
+    }
+
+    public function mobileUpload(): View
+    {
+        return view('kiosk.mobile-upload');
+    }
+
+    public function mobileStore(
+        Request $request,
+        PrintJobFactory $printJobFactory
+    ): View {
+        $validated = $request->validate([
+            'document' => [
+                'required',
+                'file',
+                'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,txt',
+                'max:102400',
+            ],
+        ]);
+
+        $printJob = $printJobFactory
+            ->createFromUploadedFile(
+                $validated['document']
+            );
+
+        $printJob->update([
+            'status' => 'uploaded',
+        ]);
+
+        return view('kiosk.mobile-upload-success');
     }
 }

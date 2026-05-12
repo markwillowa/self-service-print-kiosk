@@ -63,6 +63,16 @@ Route::middleware([
     )->name('kiosk.home');
 
     Route::get(
+        '/upload',
+        [KioskController::class, 'upload']
+    )->name('kiosk.upload');
+
+    Route::post(
+        '/upload',
+        [KioskController::class, 'store']
+    )->name('kiosk.store');
+
+    Route::get(
         '/payment/{printJob}',
         [KioskController::class, 'payment']
     )->name('kiosk.payment');
@@ -145,11 +155,12 @@ Route::middleware([
 |--------------------------------------------------------------------------
 */
 Route::get(
-    '/upload',
-    [KioskController::class, 'upload']
-)->name('kiosk.upload');
+    '/mobile-upload',
+    [KioskController::class, 'mobileUpload']
+)->name('kiosk.mobile-upload');
 
 Route::post(
-    '/upload',
-    [KioskController::class, 'store']
-)->name('kiosk.store');
+    '/mobile-upload',
+    [KioskController::class, 'mobileStore']
+)->name('kiosk.mobile-store');
+
