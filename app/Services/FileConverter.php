@@ -25,7 +25,20 @@ class FileConverter
             mkdir($outputDirectory, 0777, true);
         }
 
-        $beforeFiles = glob($outputDirectory . '/*.pdf');
+        $filenameWithoutExtension = pathinfo(
+            $path,
+            PATHINFO_FILENAME
+        );
+
+        $expectedPdfPath =
+            $outputDirectory .
+            '/' .
+            $filenameWithoutExtension .
+            '.pdf';
+
+        if (file_exists($expectedPdfPath)) {
+            unlink($expectedPdfPath);
+        }
 
         $process = new Process([
             'soffice',
@@ -47,18 +60,14 @@ class FileConverter
             );
         }
 
-        sleep(1);
+        clearstatcache();
 
-        $afterFiles = glob($outputDirectory . '/*.pdf');
-
-        $newFiles = array_diff($afterFiles, $beforeFiles);
-
-        if (empty($newFiles)) {
+        if (! file_exists($expectedPdfPath)) {
             throw new RuntimeException(
                 'Converted PDF file not found.'
             );
         }
 
-        return array_values($newFiles)[0];
+        return $expectedPdfPath;
     }
 }
