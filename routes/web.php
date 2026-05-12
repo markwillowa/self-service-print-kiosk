@@ -46,7 +46,10 @@ Route::post(
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('kiosk.registered')->group(function () {
+Route::middleware([
+    'kiosk.registered',
+    'kiosk.local',
+])->group(function () {
     Route::middleware('admin.auth')->group(function () {
         Route::get(
             '/admin',
@@ -58,16 +61,6 @@ Route::middleware('kiosk.registered')->group(function () {
         '/',
         [KioskController::class, 'home']
     )->name('kiosk.home');
-
-    Route::get(
-        '/upload',
-        [KioskController::class, 'upload']
-    )->name('kiosk.upload');
-
-    Route::post(
-        '/upload',
-        [KioskController::class, 'store']
-    )->name('kiosk.store');
 
     Route::get(
         '/payment/{printJob}',
@@ -145,3 +138,18 @@ Route::middleware('kiosk.registered')->group(function () {
         [KioskController::class, 'transfer']
     )->name('kiosk.transfer');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Protected Phone Routes
+|--------------------------------------------------------------------------
+*/
+Route::get(
+    '/upload',
+    [KioskController::class, 'upload']
+)->name('kiosk.upload');
+
+Route::post(
+    '/upload',
+    [KioskController::class, 'store']
+)->name('kiosk.store');

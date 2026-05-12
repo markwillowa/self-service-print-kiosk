@@ -380,7 +380,7 @@ class KioskController extends Controller
     public function transfer(): View
     {
         return view('kiosk.transfer', [
-            'uploadUrl' => 'http://192.168.4.1:8000/upload',
+            'uploadUrl' => url('/upload'),
         ]);
     }
 }
