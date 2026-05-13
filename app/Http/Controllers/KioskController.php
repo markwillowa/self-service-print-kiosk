@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessPrintJob;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
-use App\Services\FileConverter;
-use App\Services\FileValidationService;
 use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
-use App\Services\PdfPageCounter;
 use App\Services\PdfPageExtractor;
 use App\Services\PdfPreviewGenerator;
 use App\Services\PrintJobFactory;
@@ -20,15 +17,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 use RuntimeException;
+use Throwable;
 
 class KioskController extends Controller
 {
     public function home(
         KioskSessionLock $kioskSessionLock
-    ): RedirectResponse|View
-    {
-        $activeJobUuid = $kioskSessionLock
-            ->activeJobUuid();
+    ): RedirectResponse|View {
+        $activeJobUuid = $kioskSessionLock->activeJobUuid();
 
         if ($activeJobUuid) {
             $printJob = PrintJob::query()
@@ -36,10 +32,7 @@ class KioskController extends Controller
                 ->first();
 
             if ($printJob) {
-                return redirect()->route(
-                    'kiosk.preview',
-                    $printJob
-                );
+                return redirect()->route('kiosk.preview', $printJob);
             }
 
             $kioskSessionLock->unlock();
@@ -83,10 +76,7 @@ class KioskController extends Controller
 
         $this->refreshExpiration($printJob);
 
-        return redirect()->route(
-            'kiosk.preview',
-            $printJob
-        );
+        return redirect()->route('kiosk.preview', $printJob);
     }
 
     public function store(
@@ -94,26 +84,29 @@ class KioskController extends Controller
         PrintJobFactory $printJobFactory,
         KioskSessionLock $kioskSessionLock
     ): RedirectResponse {
-        $validated = $request->validate([
-            'document' => [
-                'required',
-                'file',
-                'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,txt',
-                'max:102400',
-            ],
-        ]);
+        $validated = $request->validate(
+            $this->uploadValidationRules(),
+            $this->uploadValidationMessages()
+        );
 
-        $printJob = $printJobFactory
-            ->createFromUploadedFile(
+        try {
+            $printJob = $printJobFactory->createFromUploadedFile(
                 $validated['document']
             );
+        } catch (Throwable $exception) {
+            logger()->error('Kiosk upload failed', [
+                'message' => $exception->getMessage(),
+                'exception' => $exception,
+            ]);
+
+            return back()->withErrors([
+                'document' => $exception->getMessage(),
+            ]);
+        }
 
         $kioskSessionLock->lock($printJob);
 
-        return redirect()->route(
-            'kiosk.preview',
-            $printJob
-        );
+        return redirect()->route('kiosk.preview', $printJob);
     }
 
     public function payment(PrintJob $printJob): RedirectResponse|View
@@ -156,38 +149,6 @@ class KioskController extends Controller
         return redirect()->route('kiosk.payment', $printJob);
     }
 
-    public function print(
-        PrintJob $printJob,
-        PrintJobStateService $stateService
-    ): RedirectResponse {
-        abort_if(
-            $printJob->expires_at &&
-            now()->greaterThan($printJob->expires_at),
-            403
-        );
-
-        abort_if(
-            $printJob->status !== 'paid',
-            403
-        );
-
-        try {
-            $stateService->transition(
-                $printJob,
-                'queued'
-            );
-
-            ProcessPrintJob::dispatch($printJob);
-        } catch (RuntimeException) {
-            abort(403);
-        }
-
-        return redirect()->route(
-            'kiosk.status',
-            $printJob
-        );
-    }
-
     public function addCredit(
         PrintJob $printJob,
         int $amount
@@ -221,6 +182,29 @@ class KioskController extends Controller
         return redirect()->route('kiosk.payment', $printJob);
     }
 
+    public function print(
+        PrintJob $printJob,
+        PrintJobStateService $stateService
+    ): RedirectResponse {
+        abort_if(
+            $printJob->expires_at &&
+            now()->greaterThan($printJob->expires_at),
+            403
+        );
+
+        abort_if($printJob->status !== 'paid', 403);
+
+        try {
+            $stateService->transition($printJob, 'queued');
+
+            ProcessPrintJob::dispatch($printJob);
+        } catch (RuntimeException) {
+            abort(403);
+        }
+
+        return redirect()->route('kiosk.status', $printJob);
+    }
+
     public function printing(PrintJob $printJob): View
     {
         return view('kiosk.printing', [
@@ -228,9 +212,8 @@ class KioskController extends Controller
         ]);
     }
 
-    public function status(
-        PrintJob $printJob
-    ): RedirectResponse|View {
+    public function status(PrintJob $printJob): RedirectResponse|View
+    {
         if (
             $printJob->status === 'cancelled' ||
             (
@@ -310,20 +293,23 @@ class KioskController extends Controller
         if ($selection === '' || $selection === 'all') {
             $selection = 'all';
 
-            $selectedPages = range(
-                1,
-                $printJob->pages
-            );
+            $selectedPages = range(1, $printJob->pages);
 
             $relativeFilteredPath = null;
 
             $workingPdf = Storage::disk('local')
                 ->path($printJob->converted_pdf_path);
         } else {
-            $selectedPages = $parser->parse(
-                $selection,
-                $printJob->pages
-            );
+            try {
+                $selectedPages = $parser->parse(
+                    $selection,
+                    $printJob->pages
+                );
+            } catch (RuntimeException $exception) {
+                return back()->withErrors([
+                    'page_selection' => $exception->getMessage(),
+                ]);
+            }
 
             $sourcePdf = Storage::disk('local')
                 ->path($printJob->converted_pdf_path);
@@ -345,35 +331,36 @@ class KioskController extends Controller
                 ? $printJob->color_price_per_page
                 : $printJob->black_price_per_page;
 
-        $previewPdf = $previewGenerator->generate(
-            sourcePath: $workingPdf,
+        try {
+            $previewPdf = $previewGenerator->generate(
+                sourcePath: $workingPdf,
+                printMode: $validated['print_mode'],
+                orientation: $validated['orientation'],
+                paperSize: $validated['paper_size']
+            );
+        } catch (Throwable $exception) {
+            logger()->error('Preview generation failed', [
+                'print_job_id' => $printJob->id,
+                'message' => $exception->getMessage(),
+                'exception' => $exception,
+            ]);
 
-            printMode: $validated['print_mode'],
-
-            orientation: $validated['orientation'],
-
-            paperSize: $validated['paper_size']
-        );
+            return back()->withErrors([
+                'document' => $exception->getMessage(),
+            ]);
+        }
 
         $printJob->update([
             'page_selection' => $selection,
-
             'selected_pages_count' => count($selectedPages),
-
             'filtered_pdf_path' => $relativeFilteredPath,
-
             'preview_pdf_path' =>
                 'print-jobs/previews/' .
                 basename($previewPdf),
-
             'print_mode' => $validated['print_mode'],
-
             'orientation' => $validated['orientation'],
-
             'paper_size' => $validated['paper_size'],
-
             'price_per_page' => $pricePerPage,
-
             'total_amount' =>
                 count($selectedPages) *
                 $pricePerPage,
@@ -382,13 +369,6 @@ class KioskController extends Controller
         $this->refreshExpiration($printJob);
 
         return back();
-    }
-
-    private function refreshExpiration(PrintJob $printJob): void
-    {
-        $printJob->update([
-            'expires_at' => now()->addMinutes(5),
-        ]);
     }
 
     public function cancel(
@@ -408,13 +388,9 @@ class KioskController extends Controller
     {
         return view('kiosk.connect', [
             'wifiSsid' => 'PisoPrint',
-
             'wifiPassword' => '12345678',
-
             'uploadUrl' => url('/upload'),
-
-            'wifiQr' =>
-                'WIFI:T:WPA;S:PisoPrint;P:12345678;;',
+            'wifiQr' => 'WIFI:T:WPA;S:PisoPrint;P:12345678;;',
         ]);
     }
 
@@ -433,25 +409,64 @@ class KioskController extends Controller
     public function mobileStore(
         Request $request,
         PrintJobFactory $printJobFactory
-    ): View {
-        $validated = $request->validate([
-            'document' => [
-                'required',
-                'file',
-                'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,txt',
-                'max:102400',
-            ],
-        ]);
+    ): RedirectResponse|View {
+        $validated = $request->validate(
+            $this->uploadValidationRules(),
+            $this->uploadValidationMessages()
+        );
 
-        $printJob = $printJobFactory
-            ->createFromUploadedFile(
+        try {
+            $printJob = $printJobFactory->createFromUploadedFile(
                 $validated['document']
             );
+        } catch (Throwable $exception) {
+            logger()->error('Mobile upload failed', [
+                'message' => $exception->getMessage(),
+                'exception' => $exception,
+            ]);
+
+            return back()->withErrors([
+                'document' => $exception->getMessage(),
+            ]);
+        }
 
         $printJob->update([
             'status' => 'uploaded',
         ]);
 
         return view('kiosk.mobile-upload-success');
+    }
+
+    private function refreshExpiration(PrintJob $printJob): void
+    {
+        $printJob->update([
+            'expires_at' => now()->addMinutes(5),
+        ]);
+    }
+
+    private function uploadValidationRules(): array
+    {
+        return [
+            'document' => [
+                'required',
+                'file',
+                'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,txt',
+                'max:102400',
+            ],
+        ];
+    }
+
+    private function uploadValidationMessages(): array
+    {
+        return [
+            'document.required' => 'Please select a file.',
+            'document.file' => 'The selected document is not a valid file.',
+            'document.mimes' =>
+                'Unsupported file type. Please upload PDF, Word, PowerPoint, Excel, JPG, PNG, or TXT.',
+            'document.max' =>
+                'File is too large. Maximum upload size is 100MB.',
+            'document.uploaded' =>
+                'The document failed to upload. Please try a smaller file or use JPG/PNG/PDF.',
+        ];
     }
 }
