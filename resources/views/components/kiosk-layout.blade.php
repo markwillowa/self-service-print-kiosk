@@ -5,7 +5,7 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     >
 
     <title>{{ $title ?? 'Piso Print' }}</title>
@@ -14,29 +14,54 @@
 
     <style>
         * {
+            box-sizing: border-box;
             touch-action: manipulation;
-
             -webkit-user-select: none;
-
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html,
         body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
             overscroll-behavior: none;
+            background: #020617;
         }
 
-        html {
-            touch-action: manipulation;
+        input,
+        textarea,
+        select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        input,
+        button,
+        textarea,
+        select {
+            font-size: 16px;
+        }
+
+        iframe {
+            border: 0;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 
 <body
     draggable="false"
-    class="min-h-screen bg-slate-950 flex items-center justify-center overflow-hidden select-none touch-manipulation"
+    class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
 >
-<main class="relative w-[1024px] h-[600px] overflow-hidden bg-gradient-to-br from-white via-slate-50 to-slate-200 shadow-2xl">
+<main
+    class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-white via-slate-50 to-slate-200"
+>
     <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-blue-200/30 blur-3xl"></div>
 
     <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-emerald-200/30 blur-3xl"></div>
@@ -61,7 +86,7 @@
             </div>
         </header>
 
-        <div class="flex-1 min-h-0">
+        <div class="flex-1 min-h-0 overflow-hidden">
             {{ $slot }}
         </div>
     </section>
@@ -71,7 +96,7 @@
     id="adminPinModal"
     class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50"
 >
-    <div class="w-[420px] rounded-[2rem] bg-white p-8 shadow-2xl">
+    <div class="w-[420px] max-w-[calc(100vw-2rem)] rounded-[2rem] bg-white p-8 shadow-2xl">
         <h2 class="text-3xl font-black text-center mb-6">
             Admin Access
         </h2>
@@ -137,25 +162,35 @@
     });
 
     function openAdminModal() {
-        document
-            .getElementById('adminPinModal')
+        const modal = document.getElementById(
+            'adminPinModal'
+        );
+
+        modal
             .classList
             .remove('hidden');
 
-        document
-            .getElementById('adminPinModal')
+        modal
             .classList
             .add('flex');
+
+        setTimeout(() => {
+            modal
+                .querySelector('input[name="pin_code"]')
+                ?.focus();
+        }, 100);
     }
 
     function closeAdminModal() {
-        document
-            .getElementById('adminPinModal')
+        const modal = document.getElementById(
+            'adminPinModal'
+        );
+
+        modal
             .classList
             .remove('flex');
 
-        document
-            .getElementById('adminPinModal')
+        modal
             .classList
             .add('hidden');
     }
@@ -167,6 +202,14 @@
                 closeAdminModal();
             }
         });
+
+    document.addEventListener('gesturestart', (event) => {
+        event.preventDefault();
+    });
+
+    document.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+    });
 </script>
 
 @include('kiosk.partials.kiosk-lockdown')
