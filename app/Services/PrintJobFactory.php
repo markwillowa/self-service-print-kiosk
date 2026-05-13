@@ -13,7 +13,8 @@ class PrintJobFactory
     public function __construct(
         private readonly PdfPageCounter $pdfPageCounter,
         private readonly FileConverter $fileConverter,
-        private readonly FileValidationService $fileValidationService
+        private readonly FileValidationService $fileValidationService,
+        private readonly PdfPreviewGenerator $previewGenerator
     ) {
     }
 
@@ -98,6 +99,39 @@ class PrintJobFactory
 
         /*
         |--------------------------------------------------------------------------
+        | Default Print Settings
+        |--------------------------------------------------------------------------
+        */
+
+        $defaultMode = 'black';
+
+        $defaultOrientation = 'portrait';
+
+        $defaultPaperSize = 'short';
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate Default Black Preview
+        |--------------------------------------------------------------------------
+        */
+
+        $previewPdfPath = $this->previewGenerator
+            ->generate(
+                sourcePath: $finalPdfPath,
+
+                printMode: $defaultMode,
+
+                orientation: $defaultOrientation,
+
+                paperSize: $defaultPaperSize
+            );
+
+        $relativePreviewPath =
+            'print-jobs/previews/' .
+            basename($previewPdfPath);
+
+        /*
+        |--------------------------------------------------------------------------
         | Default Pricing
         |--------------------------------------------------------------------------
         */
@@ -105,8 +139,6 @@ class PrintJobFactory
         $blackPricePerPage = 1;
 
         $colorPricePerPage = 2;
-
-        $defaultMode = 'black';
 
         $pricePerPage =
             $defaultMode === 'color'
@@ -122,12 +154,6 @@ class PrintJobFactory
         return PrintJob::create([
             'expires_at' => now()->addMinutes(5),
 
-            /*
-            |--------------------------------------------------------------------------
-            | File Information
-            |--------------------------------------------------------------------------
-            */
-
             'original_filename' => $originalFilename,
 
             'original_file_path' => $originalPath,
@@ -136,7 +162,7 @@ class PrintJobFactory
 
             'filtered_pdf_path' => null,
 
-            'preview_pdf_path' => null,
+            'preview_pdf_path' => $relativePreviewPath,
 
             'original_extension' => $extension,
 
@@ -144,35 +170,17 @@ class PrintJobFactory
 
             'file_path' => $relativePdfPath,
 
-            /*
-            |--------------------------------------------------------------------------
-            | Page Settings
-            |--------------------------------------------------------------------------
-            */
-
             'pages' => $pages,
 
             'page_selection' => 'all',
 
             'selected_pages_count' => $pages,
 
-            /*
-            |--------------------------------------------------------------------------
-            | Print Settings
-            |--------------------------------------------------------------------------
-            */
-
             'print_mode' => $defaultMode,
 
-            'orientation' => 'portrait',
+            'orientation' => $defaultOrientation,
 
-            'paper_size' => 'short',
-
-            /*
-            |--------------------------------------------------------------------------
-            | Pricing
-            |--------------------------------------------------------------------------
-            */
+            'paper_size' => $defaultPaperSize,
 
             'black_price_per_page' => $blackPricePerPage,
 
@@ -184,12 +192,6 @@ class PrintJobFactory
                 $pages * $pricePerPage,
 
             'paid_amount' => 0,
-
-            /*
-            |--------------------------------------------------------------------------
-            | Status
-            |--------------------------------------------------------------------------
-            */
 
             'status' => 'pending_payment',
 

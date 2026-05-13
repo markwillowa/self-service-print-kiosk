@@ -69,10 +69,14 @@ class KioskController extends Controller
         PrintJob $printJob,
         KioskSessionLock $kioskSessionLock
     ): RedirectResponse {
-        if (
-            $printJob->status === 'cancelled'
-        ) {
+        if ($printJob->status === 'cancelled') {
             return redirect()->route('kiosk.upload');
+        }
+
+        if ($printJob->status === 'uploaded') {
+            $printJob->update([
+                'status' => 'pending_payment',
+            ]);
         }
 
         $kioskSessionLock->lock($printJob);
@@ -274,6 +278,12 @@ class KioskController extends Controller
 
     public function confirm(PrintJob $printJob): RedirectResponse
     {
+        if ($printJob->status === 'uploaded') {
+            $printJob->update([
+                'status' => 'pending_payment',
+            ]);
+        }
+
         $this->refreshExpiration($printJob);
 
         return redirect()->route('kiosk.payment', $printJob);
