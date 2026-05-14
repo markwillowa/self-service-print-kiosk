@@ -7,6 +7,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Models\PrintJob;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
