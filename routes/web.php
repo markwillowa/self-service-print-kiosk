@@ -172,9 +172,19 @@ Route::post('/coin', function (Request $request) {
         'amount' => ['required', 'integer', 'min:1'],
     ]);
 
+    $activeJobUuid = app(\App\Services\KioskSessionLock::class)
+        ->activeJobUuid();
+
+    if (! $activeJobUuid) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No active kiosk session.',
+        ]);
+    }
+
     $printJob = PrintJob::query()
+        ->where('uuid', $activeJobUuid)
         ->where('status', 'pending_payment')
-        ->latest()
         ->first();
 
     if (! $printJob) {
@@ -184,10 +194,7 @@ Route::post('/coin', function (Request $request) {
         ]);
     }
 
-    $printJob->increment(
-        'paid_amount',
-        $validated['amount']
-    );
+    $printJob->increment('paid_amount', $validated['amount']);
 
     $printJob->refresh();
 
@@ -199,9 +206,8 @@ Route::post('/coin', function (Request $request) {
 
     return response()->json([
         'success' => true,
-        'print_job_id' => $printJob->id,
         'paid_amount' => $printJob->paid_amount,
         'total_amount' => $printJob->total_amount,
         'status' => $printJob->status,
     ]);
-})->name('coin.insert');
+});
