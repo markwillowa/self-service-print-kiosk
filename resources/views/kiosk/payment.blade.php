@@ -1,4 +1,6 @@
 <x-kiosk-layout title="Insert Coins">
+    <meta http-equiv="refresh" content="1">
+
     <div class="h-full flex flex-col min-h-0 gap-6">
         <div class="flex justify-between items-start shrink-0">
             <div class="min-w-0">
@@ -19,10 +21,7 @@
                     Back
                 </a>
 
-                <form
-                    method="POST"
-                    action="{{ route('kiosk.cancel', $printJob) }}"
-                >
+                <form method="POST" action="{{ route('kiosk.cancel', $printJob) }}">
                     @csrf
 
                     <button
@@ -57,19 +56,14 @@
             @if ($printJob->status === 'paid')
                 <div class="h-full rounded-[3rem] bg-emerald-100 border border-emerald-200 p-12 text-center shadow-2xl flex flex-col items-center justify-center">
                     <div class="w-32 h-32 rounded-[2.5rem] bg-emerald-600 text-white flex items-center justify-center shadow-2xl mb-8">
-                        <span class="text-7xl">
-                            ✓
-                        </span>
+                        <span class="text-7xl">✓</span>
                     </div>
 
                     <p class="text-6xl font-black text-emerald-800 mb-10 leading-none">
                         Payment Complete
                     </p>
 
-                    <form
-                        method="POST"
-                        action="{{ route('kiosk.print', $printJob) }}"
-                    >
+                    <form method="POST" action="{{ route('kiosk.print', $printJob) }}">
                         @csrf
 
                         <button
@@ -81,35 +75,29 @@
                     </form>
                 </div>
             @else
-                <div class="h-full rounded-[3rem] bg-white/90 border border-white p-10 shadow-2xl flex flex-col justify-center">
-                    <p class="text-center text-5xl font-black text-slate-950 mb-10">
+                <div class="h-full rounded-[3rem] bg-white/90 border border-white p-12 shadow-2xl flex flex-col items-center justify-center text-center">
+                    <div class="w-36 h-36 rounded-[3rem] bg-slate-950 text-white flex items-center justify-center shadow-2xl mb-8 animate-pulse">
+                        <x-heroicon-o-banknotes class="w-20 h-20" />
+                    </div>
+
+                    <p class="text-5xl font-black text-slate-950 mb-5">
+                        Please Insert Coins
+                    </p>
+
+                    <p class="text-4xl font-black text-slate-700 mb-8">
                         Remaining:
                         <span class="text-emerald-700">
                             ₱{{ max($printJob->total_amount - $printJob->paid_amount, 0) }}
                         </span>
                     </p>
 
-                    <div class="grid grid-cols-3 gap-8">
-                        @foreach ([1, 5, 10] as $amount)
-                            <form
-                                method="POST"
-                                action="{{ route('kiosk.add-credit', [$printJob, $amount]) }}"
-                            >
-                                @csrf
+                    <div class="inline-flex items-center gap-3 rounded-full bg-emerald-100 border border-emerald-200 px-7 py-4">
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
 
-                                <button
-                                    type="submit"
-                                    class="w-full rounded-[3rem] bg-slate-950 text-white text-7xl font-black py-16 shadow-2xl active:scale-95 transition"
-                                >
-                                    ₱{{ $amount }}
-                                </button>
-                            </form>
-                        @endforeach
+                        <span class="text-xl font-black text-emerald-900">
+                            Waiting for coin slot payment...
+                        </span>
                     </div>
-
-                    <p class="text-center text-xl text-slate-500 font-bold mt-10">
-                        Insert coins or use the test buttons above.
-                    </p>
                 </div>
             @endif
         </div>
