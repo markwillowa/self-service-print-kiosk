@@ -168,11 +168,11 @@ Route::post(
 )->name('kiosk.mobile-store');
 
 Route::post('/coin', function (Request $request) {
-    $request->validate([
+    $validated = $request->validate([
         'amount' => ['required', 'integer', 'min:1'],
     ]);
 
-    $printJob = \App\Models\PrintJob::query()
+    $printJob = PrintJob::query()
         ->where('status', 'pending_payment')
         ->latest()
         ->first();
@@ -186,15 +186,12 @@ Route::post('/coin', function (Request $request) {
 
     $printJob->increment(
         'paid_amount',
-        $request->integer('amount')
+        $validated['amount']
     );
 
     $printJob->refresh();
 
-    if (
-        $printJob->paid_amount >=
-        $printJob->total_amount
-    ) {
+    if ($printJob->paid_amount >= $printJob->total_amount) {
         $printJob->update([
             'status' => 'paid',
         ]);
@@ -202,6 +199,9 @@ Route::post('/coin', function (Request $request) {
 
     return response()->json([
         'success' => true,
+        'print_job_id' => $printJob->id,
         'paid_amount' => $printJob->paid_amount,
+        'total_amount' => $printJob->total_amount,
+        'status' => $printJob->status,
     ]);
-});
+})->name('coin.insert');
