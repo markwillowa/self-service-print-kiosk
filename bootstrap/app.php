@@ -19,6 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.auth' => EnsureAdminAuthenticated::class,
             'kiosk.local' => RestrictKioskAccess::class,
         ]);
+
+        $middleware->validateCsrfTokens(
+            except: [
+                'coin',
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
