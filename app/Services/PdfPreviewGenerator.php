@@ -24,7 +24,7 @@ class PdfPreviewGenerator
         $outputPath =
             $outputDirectory .
             '/' .
-            \Illuminate\Support\Str::uuid() .
+            Str::uuid() .
             '.pdf';
 
         $paper = match ($paperSize) {
@@ -34,61 +34,33 @@ class PdfPreviewGenerator
 
         $command = [
             'gs',
-
             '-sDEVICE=pdfwrite',
-
             '-dCompatibilityLevel=1.4',
-
             '-dNOPAUSE',
-
             '-dQUIET',
-
             '-dBATCH',
-
+            '-dFIXEDMEDIA',
+            '-dPDFFitPage',
             '-sPAPERSIZE=' . $paper,
-
             '-sOutputFile=' . $outputPath,
         ];
 
-        /*
-        |--------------------------------------------------------------------------
-        | Black / Grayscale
-        |--------------------------------------------------------------------------
-        */
-
         if ($printMode === 'black') {
             $command[] = '-sColorConversionStrategy=Gray';
-
             $command[] = '-dProcessColorModel=/DeviceGray';
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Landscape
-        |--------------------------------------------------------------------------
-        */
-
         if ($orientation === 'landscape') {
             $command[] = '-c';
-
-            $command[] =
-                '<</Orientation 3>> setpagedevice';
+            $command[] = '<</Orientation 3>> setpagedevice';
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Input PDF
-        |--------------------------------------------------------------------------
-        */
-
         $command[] = '-f';
-
         $command[] = $sourcePath;
 
         $process = new Process($command);
 
         $process->setTimeout(300);
-
         $process->run();
 
         if (! $process->isSuccessful()) {

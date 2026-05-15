@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessPrintJob;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
+use App\Services\FileConverter;
 use App\Services\KioskCreditService;
 use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
+use App\Services\PdfPageCounter;
 use App\Services\PdfPageExtractor;
 use App\Services\PdfPreviewGenerator;
 use App\Services\PrintJobFactory;
@@ -284,7 +286,9 @@ class KioskController extends Controller
         PrintJob $printJob,
         PageSelectionParser $parser,
         PdfPageExtractor $extractor,
-        PdfPreviewGenerator $previewGenerator
+        PdfPreviewGenerator $previewGenerator,
+        FileConverter $fileConverter,
+        PdfPageCounter $pdfPageCounter
     ): RedirectResponse {
         $validated = $request->validate([
             'page_selection' => ['nullable', 'string'],
@@ -299,48 +303,47 @@ class KioskController extends Controller
 
         if ($selection === '' || $selection === 'all') {
             $selection = 'all';
-
-            $selectedPages = range(1, $printJob->pages);
-
-            $relativeFilteredPath = null;
-
-            $workingPdf = Storage::disk('local')
-                ->path($printJob->converted_pdf_path);
-        } else {
-            try {
-                $selectedPages = $parser->parse(
-                    $selection,
-                    $printJob->pages
-                );
-            } catch (RuntimeException $exception) {
-                return back()->withErrors([
-                    'page_selection' => $exception->getMessage(),
-                ]);
-            }
-
-            $sourcePdf = Storage::disk('local')
-                ->path($printJob->converted_pdf_path);
-
-            $filteredPdf = $extractor->extract(
-                $sourcePdf,
-                $selection
-            );
-
-            $relativeFilteredPath =
-                'print-jobs/filtered/' .
-                basename($filteredPdf);
-
-            $workingPdf = $filteredPdf;
         }
 
-        $pricePerPage =
-            $validated['print_mode'] === 'color'
-                ? $printJob->color_price_per_page
-                : $printJob->black_price_per_page;
-
         try {
+            $workingPdf = $this->buildLayoutAwarePdf(
+                printJob: $printJob,
+                orientation: $validated['orientation'],
+                paperSize: $validated['paper_size'],
+                fileConverter: $fileConverter
+            );
+
+            $pages = $pdfPageCounter->count($workingPdf);
+
+            if ($selection === 'all') {
+                $selectedPages = range(1, $pages);
+                $relativeFilteredPath = null;
+                $pdfForPreview = $workingPdf;
+            } else {
+                $selectedPages = $parser->parse(
+                    $selection,
+                    $pages
+                );
+
+                $filteredPdf = $extractor->extract(
+                    $workingPdf,
+                    $selection
+                );
+
+                $relativeFilteredPath =
+                    'print-jobs/filtered/' .
+                    basename($filteredPdf);
+
+                $pdfForPreview = $filteredPdf;
+            }
+
+            $pricePerPage =
+                $validated['print_mode'] === 'color'
+                    ? $printJob->color_price_per_page
+                    : $printJob->black_price_per_page;
+
             $previewPdf = $previewGenerator->generate(
-                sourcePath: $workingPdf,
+                sourcePath: $pdfForPreview,
                 printMode: $validated['print_mode'],
                 orientation: $validated['orientation'],
                 paperSize: $validated['paper_size']
@@ -358,8 +361,12 @@ class KioskController extends Controller
         }
 
         $printJob->update([
+            'pages' => $pages,
             'page_selection' => $selection,
             'selected_pages_count' => count($selectedPages),
+            'converted_pdf_path' =>
+                'print-jobs/converted/' .
+                basename($workingPdf),
             'filtered_pdf_path' => $relativeFilteredPath,
             'preview_pdf_path' =>
                 'print-jobs/previews/' .
@@ -448,6 +455,45 @@ class KioskController extends Controller
         ]);
 
         return view('kiosk.mobile-upload-success');
+    }
+
+    private function buildLayoutAwarePdf(
+        PrintJob $printJob,
+        string $orientation,
+        string $paperSize,
+        FileConverter $fileConverter
+    ): string {
+        $extension = strtolower(
+            $printJob->original_extension ?? ''
+        );
+
+        $editableExtensions = [
+            'doc',
+            'docx',
+            'txt',
+            'rtf',
+            'odt',
+        ];
+
+        if (
+            in_array(
+                $extension,
+                $editableExtensions,
+                true
+            )
+        ) {
+            $originalPath = Storage::disk('local')
+                ->path($printJob->original_file_path);
+
+            return $fileConverter->convertToPdf(
+                path: $originalPath,
+                orientation: $orientation,
+                paperSize: $paperSize
+            );
+        }
+
+        return Storage::disk('local')
+            ->path($printJob->converted_pdf_path);
     }
 
     private function refreshExpiration(PrintJob $printJob): void

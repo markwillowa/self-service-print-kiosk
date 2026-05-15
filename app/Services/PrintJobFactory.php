@@ -39,11 +39,8 @@ class PrintJobFactory
 
         return $this->createFromPath(
             path: $originalFullPath,
-
             originalFilename: $sanitizedFilename,
-
             originalPath: $originalPath,
-
             source: $source
         );
     }
@@ -67,19 +64,20 @@ class PrintJobFactory
             )
         );
 
-        /*
-        |--------------------------------------------------------------------------
-        | Convert To PDF
-        |--------------------------------------------------------------------------
-        */
+        $defaultMode = 'black';
+        $defaultOrientation = 'portrait';
+        $defaultPaperSize = 'short';
 
         if ($extension === 'pdf') {
             $finalPdfPath = $path;
-
             $relativePdfPath = $originalPath;
         } else {
             $convertedPdfPath = $this->fileConverter
-                ->convertToPdf($path);
+                ->convertToPdf(
+                    path: $path,
+                    orientation: $defaultOrientation,
+                    paperSize: $defaultPaperSize
+                );
 
             $finalPdfPath = $convertedPdfPath;
 
@@ -88,41 +86,14 @@ class PrintJobFactory
                 basename($convertedPdfPath);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Count Pages
-        |--------------------------------------------------------------------------
-        */
-
         $pages = $this->pdfPageCounter
             ->count($finalPdfPath);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Default Print Settings
-        |--------------------------------------------------------------------------
-        */
-
-        $defaultMode = 'black';
-
-        $defaultOrientation = 'portrait';
-
-        $defaultPaperSize = 'short';
-
-        /*
-        |--------------------------------------------------------------------------
-        | Generate Default Black Preview
-        |--------------------------------------------------------------------------
-        */
 
         $previewPdfPath = $this->previewGenerator
             ->generate(
                 sourcePath: $finalPdfPath,
-
                 printMode: $defaultMode,
-
                 orientation: $defaultOrientation,
-
                 paperSize: $defaultPaperSize
             );
 
@@ -130,14 +101,7 @@ class PrintJobFactory
             'print-jobs/previews/' .
             basename($previewPdfPath);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Default Pricing
-        |--------------------------------------------------------------------------
-        */
-
         $blackPricePerPage = 1;
-
         $colorPricePerPage = 2;
 
         $pricePerPage =
@@ -145,56 +109,34 @@ class PrintJobFactory
                 ? $colorPricePerPage
                 : $blackPricePerPage;
 
-        /*
-        |--------------------------------------------------------------------------
-        | Create Print Job
-        |--------------------------------------------------------------------------
-        */
-
         return PrintJob::create([
             'expires_at' => now()->addMinutes(5),
 
             'original_filename' => $originalFilename,
-
             'original_file_path' => $originalPath,
-
             'converted_pdf_path' => $relativePdfPath,
-
             'filtered_pdf_path' => null,
-
             'preview_pdf_path' => $relativePreviewPath,
 
             'original_extension' => $extension,
-
             'conversion_status' => 'completed',
-
             'file_path' => $relativePdfPath,
 
             'pages' => $pages,
-
             'page_selection' => 'all',
-
             'selected_pages_count' => $pages,
 
-            'print_mode' => $defaultMode,
-
-            'orientation' => $defaultOrientation,
-
-            'paper_size' => $defaultPaperSize,
+            'print_mode' => 'black',
+            'orientation' => 'portrait',
+            'paper_size' => 'short',
 
             'black_price_per_page' => $blackPricePerPage,
-
             'color_price_per_page' => $colorPricePerPage,
-
             'price_per_page' => $pricePerPage,
-
-            'total_amount' =>
-                $pages * $pricePerPage,
-
+            'total_amount' => $pages * $pricePerPage,
             'paid_amount' => 0,
 
             'status' => 'pending_payment',
-
             'source' => $source,
         ]);
     }
