@@ -1,47 +1,35 @@
 import RPi.GPIO as GPIO
 import time
-from datetime import datetime
+
+PIN = 26
 
 GPIO.setmode(GPIO.BCM)
 
-IGNORE_PINS = {
-    0, 1, 2, 3, 4,
-    14, 15,
-}
+GPIO.setup(
+    PIN,
+    GPIO.IN,
+    pull_up_down=GPIO.PUD_UP
+)
 
-PINS = []
+pulse_count = 0
 
-for pin in range(2, 28):
-    if pin not in IGNORE_PINS:
-        PINS.append(pin)
+last_state = GPIO.input(PIN)
 
-for pin in PINS:
-    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-last_state = {
-    pin: GPIO.input(pin)
-    for pin in PINS
-}
-
-print("Scanning ALL GPIO pins...")
-print("Insert coins now.")
-print("Press CTRL+C to stop.\n")
+print("Insert coins now...")
 
 try:
     while True:
-        for pin in PINS:
-            current_state = GPIO.input(pin)
+        current_state = GPIO.input(PIN)
 
-            if (
-                last_state[pin] == GPIO.HIGH and
-                current_state == GPIO.LOW
-            ):
-                print(
-                    f"[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}] "
-                    f"PULSE DETECTED ON GPIO{pin}"
-                )
+        if (
+            last_state == GPIO.HIGH and
+            current_state == GPIO.LOW
+        ):
+            pulse_count += 1
 
-            last_state[pin] = current_state
+            print(f"Pulse #{pulse_count}")
+
+        last_state = current_state
 
         time.sleep(0.001)
 
