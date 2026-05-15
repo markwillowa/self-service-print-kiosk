@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-PIN = 26
+PIN = 19
 
 GPIO.setmode(GPIO.BCM)
 
@@ -11,27 +11,19 @@ GPIO.setup(
     pull_up_down=GPIO.PUD_UP
 )
 
-pulse_count = 0
-
-last_state = GPIO.input(PIN)
-
-print("Insert coins now...")
+print(f"Watching GPIO{PIN}...")
+print("Press CTRL+C to stop.\n")
 
 try:
     while True:
-        current_state = GPIO.input(PIN)
+        state = GPIO.input(PIN)
 
-        if (
-            last_state == GPIO.HIGH and
-            current_state == GPIO.LOW
-        ):
-            pulse_count += 1
+        print(
+            f"GPIO{PIN}: {'HIGH' if state else 'LOW'}",
+            end='\r'
+        )
 
-            print(f"Pulse #{pulse_count}")
-
-        last_state = current_state
-
-        time.sleep(0.001)
+        time.sleep(0.05)
 
 except KeyboardInterrupt:
     print("\nStopped.")
