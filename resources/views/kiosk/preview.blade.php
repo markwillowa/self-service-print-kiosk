@@ -6,42 +6,42 @@
         $currentPageSelection = $printJob->page_selection ?: 'all';
     @endphp
 
-    <div class="h-full flex flex-col min-h-0 gap-6">
+    <div class="h-full flex flex-col min-h-0 gap-2">
         <div class="flex items-center justify-between shrink-0">
             <div class="min-w-0">
-                <h2 class="text-6xl font-black text-slate-950 leading-none mb-2">
+                <h2 class="text-3xl font-black text-slate-950 leading-none mb-1">
                     Preview Document
                 </h2>
 
-                <p class="text-xl text-slate-600 truncate max-w-[780px] font-bold">
+                <p class="text-sm text-slate-600 truncate max-w-[360px] font-bold">
                     {{ $printJob->original_filename }}
                 </p>
             </div>
 
-            <div class="flex items-center gap-4">
-                <div class="rounded-[2rem] bg-white px-7 py-5 shadow-xl text-center min-w-[140px]">
-                    <div class="text-sm font-black text-slate-500 uppercase mb-1">
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="rounded-xl bg-white px-3 py-2 shadow-lg text-center min-w-[70px]">
+                    <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                         Pages
                     </div>
 
-                    <div class="text-4xl font-black text-slate-950 leading-none">
+                    <div class="text-lg font-black text-slate-950 leading-none">
                         {{ $printJob->selected_pages_count ?: $printJob->pages }}
                     </div>
                 </div>
 
-                <div class="rounded-[2rem] bg-white px-7 py-5 shadow-xl text-center min-w-[150px]">
-                    <div class="text-sm font-black text-slate-500 uppercase mb-1">
+                <div class="rounded-xl bg-white px-3 py-2 shadow-lg text-center min-w-[75px]">
+                    <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                         Total
                     </div>
 
-                    <div class="text-4xl font-black text-slate-950 leading-none">
+                    <div class="text-lg font-black text-slate-950 leading-none">
                         ₱{{ $printJob->total_amount }}
                     </div>
                 </div>
 
                 <a
                     href="{{ route('kiosk.upload') }}"
-                    class="rounded-[2rem] bg-slate-200 px-7 h-20 flex items-center justify-center text-xl font-black text-slate-900 active:scale-95 transition"
+                    class="rounded-xl bg-slate-200 px-3 h-11 flex items-center justify-center text-sm font-black text-slate-900 active:scale-95 transition"
                 >
                     Back
                 </a>
@@ -54,7 +54,7 @@
 
                     <button
                         type="submit"
-                        class="rounded-[2rem] bg-red-100 text-red-700 px-7 h-20 text-xl font-black active:scale-95 transition"
+                        class="rounded-xl bg-red-100 text-red-700 px-3 h-11 text-sm font-black active:scale-95 transition"
                     >
                         Cancel
                     </button>
@@ -63,7 +63,7 @@
                 <button
                     type="button"
                     onclick="openEditModal()"
-                    class="rounded-[2rem] bg-slate-200 px-7 h-20 text-xl font-black text-slate-900 active:scale-95 transition"
+                    class="rounded-xl bg-slate-200 px-3 h-11 text-sm font-black text-slate-900 active:scale-95 transition"
                 >
                     Edit
                 </button>
@@ -76,7 +76,7 @@
 
                     <button
                         type="submit"
-                        class="rounded-[2rem] bg-slate-950 text-white px-9 h-20 text-xl font-black shadow-xl active:scale-95 transition"
+                        class="rounded-xl bg-slate-950 text-white px-4 h-11 text-sm font-black shadow-lg active:scale-95 transition"
                     >
                         Continue
                     </button>
@@ -84,49 +84,49 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-4 shrink-0">
-            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
-                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+        <div class="grid grid-cols-4 gap-2 shrink-0">
+            <div class="rounded-xl bg-white/90 border border-white p-2 shadow-lg text-center">
+                <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                     Color
                 </div>
 
-                <div class="text-2xl font-black text-slate-950">
+                <div class="text-sm font-black text-slate-950">
                     {{ $currentPrintMode === 'color' ? 'Colored' : 'Black' }}
                 </div>
             </div>
 
-            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
-                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+            <div class="rounded-xl bg-white/90 border border-white p-2 shadow-lg text-center">
+                <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                     Size
                 </div>
 
-                <div class="text-2xl font-black text-slate-950">
+                <div class="text-sm font-black text-slate-950">
                     {{ $currentPaperSize === 'long' ? 'Long' : 'Short' }}
                 </div>
             </div>
 
-            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
-                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+            <div class="rounded-xl bg-white/90 border border-white p-2 shadow-lg text-center">
+                <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                     Orientation
                 </div>
 
-                <div class="text-2xl font-black text-slate-950">
+                <div class="text-sm font-black text-slate-950">
                     {{ $currentOrientation === 'landscape' ? 'Landscape' : 'Portrait' }}
                 </div>
             </div>
 
-            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
-                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+            <div class="rounded-xl bg-white/90 border border-white p-2 shadow-lg text-center">
+                <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                     Page
                 </div>
 
-                <div class="text-2xl font-black text-slate-950 truncate">
+                <div class="text-sm font-black text-slate-950 truncate">
                     {{ $currentPageSelection === 'all' ? 'All' : $currentPageSelection }}
                 </div>
             </div>
         </div>
 
-        <div class="flex-1 min-h-0 rounded-[3rem] bg-white overflow-hidden shadow-2xl border border-white">
+        <div class="flex-1 min-h-0 rounded-2xl bg-white overflow-hidden shadow-xl border border-white">
             <iframe
                 src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0"
                 class="w-full h-full border-0"
@@ -136,16 +136,16 @@
 
     <div
         id="editModal"
-        class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-8"
+        class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-3"
     >
-        <div class="w-full max-w-5xl rounded-[3rem] bg-white p-10 shadow-2xl">
-            <div class="flex items-center justify-between mb-8">
+        <div class="w-full max-w-[720px] max-h-[450px] overflow-y-auto rounded-2xl bg-white p-4 shadow-2xl">
+            <div class="flex items-center justify-between mb-3">
                 <div>
-                    <h3 class="text-5xl font-black text-slate-950 leading-none mb-2">
+                    <h3 class="text-2xl font-black text-slate-950 leading-none mb-1">
                         Edit Print Settings
                     </h3>
 
-                    <p class="text-xl text-slate-500 font-bold">
+                    <p class="text-xs text-slate-500 font-bold">
                         Default: Black, Short, Portrait, All pages.
                     </p>
                 </div>
@@ -153,14 +153,14 @@
                 <button
                     type="button"
                     onclick="closeEditModal()"
-                    class="w-16 h-16 rounded-2xl bg-slate-100 text-3xl font-black text-slate-900 active:scale-95 transition"
+                    class="w-10 h-10 rounded-xl bg-slate-100 text-xl font-black text-slate-900 active:scale-95 transition"
                 >
                     ✕
                 </button>
             </div>
 
             @if ($errors->any())
-                <div class="mb-6 rounded-[2rem] bg-red-100 text-red-700 p-5 text-xl font-black">
+                <div class="mb-3 rounded-xl bg-red-100 text-red-700 p-3 text-sm font-black">
                     {{ $errors->first() }}
                 </div>
             @endif
@@ -168,18 +168,18 @@
             <form
                 method="POST"
                 action="{{ route('kiosk.update-settings', $printJob) }}"
-                class="grid grid-cols-2 gap-6"
+                class="grid grid-cols-2 gap-3"
             >
                 @csrf
 
                 <div>
-                    <label class="block text-lg font-black mb-3 text-slate-700">
+                    <label class="block text-xs font-black mb-1 text-slate-700">
                         Color
                     </label>
 
                     <select
                         name="print_mode"
-                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
+                        class="w-full rounded-xl bg-slate-100 px-3 h-12 text-base font-black"
                     >
                         <option
                             value="black"
@@ -198,13 +198,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-lg font-black mb-3 text-slate-700">
+                    <label class="block text-xs font-black mb-1 text-slate-700">
                         Paper Size
                     </label>
 
                     <select
                         name="paper_size"
-                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
+                        class="w-full rounded-xl bg-slate-100 px-3 h-12 text-base font-black"
                     >
                         <option
                             value="short"
@@ -223,13 +223,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-lg font-black mb-3 text-slate-700">
+                    <label class="block text-xs font-black mb-1 text-slate-700">
                         Orientation
                     </label>
 
                     <select
                         name="orientation"
-                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
+                        class="w-full rounded-xl bg-slate-100 px-3 h-12 text-base font-black"
                     >
                         <option
                             value="portrait"
@@ -248,7 +248,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-lg font-black mb-3 text-slate-700">
+                    <label class="block text-xs font-black mb-1 text-slate-700">
                         Page Selection
                     </label>
 
@@ -257,10 +257,10 @@
                         name="page_selection"
                         value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
                         placeholder="All or 1-3,5"
-                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
+                        class="w-full rounded-xl bg-slate-100 px-3 h-12 text-base font-black"
                     >
 
-                    <p class="mt-2 text-sm font-bold text-slate-500">
+                    <p class="mt-1 text-[10px] font-bold text-slate-500">
                         Leave blank for all pages.
                     </p>
                 </div>
@@ -268,14 +268,14 @@
                 <button
                     type="button"
                     onclick="resetDefaultSettings()"
-                    class="rounded-[2rem] bg-slate-200 text-slate-900 h-20 text-2xl font-black active:scale-95 transition"
+                    class="rounded-xl bg-slate-200 text-slate-900 h-12 text-base font-black active:scale-95 transition"
                 >
                     Reset Default
                 </button>
 
                 <button
                     type="submit"
-                    class="rounded-[2rem] bg-slate-950 text-white h-20 text-2xl font-black shadow-xl active:scale-95 transition"
+                    class="rounded-xl bg-slate-950 text-white h-12 text-base font-black shadow-lg active:scale-95 transition"
                 >
                     Apply Settings
                 </button>
