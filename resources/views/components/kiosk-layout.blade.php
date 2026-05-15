@@ -52,6 +52,247 @@
         ::-webkit-scrollbar {
             display: none;
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 800x480 Raspberry Pi Touchscreen Compact Mode
+        |--------------------------------------------------------------------------
+        */
+
+        @media (max-width: 900px) and (max-height: 520px) {
+            section.relative.z-10 {
+                padding: 0.75rem !important;
+            }
+
+            header {
+                margin-bottom: 0.5rem !important;
+            }
+
+            header h1 {
+                font-size: 1.5rem !important;
+                line-height: 1.1 !important;
+            }
+
+            header p {
+                font-size: 0.55rem !important;
+                letter-spacing: 0.18em !important;
+            }
+
+            header .rounded-full {
+                padding: 0.45rem 0.8rem !important;
+                font-size: 0.85rem !important;
+            }
+
+            .text-7xl {
+                font-size: 2.4rem !important;
+                line-height: 0.95 !important;
+            }
+
+            .text-6xl {
+                font-size: 2.1rem !important;
+                line-height: 1 !important;
+            }
+
+            .text-5xl {
+                font-size: 1.75rem !important;
+                line-height: 1.05 !important;
+            }
+
+            .text-4xl {
+                font-size: 1.45rem !important;
+                line-height: 1.05 !important;
+            }
+
+            .text-3xl {
+                font-size: 1.2rem !important;
+                line-height: 1.15 !important;
+            }
+
+            .text-2xl {
+                font-size: 1rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .text-xl {
+                font-size: 0.9rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .text-lg {
+                font-size: 0.8rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .text-base {
+                font-size: 0.75rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .p-16,
+            .p-12,
+            .p-10,
+            .p-8,
+            .p-6,
+            .p-5 {
+                padding: 0.75rem !important;
+            }
+
+            .px-20,
+            .px-12,
+            .px-10,
+            .px-9,
+            .px-8,
+            .px-7,
+            .px-6,
+            .px-5 {
+                padding-left: 0.85rem !important;
+                padding-right: 0.85rem !important;
+            }
+
+            .py-8,
+            .py-7,
+            .py-6,
+            .py-5,
+            .py-4,
+            .py-3 {
+                padding-top: 0.55rem !important;
+                padding-bottom: 0.55rem !important;
+            }
+
+            .gap-10,
+            .gap-8,
+            .gap-6,
+            .gap-5,
+            .gap-4 {
+                gap: 0.65rem !important;
+            }
+
+            .mb-10,
+            .mb-8,
+            .mb-7,
+            .mb-6,
+            .mb-5,
+            .mb-4,
+            .mb-3,
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+
+            .mt-5,
+            .mt-4,
+            .mt-3,
+            .mt-2 {
+                margin-top: 0.4rem !important;
+            }
+
+            .h-20 {
+                height: 3rem !important;
+            }
+
+            .w-40,
+            .h-40 {
+                width: 4.5rem !important;
+                height: 4.5rem !important;
+            }
+
+            .w-36,
+            .h-36,
+            .w-32,
+            .h-32 {
+                width: 4rem !important;
+                height: 4rem !important;
+            }
+
+            .w-24,
+            .h-24,
+            .w-20,
+            .h-20 {
+                width: 3.2rem !important;
+                height: 3.2rem !important;
+            }
+
+            .w-16,
+            .h-16 {
+                width: 2.6rem !important;
+                height: 2.6rem !important;
+            }
+
+            .w-14,
+            .h-14,
+            .w-11,
+            .h-11,
+            .w-10,
+            .h-10,
+            .w-9,
+            .h-9,
+            .w-8,
+            .h-8,
+            .w-7,
+            .h-7,
+            .w-6,
+            .h-6 {
+                width: 1.45rem !important;
+                height: 1.45rem !important;
+            }
+
+            .rounded-\[3rem\],
+            .rounded-\[2\.5rem\],
+            .rounded-\[2rem\] {
+                border-radius: 1.1rem !important;
+            }
+
+            .rounded-3xl {
+                border-radius: 1rem !important;
+            }
+
+            .rounded-2xl {
+                border-radius: 0.85rem !important;
+            }
+
+            .shadow-2xl,
+            .shadow-xl {
+                box-shadow: 0 8px 20px rgb(15 23 42 / 0.12) !important;
+            }
+
+            .grid-cols-\[1\.1fr_0\.9fr\],
+            .grid-cols-\[0\.9fr_1\.1fr\] {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            .max-w-5xl {
+                max-width: 92vw !important;
+            }
+
+            .max-w-4xl {
+                max-width: 88vw !important;
+            }
+
+            .max-w-3xl,
+            .max-w-2xl {
+                max-width: 100% !important;
+            }
+
+            iframe {
+                transform: scale(1);
+                transform-origin: top left;
+            }
+
+            #adminPinModal .w-\[420px\] {
+                width: 330px !important;
+            }
+
+            #adminPinModal input {
+                height: 3rem !important;
+                font-size: 1.2rem !important;
+                padding: 0.5rem !important;
+            }
+
+            #adminPinModal button {
+                height: 3rem !important;
+                padding: 0.5rem !important;
+                font-size: 1rem !important;
+            }
+        }
     </style>
 </head>
 
@@ -81,7 +322,7 @@
                 </h1>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <div class="rounded-full bg-emerald-600 text-white px-6 py-3 font-black text-xl shadow-xl">
                     Credit: ₱{{ $kioskCreditBalance ?? 0 }}
                 </div>
@@ -172,13 +413,8 @@
             'adminPinModal'
         );
 
-        modal
-            .classList
-            .remove('hidden');
-
-        modal
-            .classList
-            .add('flex');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
 
         setTimeout(() => {
             modal
@@ -192,13 +428,8 @@
             'adminPinModal'
         );
 
-        modal
-            .classList
-            .remove('flex');
-
-        modal
-            .classList
-            .add('hidden');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
     }
 
     document
