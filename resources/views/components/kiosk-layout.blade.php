@@ -54,7 +54,6 @@
         }
     </style>
 </head>
-
 <body
     draggable="false"
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
@@ -76,8 +75,11 @@
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-                <div class="rounded-xl bg-emerald-600 text-white px-3 py-2 font-black text-sm">
-                    Credit ₱{{ $kioskCreditBalance ?? 0 }}
+                <div
+                    id="kioskCreditBadge"
+                    class="rounded-full bg-emerald-600 text-white px-6 py-3 font-black text-xl shadow-xl"
+                >
+                    Credit: ₱{{ $kioskCreditBalance ?? 0 }}
                 </div>
 
                 <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
@@ -198,6 +200,31 @@
     document.addEventListener('dragstart', (event) => {
         event.preventDefault();
     });
+</script>
+
+<script>
+    async function refreshKioskCredit() {
+        try {
+            const response = await fetch('{{ route('kiosk.credit') }}', {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            const badge = document.getElementById('kioskCreditBadge');
+
+            if (badge) {
+                badge.textContent = 'Credit: ₱' + data.credit_balance;
+            }
+        } catch (error) {
+        }
+    }
+
+    refreshKioskCredit();
+
+    setInterval(refreshKioskCredit, 1000);
 </script>
 
 @include('kiosk.partials.kiosk-lockdown')

@@ -174,35 +174,69 @@ Route::post('/coin', function (Request $request) {
 
     $creditService = app(\App\Services\KioskCreditService::class);
 
-    $creditService->add($validated['amount']);
-
     $activeJobUuid = app(\App\Services\KioskSessionLock::class)
         ->activeJobUuid();
 
-    if (! $activeJobUuid) {
+    $printJob = null;
+
+    if ($activeJobUuid) {
+        $printJob = PrintJob::query()
+            ->where('uuid', $activeJobUuid)
+            ->where('status', 'pending_payment')
+            ->first();
+    }
+
+    if (! $printJob) {
+        $creditService->add($validated['amount']);
+
         return response()->json([
             'success' => true,
-            'message' => 'Credit added. No active kiosk session.',
+            'message' => 'Credit saved.',
             'credit_balance' => $creditService->balance(),
         ]);
     }
 
-    $printJob = PrintJob::query()
-        ->where('uuid', $activeJobUuid)
-        ->where('status', 'pending_payment')
-        ->first();
+    $remaining = max(
+        $printJob->total_amount - $printJob->paid_amount,
+        0
+    );
 
-    if ($printJob) {
-        $creditService->useFor($printJob);
+    $coinAmount = $validated['amount'];
+
+    $usedAmount = min($coinAmount, $remaining);
+
+    $excessAmount = max($coinAmount - $usedAmount, 0);
+
+    if ($usedAmount > 0) {
+        $printJob->increment('paid_amount', $usedAmount);
+    }
+
+    if ($excessAmount > 0) {
+        $creditService->add($excessAmount);
+    }
+
+    $printJob->refresh();
+
+    if ($printJob->paid_amount >= $printJob->total_amount) {
+        $printJob->update([
+            'status' => 'paid',
+        ]);
 
         $printJob->refresh();
     }
 
     return response()->json([
         'success' => true,
-        'paid_amount' => $printJob?->paid_amount,
-        'total_amount' => $printJob?->total_amount,
-        'status' => $printJob?->status,
+        'paid_amount' => $printJob->paid_amount,
+        'total_amount' => $printJob->total_amount,
+        'status' => $printJob->status,
         'credit_balance' => $creditService->balance(),
     ]);
 });
+
+Route::get('/kiosk-credit', function () {
+    return response()->json([
+        'credit_balance' => app(\App\Services\KioskCreditService::class)
+            ->balance(),
+    ]);
+})->name('kiosk.credit');
