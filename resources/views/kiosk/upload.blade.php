@@ -36,11 +36,17 @@
                 </button>
 
                 <a
+                    href="{{ route('kiosk.home') }}"
+                    class="flex items-center gap-3 rounded-[2rem] bg-red-100 px-7 py-5 text-xl font-black text-red-700 active:scale-95 transition"
+                >
+                    Cancel
+                </a>
+
+                <a
                     href="{{ route('kiosk.transfer') }}"
                     class="flex items-center gap-3 rounded-[2rem] bg-slate-200 px-7 py-5 text-xl font-black text-slate-900 active:scale-95 transition"
                 >
                     <x-heroicon-o-arrow-left class="w-7 h-7" />
-
                     Back
                 </a>
             </div>

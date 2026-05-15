@@ -26,7 +26,7 @@
 
                     <button
                         type="submit"
-                        class="rounded-[2rem] bg-slate-200 px-8 h-20 text-xl font-black text-slate-900 shadow-xl active:scale-95 transition"
+                        class="rounded-[2rem] bg-red-100 px-8 h-20 text-xl font-black text-red-700 shadow-xl active:scale-95 transition"
                     >
                         Cancel
                     </button>
@@ -34,18 +34,19 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-6 shrink-0">
+        <div class="grid grid-cols-4 gap-6 shrink-0">
             @foreach ([
                 ['Pages', $printJob->selected_pages_count],
                 ['Total', '₱' . $printJob->total_amount],
                 ['Paid', '₱' . $printJob->paid_amount],
+                ['Credit', '₱' . ($kioskCreditBalance ?? 0)],
             ] as [$label, $value])
                 <div class="rounded-[3rem] bg-white/90 border border-white p-8 shadow-2xl text-center">
                     <div class="text-lg text-slate-500 font-black uppercase mb-3">
                         {{ $label }}
                     </div>
 
-                    <div class="text-7xl font-black text-slate-950 leading-none">
+                    <div class="text-6xl font-black text-slate-950 leading-none">
                         {{ $value }}
                     </div>
                 </div>

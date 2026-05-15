@@ -1,4 +1,11 @@
 <x-kiosk-layout title="Preview Document">
+    @php
+        $currentPrintMode = $printJob->print_mode ?: 'black';
+        $currentOrientation = $printJob->orientation ?: 'portrait';
+        $currentPaperSize = $printJob->paper_size ?: 'short';
+        $currentPageSelection = $printJob->page_selection ?: 'all';
+    @endphp
+
     <div class="h-full flex flex-col min-h-0 gap-6">
         <div class="flex items-center justify-between shrink-0">
             <div class="min-w-0">
@@ -18,7 +25,7 @@
                     </div>
 
                     <div class="text-4xl font-black text-slate-950 leading-none">
-                        {{ $printJob->selected_pages_count }}
+                        {{ $printJob->selected_pages_count ?: $printJob->pages }}
                     </div>
                 </div>
 
@@ -38,6 +45,20 @@
                 >
                     Back
                 </a>
+
+                <form
+                    method="POST"
+                    action="{{ route('kiosk.cancel', $printJob) }}"
+                >
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="rounded-[2rem] bg-red-100 text-red-700 px-7 h-20 text-xl font-black active:scale-95 transition"
+                    >
+                        Cancel
+                    </button>
+                </form>
 
                 <button
                     type="button"
@@ -63,6 +84,48 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-4 gap-4 shrink-0">
+            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
+                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+                    Color
+                </div>
+
+                <div class="text-2xl font-black text-slate-950">
+                    {{ $currentPrintMode === 'color' ? 'Colored' : 'Black' }}
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
+                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+                    Size
+                </div>
+
+                <div class="text-2xl font-black text-slate-950">
+                    {{ $currentPaperSize === 'long' ? 'Long' : 'Short' }}
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
+                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+                    Orientation
+                </div>
+
+                <div class="text-2xl font-black text-slate-950">
+                    {{ $currentOrientation === 'landscape' ? 'Landscape' : 'Portrait' }}
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] bg-white/90 border border-white p-5 shadow-xl text-center">
+                <div class="text-sm font-black text-slate-500 uppercase mb-1">
+                    Page
+                </div>
+
+                <div class="text-2xl font-black text-slate-950 truncate">
+                    {{ $currentPageSelection === 'all' ? 'All' : $currentPageSelection }}
+                </div>
+            </div>
+        </div>
+
         <div class="flex-1 min-h-0 rounded-[3rem] bg-white overflow-hidden shadow-2xl border border-white">
             <iframe
                 src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0"
@@ -83,7 +146,7 @@
                     </h3>
 
                     <p class="text-xl text-slate-500 font-bold">
-                        Changes will update the preview and price.
+                        Default: Black, Short, Portrait, All pages.
                     </p>
                 </div>
 
@@ -96,6 +159,12 @@
                 </button>
             </div>
 
+            @if ($errors->any())
+                <div class="mb-6 rounded-[2rem] bg-red-100 text-red-700 p-5 text-xl font-black">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
             <form
                 method="POST"
                 action="{{ route('kiosk.update-settings', $printJob) }}"
@@ -105,7 +174,7 @@
 
                 <div>
                     <label class="block text-lg font-black mb-3 text-slate-700">
-                        Print Mode
+                        Color
                     </label>
 
                     <select
@@ -114,55 +183,16 @@
                     >
                         <option
                             value="black"
-                            @selected($printJob->print_mode === 'black')
+                            @selected(old('print_mode', $currentPrintMode) === 'black')
                         >
-                            Black Only
+                            Black
                         </option>
 
                         <option
                             value="color"
-                            @selected($printJob->print_mode === 'color')
+                            @selected(old('print_mode', $currentPrintMode) === 'color')
                         >
                             Colored
-                        </option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-lg font-black mb-3 text-slate-700">
-                        Page Selection
-                    </label>
-
-                    <input
-                        type="text"
-                        name="page_selection"
-                        value="{{ $printJob->page_selection !== 'all' ? $printJob->page_selection : '' }}"
-                        placeholder="All or 1-3,5"
-                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
-                    >
-                </div>
-
-                <div>
-                    <label class="block text-lg font-black mb-3 text-slate-700">
-                        Orientation
-                    </label>
-
-                    <select
-                        name="orientation"
-                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
-                    >
-                        <option
-                            value="portrait"
-                            @selected($printJob->orientation === 'portrait')
-                        >
-                            Portrait
-                        </option>
-
-                        <option
-                            value="landscape"
-                            @selected($printJob->orientation === 'landscape')
-                        >
-                            Landscape
                         </option>
                     </select>
                 </div>
@@ -178,26 +208,69 @@
                     >
                         <option
                             value="short"
-                            @selected($printJob->paper_size === 'short')
+                            @selected(old('paper_size', $currentPaperSize) === 'short')
                         >
                             Short
                         </option>
 
                         <option
                             value="long"
-                            @selected($printJob->paper_size === 'long')
+                            @selected(old('paper_size', $currentPaperSize) === 'long')
                         >
                             Long
                         </option>
                     </select>
                 </div>
 
+                <div>
+                    <label class="block text-lg font-black mb-3 text-slate-700">
+                        Orientation
+                    </label>
+
+                    <select
+                        name="orientation"
+                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
+                    >
+                        <option
+                            value="portrait"
+                            @selected(old('orientation', $currentOrientation) === 'portrait')
+                        >
+                            Portrait
+                        </option>
+
+                        <option
+                            value="landscape"
+                            @selected(old('orientation', $currentOrientation) === 'landscape')
+                        >
+                            Landscape
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-lg font-black mb-3 text-slate-700">
+                        Page Selection
+                    </label>
+
+                    <input
+                        type="text"
+                        name="page_selection"
+                        value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
+                        placeholder="All or 1-3,5"
+                        class="w-full rounded-[2rem] bg-slate-100 px-6 h-20 text-2xl font-black"
+                    >
+
+                    <p class="mt-2 text-sm font-bold text-slate-500">
+                        Leave blank for all pages.
+                    </p>
+                </div>
+
                 <button
                     type="button"
-                    onclick="closeEditModal()"
+                    onclick="resetDefaultSettings()"
                     class="rounded-[2rem] bg-slate-200 text-slate-900 h-20 text-2xl font-black active:scale-95 transition"
                 >
-                    Cancel
+                    Reset Default
                 </button>
 
                 <button
@@ -215,7 +288,6 @@
             const modal = document.getElementById('editModal');
 
             modal.classList.remove('hidden');
-
             modal.classList.add('flex');
         }
 
@@ -223,8 +295,18 @@
             const modal = document.getElementById('editModal');
 
             modal.classList.remove('flex');
-
             modal.classList.add('hidden');
         }
+
+        function resetDefaultSettings() {
+            document.querySelector('select[name="print_mode"]').value = 'black';
+            document.querySelector('select[name="paper_size"]').value = 'short';
+            document.querySelector('select[name="orientation"]').value = 'portrait';
+            document.querySelector('input[name="page_selection"]').value = '';
+        }
+
+        @if ($errors->any())
+        openEditModal();
+        @endif
     </script>
 </x-kiosk-layout>

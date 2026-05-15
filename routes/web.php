@@ -172,13 +172,18 @@ Route::post('/coin', function (Request $request) {
         'amount' => ['required', 'integer', 'min:1'],
     ]);
 
+    $creditService = app(\App\Services\KioskCreditService::class);
+
+    $creditService->add($validated['amount']);
+
     $activeJobUuid = app(\App\Services\KioskSessionLock::class)
         ->activeJobUuid();
 
     if (! $activeJobUuid) {
         return response()->json([
-            'success' => false,
-            'message' => 'No active kiosk session.',
+            'success' => true,
+            'message' => 'Credit added. No active kiosk session.',
+            'credit_balance' => $creditService->balance(),
         ]);
     }
 
@@ -187,27 +192,17 @@ Route::post('/coin', function (Request $request) {
         ->where('status', 'pending_payment')
         ->first();
 
-    if (! $printJob) {
-        return response()->json([
-            'success' => false,
-            'message' => 'No active payment session.',
-        ]);
-    }
+    if ($printJob) {
+        $creditService->useFor($printJob);
 
-    $printJob->increment('paid_amount', $validated['amount']);
-
-    $printJob->refresh();
-
-    if ($printJob->paid_amount >= $printJob->total_amount) {
-        $printJob->update([
-            'status' => 'paid',
-        ]);
+        $printJob->refresh();
     }
 
     return response()->json([
         'success' => true,
-        'paid_amount' => $printJob->paid_amount,
-        'total_amount' => $printJob->total_amount,
-        'status' => $printJob->status,
+        'paid_amount' => $printJob?->paid_amount,
+        'total_amount' => $printJob?->total_amount,
+        'status' => $printJob?->status,
+        'credit_balance' => $creditService->balance(),
     ]);
 });

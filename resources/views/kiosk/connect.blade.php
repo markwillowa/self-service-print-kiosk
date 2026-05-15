@@ -57,13 +57,19 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-3 gap-4">
+                <a
+                    href="{{ route('kiosk.home') }}"
+                    class="flex items-center justify-center gap-3 rounded-[2rem] bg-red-100 text-red-700 text-2xl font-black py-6 active:scale-95 transition"
+                >
+                    Cancel
+                </a>
+
                 <a
                     href="{{ route('kiosk.home') }}"
                     class="flex items-center justify-center gap-3 rounded-[2rem] bg-slate-200 text-slate-900 text-2xl font-black py-6 active:scale-95 transition"
                 >
                     <x-heroicon-o-arrow-left class="w-7 h-7" />
-
                     Back
                 </a>
 
@@ -72,7 +78,6 @@
                     class="flex items-center justify-center gap-3 rounded-[2rem] bg-slate-950 text-white text-2xl font-black py-6 shadow-2xl active:scale-95 transition"
                 >
                     Next
-
                     <x-heroicon-o-arrow-right class="w-7 h-7" />
                 </a>
             </div>

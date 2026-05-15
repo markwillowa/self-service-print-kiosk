@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessPrintJob;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
+use App\Services\KioskCreditService;
 use App\Services\KioskSessionLock;
 use App\Services\PageSelectionParser;
 use App\Services\PdfPageExtractor;
@@ -109,8 +110,10 @@ class KioskController extends Controller
         return redirect()->route('kiosk.preview', $printJob);
     }
 
-    public function payment(PrintJob $printJob): RedirectResponse|View
-    {
+    public function payment(
+        PrintJob $printJob,
+        KioskCreditService $creditService
+    ): RedirectResponse|View {
         if (
             $printJob->status === 'cancelled' ||
             (
@@ -120,6 +123,10 @@ class KioskController extends Controller
         ) {
             return redirect()->route('kiosk.home');
         }
+
+        $creditService->useFor($printJob);
+
+        $printJob->refresh();
 
         $this->refreshExpiration($printJob);
 
@@ -373,10 +380,16 @@ class KioskController extends Controller
 
     public function cancel(
         PrintJob $printJob,
-        KioskSessionLock $kioskSessionLock
+        KioskSessionLock $kioskSessionLock,
+        KioskCreditService $creditService
     ): RedirectResponse {
+        if ($printJob->status === 'pending_payment') {
+            $creditService->refundFrom($printJob);
+        }
+
         $printJob->update([
             'status' => 'cancelled',
+            'cancelled_at' => now(),
         ]);
 
         $kioskSessionLock->unlock();

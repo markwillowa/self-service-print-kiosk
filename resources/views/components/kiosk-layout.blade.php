@@ -81,8 +81,14 @@
                 </h1>
             </div>
 
-            <div class="rounded-full bg-slate-950 text-white px-6 py-3 font-black text-xl shadow-xl">
-                ₱1 / page
+            <div class="flex items-center gap-4">
+                <div class="rounded-full bg-emerald-600 text-white px-6 py-3 font-black text-xl shadow-xl">
+                    Credit: ₱{{ $kioskCreditBalance ?? 0 }}
+                </div>
+
+                <div class="rounded-full bg-slate-950 text-white px-6 py-3 font-black text-xl shadow-xl">
+                    ₱1 / page
+                </div>
             </div>
         </header>
 
