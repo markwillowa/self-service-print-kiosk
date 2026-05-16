@@ -1,6 +1,7 @@
 import time
 import requests
 import RPi.GPIO as GPIO
+import datetime as datetime
 
 PIN = 26
 COIN_ENDPOINT = "http://127.0.0.1:8000/coin"
