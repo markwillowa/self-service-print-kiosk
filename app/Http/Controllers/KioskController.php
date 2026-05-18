@@ -132,8 +132,6 @@ class KioskController extends Controller
         ]);
     }
 
-
-
     public function addCoin(PrintJob $printJob): RedirectResponse
     {
         if ($printJob->status !== 'pending_payment') {

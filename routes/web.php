@@ -56,6 +56,31 @@ Route::middleware([
             '/admin',
             [AdminController::class, 'dashboard']
         )->name('admin.dashboard');
+
+        Route::get(
+            '/admin/print-jobs',
+            [AdminController::class, 'printJobs']
+        )->name('admin.print-jobs');
+
+        Route::get(
+            '/admin/coins',
+            [AdminController::class, 'coins']
+        )->name('admin.coins');
+
+        Route::get(
+            '/admin/settings',
+            [AdminController::class, 'settings']
+        )->name('admin.settings');
+
+        Route::get(
+            '/admin/logs',
+            [AdminController::class, 'logs']
+        )->name('admin.logs');
+
+        Route::post(
+            '/admin/logs/clear',
+            [AdminController::class, 'clearLogs']
+        )->name('admin.logs.clear');
     });
 
     Route::get(

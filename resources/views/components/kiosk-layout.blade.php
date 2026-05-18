@@ -77,7 +77,7 @@
             <div class="flex items-center gap-2 shrink-0">
                 <div
                     id="kioskCreditBadge"
-                    class="rounded-full bg-emerald-600 text-white px-6 py-3 font-black text-xl shadow-xl"
+                    class="rounded-xl bg-emerald-600 text-white px-3 py-2 font-black text-sm"
                 >
                     Credit: ₱{{ $kioskCreditBalance ?? 0 }}
                 </div>
