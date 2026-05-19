@@ -26,17 +26,24 @@
         </a>
 
         <a
-            href="{{ route('admin.settings') }}"
-            class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.settings') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
-        >
-            Settings
-        </a>
-
-        <a
             href="{{ route('admin.logs') }}"
             class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.logs') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
         >
             Logs
+        </a>
+
+        <a
+            href="{{ route('admin.profile') }}"
+            class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.profile') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
+        >
+            Profile
+        </a>
+
+        <a
+            href="{{ route('admin.settings') }}"
+            class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.settings') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
+        >
+            Settings
         </a>
     </nav>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Company;
 use App\Models\Organization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,18 @@ class RegistrationController extends Controller
         Request $request
     ): RedirectResponse {
         $validated = $request->validate([
+            'company_avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+
+            'company_name' => ['required', 'string', 'max:255'],
+
+            'company_owner' => ['required', 'string', 'max:255'],
+
+            'company_address' => ['required', 'string'],
+
+            'company_email' => ['nullable', 'email'],
+
+            'company_contact_number' => ['required', 'string', 'max:50'],
+
             'school_name' => ['required', 'string', 'max:255'],
 
             'contact_person' => ['required', 'string', 'max:255'],
@@ -48,6 +61,23 @@ class RegistrationController extends Controller
             'password' => ['required', 'string', 'min:6'],
 
             'pin_code' => ['required', 'digits_between:4,6'],
+        ]);
+
+        $avatarPath = null;
+
+        if ($request->hasFile('company_avatar')) {
+            $avatarPath = $request
+                ->file('company_avatar')
+                ->store('companies/avatars', 'public');
+        }
+
+        Company::create([
+            'avatar' => $avatarPath,
+            'name' => $validated['company_name'],
+            'owner' => $validated['company_owner'],
+            'address' => $validated['company_address'],
+            'email' => $validated['company_email'] ?? null,
+            'contact_number' => $validated['company_contact_number'],
         ]);
 
         $organization = Organization::create([

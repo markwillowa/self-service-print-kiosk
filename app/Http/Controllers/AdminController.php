@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\CreditTransaction;
+use App\Models\Organization;
 use App\Models\PrintJob;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -136,5 +138,13 @@ class AdminController extends Controller
         }
 
         return back();
+    }
+
+    public function profile(): View
+    {
+        return view('admin.profile', [
+            'company' => Company::query()->latest()->first(),
+            'organization' => Organization::query()->latest()->first(),
+        ]);
     }
 }

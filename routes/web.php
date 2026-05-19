@@ -81,6 +81,11 @@ Route::middleware([
             '/admin/logs/clear',
             [AdminController::class, 'clearLogs']
         )->name('admin.logs.clear');
+
+        Route::get(
+            '/admin/profile',
+            [AdminController::class, 'profile']
+        )->name('admin.profile');
     });
 
     Route::get(
