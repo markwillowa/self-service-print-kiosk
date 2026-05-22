@@ -33,6 +33,13 @@
         </a>
 
         <a
+            href="{{ route('admin.maintenance') }}"
+            class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.maintenance') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
+        >
+            Maintenance
+        </a>
+
+        <a
             href="{{ route('admin.profile') }}"
             class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.profile') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
         >

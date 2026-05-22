@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\CreditTransaction;
+use App\Models\Maintenance;
 use App\Models\Organization;
 use App\Models\PrintJob;
 use Illuminate\Http\RedirectResponse;
@@ -145,6 +146,60 @@ class AdminController extends Controller
         return view('admin.profile', [
             'company' => Company::query()->latest()->first(),
             'organization' => Organization::query()->latest()->first(),
+        ]);
+    }
+
+    public function maintenance(): View
+    {
+        return view('admin.maintenance', [
+            'maintenances' => Maintenance::query()
+                ->with(['company', 'organization', 'admin'])
+                ->latest()
+                ->paginate(15),
+        ]);
+    }
+
+    public function storeMaintenance(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'maintenance_type' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', 'max:255'],
+            'issue_reported' => ['nullable', 'string'],
+            'action_taken' => ['nullable', 'string'],
+            'parts_replaced' => ['nullable', 'string'],
+            'cost' => ['nullable', 'integer', 'min:0'],
+            'printer_status' => ['nullable', 'string', 'max:255'],
+            'coin_acceptor_status' => ['nullable', 'string', 'max:255'],
+            'paper_stock' => ['nullable', 'string', 'max:255'],
+            'ink_status' => ['nullable', 'string', 'max:255'],
+            'network_status' => ['nullable', 'string', 'max:255'],
+            'performed_at' => ['nullable', 'date'],
+            'next_maintenance_at' => ['nullable', 'date'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        Maintenance::create([
+            ...$validated,
+            'company_id' => Company::query()->latest()->value('id'),
+            'organization_id' => Organization::query()->latest()->value('id'),
+            'admin_id' => session('admin_id'),
+            'cost' => $validated['cost'] ?? 0,
+        ]);
+
+        return redirect()
+            ->route('admin.maintenance')
+            ->with('success', 'Maintenance record saved.');
+    }
+
+    public function maintenanceReport(
+        Maintenance $maintenance
+    ): View {
+        return view('admin.maintenance-report', [
+            'maintenance' => $maintenance->load([
+                'company',
+                'organization',
+                'admin',
+            ]),
         ]);
     }
 }

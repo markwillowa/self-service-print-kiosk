@@ -86,6 +86,21 @@ Route::middleware([
             '/admin/profile',
             [AdminController::class, 'profile']
         )->name('admin.profile');
+
+        Route::get(
+            '/admin/maintenance',
+            [AdminController::class, 'maintenance']
+        )->name('admin.maintenance');
+
+        Route::post(
+            '/admin/maintenance',
+            [AdminController::class, 'storeMaintenance']
+        )->name('admin.maintenance.store');
+
+        Route::get(
+            '/admin/maintenance/{maintenance}/report',
+            [AdminController::class, 'maintenanceReport']
+        )->name('admin.maintenance.report');
     });
 
     Route::get(
