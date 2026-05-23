@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="text-xl font-black text-slate-900">
-                        {{ $wifiSsid }}
+                        {{ $globalKioskName ?? 'Piso Print' }}
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
 
                         <ol class="text-sm text-blue-800 space-y-0.5 list-decimal pl-5 font-bold leading-snug">
                             <li>Scan the QR code</li>
-                            <li>Connect to PisoPrint Wi-Fi</li>
+                            <li>Connect to {{ $globalKioskName ?? 'Piso Print' }} Wi-Fi</li>
                             <li>Tap Next when connected</li>
                         </ol>
                     </div>

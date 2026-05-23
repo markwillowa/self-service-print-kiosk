@@ -1,4 +1,4 @@
-<x-kiosk-layout title="Piso Print">
+<x-kiosk-layout title="{{ $globalKioskName ?? 'Piso Print' }}">
     <div class="h-full grid grid-cols-[1.1fr_0.9fr] gap-3 items-center">
         <div class="min-w-0 pr-1">
             <div class="mb-2">
@@ -20,7 +20,7 @@
             </h2>
 
             <p class="text-sm text-slate-600 leading-snug mb-3 max-w-md font-bold">
-                Transfer files from your phone using PisoPrint Wi-Fi,
+                Transfer files from your phone using the local Wi-Fi,
                 then preview and print directly on this kiosk.
             </p>
 
@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="text-xl font-black text-slate-950">
-                        PisoPrint
+                        {{ $globalKioskName ?? 'Piso Print' }}
                     </div>
                 </div>
 
@@ -60,7 +60,7 @@
                 @foreach ([
                     [
                         'icon' => 'wifi',
-                        'label' => 'Connect to PisoPrint Wi-Fi',
+                        'label' => 'Connect to local Wi-Fi',
                     ],
                     [
                         'icon' => 'arrow-up-tray',

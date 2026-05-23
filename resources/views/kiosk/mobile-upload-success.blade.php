@@ -32,7 +32,7 @@
 
     <p class="text-base text-slate-600 leading-relaxed mb-6">
         Your file has been uploaded successfully.
-        Please continue on the PisoPrint kiosk.
+        Please continue on the {{ $globalKioskName ?? 'Piso Print' }} kiosk.
     </p>
 
     <div class="rounded-[1.5rem] bg-emerald-50 border border-emerald-200 p-5">

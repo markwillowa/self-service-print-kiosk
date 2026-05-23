@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('avatar')->nullable();
+            $table->string('kiosk_name')->default('Piso Print');
             $table->string('name');
             $table->string('owner');
             $table->text('address');

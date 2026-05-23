@@ -90,7 +90,7 @@
                     </div>
 
                     <div class="text-xl font-black text-slate-950">
-                        PisoPrint
+                        {{ $globalKioskName ?? 'Piso Print' }}
                     </div>
                 </div>
 

@@ -102,7 +102,7 @@
 
                         <p class="text-base text-slate-500 max-w-md leading-snug font-bold">
                             Upload a document from your phone first
-                            using the PisoPrint Wi-Fi upload page.
+                            using the {{ $globalKioskName ?? 'Piso Print' }} Wi-Fi upload page.
                         </p>
                     </div>
                 @endforelse

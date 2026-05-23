@@ -8,7 +8,7 @@
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     >
 
-    <title>{{ $title ?? 'Piso Print' }}</title>
+    <title>{{ $title ?? $globalKioskName ?? 'Piso Print' }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -54,6 +54,7 @@
         }
     </style>
 </head>
+
 <body
     draggable="false"
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
@@ -68,9 +69,9 @@
 
                 <h1
                     id="adminUnlockLogo"
-                    class="text-2xl font-black text-slate-950 leading-none"
+                    class="text-2xl font-black text-slate-950 leading-none truncate max-w-[360px]"
                 >
-                    Piso Print
+                    {{ $globalKioskName ?? 'Piso Print' }}
                 </h1>
             </div>
 
@@ -157,6 +158,7 @@
 
         if (adminTapCount >= 5) {
             adminTapCount = 0;
+
             openAdminModal();
         }
     });

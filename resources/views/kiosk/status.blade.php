@@ -55,7 +55,7 @@
 
                 <p class="text-lg text-slate-600 leading-snug max-w-md mx-auto mb-4 font-bold">
                     Your document has been printed successfully.
-                    Thank you for using Piso Print.
+                    Thank you for using {{ $globalKioskName ?? 'Piso Print' }}.
                 </p>
 
                 <div class="text-sm font-black text-slate-400">

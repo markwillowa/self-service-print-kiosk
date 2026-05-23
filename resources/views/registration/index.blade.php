@@ -11,7 +11,7 @@
                 </h1>
 
                 <p class="text-sm text-slate-600 font-bold">
-                    Setup this Piso Print unit.
+                    Setup this printing kiosk unit.
                 </p>
             </div>
         </div>
@@ -35,7 +35,7 @@
                     Company Profile
                 </h2>
 
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-4 gap-3">
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1">
                             Company Logo
@@ -47,6 +47,32 @@
                             accept="image/png,image/jpeg"
                             class="w-full rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold"
                         >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">
+                            Kiosk Name
+                        </label>
+
+                        <select
+                            name="kiosk_name"
+                            required
+                            class="w-full rounded-xl bg-slate-100 px-3 py-2 text-sm font-bold"
+                        >
+                            <option
+                                value="Piso Print"
+                                @selected(old('kiosk_name', 'Piso Print') === 'Piso Print')
+                            >
+                                Piso Print
+                            </option>
+
+                            <option
+                                value="Self-Service Print"
+                                @selected(old('kiosk_name') === 'Self-Service Print')
+                            >
+                                Self-Service Print
+                            </option>
+                        </select>
                     </div>
 
                     <div>

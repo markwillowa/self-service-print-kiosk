@@ -23,6 +23,12 @@ class RegistrationController extends Controller
         $validated = $request->validate([
             'company_avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
 
+            'kiosk_name' => [
+                'required',
+                'string',
+                'in:Piso Print,Self-Service Print',
+            ],
+
             'company_name' => ['required', 'string', 'max:255'],
 
             'company_owner' => ['required', 'string', 'max:255'],
@@ -73,6 +79,7 @@ class RegistrationController extends Controller
 
         Company::create([
             'avatar' => $avatarPath,
+            'kiosk_name' => $validated['kiosk_name'],
             'name' => $validated['company_name'],
             'owner' => $validated['company_owner'],
             'address' => $validated['company_address'],

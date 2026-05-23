@@ -27,7 +27,7 @@
         </h1>
 
         <p class="text-sm text-slate-500">
-            Upload your document to PisoPrint
+            Upload your document to {{ $globalKioskName ?? 'Piso Print' }}
         </p>
     </div>
 

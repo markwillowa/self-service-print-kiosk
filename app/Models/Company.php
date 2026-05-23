@@ -8,6 +8,7 @@ class Company extends Model
 {
     protected $fillable = [
         'avatar',
+        'kiosk_name',
         'name',
         'owner',
         'address',
