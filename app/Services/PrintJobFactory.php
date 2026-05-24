@@ -71,6 +71,8 @@ class PrintJobFactory
 
         $defaultPaperSize = 'short';
 
+        $defaultCopies = 1;
+
         if ($extension === 'pdf') {
             $finalPdfPath = $path;
 
@@ -120,6 +122,11 @@ class PrintJobFactory
                 ? $colorPricePerPage
                 : $blackPricePerPage;
 
+        $totalAmount =
+            $pages *
+            $defaultCopies *
+            $pricePerPage;
+
         return PrintJob::create([
             'expires_at' => now()->addMinutes(5),
 
@@ -145,6 +152,8 @@ class PrintJobFactory
 
             'selected_pages_count' => $pages,
 
+            'copies' => $defaultCopies,
+
             'print_mode' => $defaultMode,
 
             'orientation' => $defaultOrientation,
@@ -157,8 +166,7 @@ class PrintJobFactory
 
             'price_per_page' => $pricePerPage,
 
-            'total_amount' =>
-                $pages * $pricePerPage,
+            'total_amount' => $totalAmount,
 
             'paid_amount' => 0,
 

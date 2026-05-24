@@ -249,6 +249,8 @@ class KioskController extends Controller
 
         $this->refreshExpiration($printJob);
 
+        $printJob->refresh();
+
         $previewUrl = URL::temporarySignedRoute(
             'kiosk.preview-file',
             now()->addMinutes(5),
@@ -290,6 +292,7 @@ class KioskController extends Controller
             'print_mode' => ['required', 'in:black,color'],
             'orientation' => ['required', 'in:portrait,landscape'],
             'paper_size' => ['required', 'in:short,long'],
+            'copies' => ['required', 'integer', 'min:1', 'max:99'],
         ]);
 
         $selection = strtolower(
@@ -312,7 +315,9 @@ class KioskController extends Controller
 
             if ($selection === 'all') {
                 $selectedPages = range(1, $pages);
+
                 $relativeFilteredPath = null;
+
                 $pdfForPreview = $workingPdf;
             } else {
                 $selectedPages = $parser->parse(
@@ -355,24 +360,43 @@ class KioskController extends Controller
             ]);
         }
 
+        $copies = (int) $validated['copies'];
+
+        $selectedPagesCount = count($selectedPages);
+
+        $totalAmount =
+            $selectedPagesCount *
+            $copies *
+            $pricePerPage;
+
         $printJob->update([
             'pages' => $pages,
+
             'page_selection' => $selection,
-            'selected_pages_count' => count($selectedPages),
+
+            'selected_pages_count' => $selectedPagesCount,
+
+            'copies' => $copies,
+
             'converted_pdf_path' =>
                 'print-jobs/converted/' .
                 basename($workingPdf),
+
             'filtered_pdf_path' => $relativeFilteredPath,
+
             'preview_pdf_path' =>
                 'print-jobs/previews/' .
                 basename($previewPdf),
+
             'print_mode' => $validated['print_mode'],
+
             'orientation' => $validated['orientation'],
+
             'paper_size' => $validated['paper_size'],
+
             'price_per_page' => $pricePerPage,
-            'total_amount' =>
-                count($selectedPages) *
-                $pricePerPage,
+
+            'total_amount' => $totalAmount,
         ]);
 
         $this->refreshExpiration($printJob);

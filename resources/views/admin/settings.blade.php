@@ -19,44 +19,42 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="grid grid-cols-3 gap-3 mb-4">
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-banknotes class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Black Price
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Kiosk Name
                     </div>
 
-                    <div class="text-3xl font-black text-slate-950">
-                        ₱1/page
+                    <div class="text-2xl font-black text-slate-950">
+                        {{ $globalCompany?->kiosk_name ?? 'Piso Print' }}
                     </div>
                 </div>
 
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-banknotes class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Colored Price
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Black Price
                     </div>
 
                     <div class="text-3xl font-black text-slate-950">
-                        ₱2/page
+                        ₱{{ $globalCompany?->black_price_per_page ?? 1 }}/page
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-slate-100 p-4">
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Colored Price
+                    </div>
+
+                    <div class="text-3xl font-black text-slate-950">
+                        ₱{{ $globalCompany?->color_price_per_page ?? 3 }}/page
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-printer class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Printer Mode
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Printer Mode
                     </div>
 
                     <div class="text-xl font-black text-slate-950">
@@ -65,12 +63,8 @@
                 </div>
 
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-printer class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Printer Name
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Printer Name
                     </div>
 
                     <div class="text-xl font-black text-slate-950 break-words">
@@ -81,12 +75,8 @@
 
             <div class="grid grid-cols-3 gap-3 mb-4">
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-wifi class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Wi-Fi Name
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Wi-Fi Name
                     </div>
 
                     <div class="text-xl font-black text-slate-950">
@@ -95,12 +85,8 @@
                 </div>
 
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-lock-closed class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Wi-Fi Password
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Wi-Fi Password
                     </div>
 
                     <div class="text-xl font-black text-slate-950">
@@ -109,12 +95,8 @@
                 </div>
 
                 <div class="rounded-2xl bg-slate-100 p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                        <x-heroicon-o-circle-stack class="w-5 h-5 text-slate-700" />
-
-                        <div class="text-sm font-black text-slate-500 uppercase">
-                            Queue Driver
-                        </div>
+                    <div class="text-sm font-black text-slate-500 uppercase mb-2">
+                        Queue Driver
                     </div>
 
                     <div class="text-xl font-black text-slate-950">
@@ -124,12 +106,8 @@
             </div>
 
             <div class="rounded-2xl bg-slate-950 text-white p-4">
-                <div class="flex items-center gap-2 mb-2">
-                    <x-heroicon-o-information-circle class="w-5 h-5" />
-
-                    <div class="text-sm font-black uppercase">
-                        System Information
-                    </div>
+                <div class="text-sm font-black uppercase mb-2">
+                    System Information
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 text-sm font-bold">

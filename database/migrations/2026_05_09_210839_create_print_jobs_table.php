@@ -53,6 +53,8 @@ return new class extends Migration
                 ->default('portrait');
             $table->string('paper_size')
                 ->default('short');
+            $table->unsignedInteger('copies')
+                ->default(1);
             $table->unsignedInteger('black_price_per_page')
                 ->default(1);
             $table->unsignedInteger('color_price_per_page')

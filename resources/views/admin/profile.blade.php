@@ -14,7 +14,7 @@
                     </h2>
 
                     <p class="text-sm text-slate-500 font-bold">
-                        Company and kiosk information
+                        Company, kiosk, pricing, and organization information
                     </p>
                 </div>
             </div>
@@ -28,7 +28,17 @@
                     <div class="space-y-3">
                         <div>
                             <div class="text-xs font-black text-slate-500 uppercase">
-                                Name
+                                Kiosk Name
+                            </div>
+
+                            <div class="text-lg font-black text-slate-950">
+                                {{ $company?->kiosk_name ?? 'Piso Print' }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-xs font-black text-slate-500 uppercase">
+                                Company Name
                             </div>
 
                             <div class="text-lg font-black text-slate-950">
@@ -80,7 +90,43 @@
 
                 <section class="rounded-2xl bg-slate-100 p-4">
                     <h3 class="text-xl font-black text-slate-950 mb-3">
-                        Kiosk / Organization
+                        Kiosk / Pricing
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="rounded-xl bg-white p-3 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase">
+                                Black Price
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950">
+                                ₱{{ $company?->black_price_per_page ?? 1 }}/page
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl bg-white p-3 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase">
+                                Colored Price
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950">
+                                ₱{{ $company?->color_price_per_page ?? 3 }}/page
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-xl bg-white p-3 shadow-sm mb-4">
+                        <div class="text-xs font-black text-slate-500 uppercase">
+                            Custom Pricing
+                        </div>
+
+                        <div class="text-lg font-black text-slate-950">
+                            {{ $company?->allow_custom_pricing ? 'Enabled' : 'Disabled' }}
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-black text-slate-950 mb-3">
+                        Organization
                     </h3>
 
                     <div class="space-y-3">

@@ -28,6 +28,7 @@ class PrintJob extends Model
         'black_price_per_page',
         'color_price_per_page',
         'price_per_page',
+        'copies',
         'total_amount',
         'paid_amount',
         'status',

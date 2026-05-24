@@ -29,6 +29,16 @@
                     </div>
                 </div>
 
+                <div class="rounded-xl bg-white px-3 py-2 shadow-lg text-center min-w-[70px]">
+                    <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
+                        Copies
+                    </div>
+
+                    <div class="text-lg font-black text-slate-950 leading-none">
+                        {{ $printJob->copies ?: 1 }}
+                    </div>
+                </div>
+
                 <div class="rounded-xl bg-white px-3 py-2 shadow-lg text-center min-w-[75px]">
                     <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                         Total
@@ -78,7 +88,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-2 shrink-0">
+        <div class="grid grid-cols-5 gap-2 shrink-0">
             <div class="rounded-xl bg-white/90 border border-white p-2 shadow-lg text-center">
                 <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
                     Color
@@ -118,6 +128,16 @@
                     {{ $currentPageSelection === 'all' ? 'All' : $currentPageSelection }}
                 </div>
             </div>
+
+            <div class="rounded-xl bg-white/90 border border-white p-2 shadow-lg text-center">
+                <div class="text-[9px] font-black text-slate-500 uppercase leading-none mb-1">
+                    Charged Pages
+                </div>
+
+                <div class="text-sm font-black text-slate-950">
+                    {{ ($printJob->selected_pages_count ?: $printJob->pages) * ($printJob->copies ?: 1) }}
+                </div>
+            </div>
         </div>
 
         <div class="flex-1 min-h-0 rounded-2xl bg-white overflow-hidden shadow-xl border border-white">
@@ -140,7 +160,7 @@
                     </h3>
 
                     <p class="text-xs text-slate-500 font-bold">
-                        Default: Black, Short, Portrait, All pages.
+                        Default: Black, Short, Portrait, All pages, 1 copy.
                     </p>
                 </div>
 
@@ -243,6 +263,22 @@
 
                 <div>
                     <label class="block text-xs font-black mb-1 text-slate-700">
+                        Copies
+                    </label>
+
+                    <input
+                        type="number"
+                        name="copies"
+                        value="{{ old('copies', $printJob->copies ?: 1) }}"
+                        min="1"
+                        max="99"
+                        required
+                        class="w-full rounded-xl bg-slate-100 px-3 h-12 text-base font-black"
+                    >
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-xs font-black mb-1 text-slate-700">
                         Page Selection
                     </label>
 
@@ -337,9 +373,14 @@
 
         function resetDefaultSettings() {
             document.querySelector('select[name="print_mode"]').value = 'black';
+
             document.querySelector('select[name="paper_size"]').value = 'short';
+
             document.querySelector('select[name="orientation"]').value = 'portrait';
+
             document.querySelector('input[name="page_selection"]').value = '';
+
+            document.querySelector('input[name="copies"]').value = '1';
         }
 
         function openCancelModal() {
@@ -348,7 +389,6 @@
             );
 
             modal.classList.remove('hidden');
-
             modal.classList.add('flex');
         }
 
@@ -358,7 +398,6 @@
             );
 
             modal.classList.remove('flex');
-
             modal.classList.add('hidden');
         }
 
