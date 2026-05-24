@@ -55,6 +55,7 @@
                         </label>
 
                         <select
+                            id="kioskNameSelect"
                             name="kiosk_name"
                             required
                             class="w-full rounded-xl bg-slate-100 px-3 py-2 text-sm font-bold"
@@ -101,6 +102,55 @@
                             required
                             class="w-full rounded-xl bg-slate-100 px-3 py-2 text-sm font-bold"
                         >
+                    </div>
+                </div>
+
+                <div
+                    id="customPricingSection"
+                    class="hidden mt-3 rounded-2xl bg-amber-50 border border-amber-200 p-3"
+                >
+                    <div class="flex items-center gap-2 mb-2">
+                        <x-heroicon-o-banknotes class="w-5 h-5 text-amber-800" />
+
+                        <div>
+                            <h3 class="text-sm font-black text-amber-900 leading-none">
+                                Custom Pricing
+                            </h3>
+
+                            <p class="text-xs font-bold text-amber-800">
+                                Only available for Self-Service Print.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-black text-slate-700 mb-1">
+                                Black Price Per Page
+                            </label>
+
+                            <input
+                                type="number"
+                                name="black_price_per_page"
+                                value="{{ old('black_price_per_page', 1) }}"
+                                min="1"
+                                class="w-full rounded-xl bg-white px-3 py-2 text-sm font-bold"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black text-slate-700 mb-1">
+                                Colored Price Per Page
+                            </label>
+
+                            <input
+                                type="number"
+                                name="color_price_per_page"
+                                value="{{ old('color_price_per_page', 3) }}"
+                                min="1"
+                                class="w-full rounded-xl bg-white px-3 py-2 text-sm font-bold"
+                            >
+                        </div>
                     </div>
                 </div>
 
@@ -341,4 +391,31 @@
             </button>
         </form>
     </div>
+
+    <script>
+        const kioskNameSelect = document.getElementById(
+            'kioskNameSelect'
+        );
+
+        const customPricingSection = document.getElementById(
+            'customPricingSection'
+        );
+
+        function toggleCustomPricingSection() {
+            if (
+                kioskNameSelect.value === 'Self-Service Print'
+            ) {
+                customPricingSection.classList.remove('hidden');
+            } else {
+                customPricingSection.classList.add('hidden');
+            }
+        }
+
+        kioskNameSelect.addEventListener(
+            'change',
+            toggleCustomPricingSection
+        );
+
+        toggleCustomPricingSection();
+    </script>
 </x-kiosk-layout>

@@ -17,6 +17,15 @@ return new class extends Migration
             $table->text('address');
             $table->string('email')->nullable();
             $table->string('contact_number');
+            $table->unsignedInteger('black_price_per_page')
+                ->default(1)
+                ->after('kiosk_name');
+            $table->unsignedInteger('color_price_per_page')
+                ->default(3)
+                ->after('black_price_per_page');
+            $table->boolean('allow_custom_pricing')
+                ->default(false)
+                ->after('color_price_per_page');
             $table->timestamps();
         });
     }

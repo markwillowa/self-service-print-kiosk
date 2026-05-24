@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Company;
 use App\Models\PrintJob;
 use App\Support\FilenameSanitizer;
 use Illuminate\Http\UploadedFile;
@@ -65,11 +66,14 @@ class PrintJobFactory
         );
 
         $defaultMode = 'black';
+
         $defaultOrientation = 'portrait';
+
         $defaultPaperSize = 'short';
 
         if ($extension === 'pdf') {
             $finalPdfPath = $path;
+
             $relativePdfPath = $originalPath;
         } else {
             $convertedPdfPath = $this->fileConverter
@@ -101,8 +105,15 @@ class PrintJobFactory
             'print-jobs/previews/' .
             basename($previewPdfPath);
 
-        $blackPricePerPage = 1;
-        $colorPricePerPage = 2;
+        $company = Company::query()
+            ->latest()
+            ->first();
+
+        $blackPricePerPage =
+            $company?->black_price_per_page ?? 1;
+
+        $colorPricePerPage =
+            $company?->color_price_per_page ?? 3;
 
         $pricePerPage =
             $defaultMode === 'color'
@@ -113,30 +124,46 @@ class PrintJobFactory
             'expires_at' => now()->addMinutes(5),
 
             'original_filename' => $originalFilename,
+
             'original_file_path' => $originalPath,
+
             'converted_pdf_path' => $relativePdfPath,
+
             'filtered_pdf_path' => null,
+
             'preview_pdf_path' => $relativePreviewPath,
 
             'original_extension' => $extension,
+
             'conversion_status' => 'completed',
+
             'file_path' => $relativePdfPath,
 
             'pages' => $pages,
+
             'page_selection' => 'all',
+
             'selected_pages_count' => $pages,
 
-            'print_mode' => 'black',
-            'orientation' => 'portrait',
-            'paper_size' => 'short',
+            'print_mode' => $defaultMode,
+
+            'orientation' => $defaultOrientation,
+
+            'paper_size' => $defaultPaperSize,
 
             'black_price_per_page' => $blackPricePerPage,
+
             'color_price_per_page' => $colorPricePerPage,
+
             'price_per_page' => $pricePerPage,
-            'total_amount' => $pages * $pricePerPage,
+
+            'total_amount' =>
+                $pages * $pricePerPage,
+
             'paid_amount' => 0,
 
             'status' => 'pending_payment',
+
             'source' => $source,
         ]);
     }

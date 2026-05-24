@@ -46,19 +46,13 @@
                     Back
                 </a>
 
-                <form
-                    method="POST"
-                    action="{{ route('kiosk.cancel', $printJob) }}"
+                <button
+                    type="button"
+                    onclick="openCancelModal()"
+                    class="rounded-xl bg-red-100 text-red-700 px-3 h-11 text-sm font-black active:scale-95 transition"
                 >
-                    @csrf
-
-                    <button
-                        type="submit"
-                        class="rounded-xl bg-red-100 text-red-700 px-3 h-11 text-sm font-black active:scale-95 transition"
-                    >
-                        Cancel
-                    </button>
-                </form>
+                    Cancel
+                </button>
 
                 <button
                     type="button"
@@ -283,6 +277,49 @@
         </div>
     </div>
 
+    <div
+        id="cancelModal"
+        class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
+    >
+        <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl text-center">
+            <div class="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+                <x-heroicon-o-exclamation-triangle class="w-10 h-10" />
+            </div>
+
+            <h3 class="text-2xl font-black text-slate-950 mb-2">
+                Cancel Print Job?
+            </h3>
+
+            <p class="text-sm text-slate-500 font-bold mb-5">
+                This will cancel the current print session and return to the home screen.
+            </p>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button
+                    type="button"
+                    onclick="closeCancelModal()"
+                    class="rounded-xl bg-slate-200 text-slate-900 px-4 py-3 text-sm font-black active:scale-95 transition"
+                >
+                    No
+                </button>
+
+                <form
+                    method="POST"
+                    action="{{ route('kiosk.cancel', $printJob) }}"
+                >
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-xl bg-red-500 text-white px-4 py-3 text-sm font-black active:scale-95 transition"
+                    >
+                        Yes, Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         function openEditModal() {
             const modal = document.getElementById('editModal');
@@ -303,6 +340,26 @@
             document.querySelector('select[name="paper_size"]').value = 'short';
             document.querySelector('select[name="orientation"]').value = 'portrait';
             document.querySelector('input[name="page_selection"]').value = '';
+        }
+
+        function openCancelModal() {
+            const modal = document.getElementById(
+                'cancelModal'
+            );
+
+            modal.classList.remove('hidden');
+
+            modal.classList.add('flex');
+        }
+
+        function closeCancelModal() {
+            const modal = document.getElementById(
+                'cancelModal'
+            );
+
+            modal.classList.remove('flex');
+
+            modal.classList.add('hidden');
         }
 
         @if ($errors->any())

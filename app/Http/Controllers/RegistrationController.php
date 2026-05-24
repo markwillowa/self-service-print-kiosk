@@ -39,6 +39,18 @@ class RegistrationController extends Controller
 
             'company_contact_number' => ['required', 'string', 'max:50'],
 
+            'black_price_per_page' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
+
+            'color_price_per_page' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
+
             'school_name' => ['required', 'string', 'max:255'],
 
             'contact_person' => ['required', 'string', 'max:255'],
@@ -77,9 +89,27 @@ class RegistrationController extends Controller
                 ->store('companies/avatars', 'public');
         }
 
+        $kioskName = $validated['kiosk_name'];
+
+        $isSelfService =
+            $kioskName === 'Self-Service Print';
+
+        $blackPrice =
+            $isSelfService
+                ? (int) ($validated['black_price_per_page'] ?? 1)
+                : 1;
+
+        $colorPrice =
+            $isSelfService
+                ? (int) ($validated['color_price_per_page'] ?? 3)
+                : 3;
+
         Company::create([
             'avatar' => $avatarPath,
             'kiosk_name' => $validated['kiosk_name'],
+            'black_price_per_page' => $blackPrice,
+            'color_price_per_page' => $colorPrice,
+            'allow_custom_pricing' => $isSelfService,
             'name' => $validated['company_name'],
             'owner' => $validated['company_owner'],
             'address' => $validated['company_address'],

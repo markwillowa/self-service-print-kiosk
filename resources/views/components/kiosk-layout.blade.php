@@ -83,9 +83,17 @@
                     Credit: ₱{{ $kioskCreditBalance ?? 0 }}
                 </div>
 
-                <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
-                    ₱1/page
-                </div>
+                @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
+                    <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
+                        ₱1/page
+                    </div>
+                @else
+                    <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
+                        Black: ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
+                        |
+                        Colored: ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
+                    </div>
+                @endif
             </div>
         </header>
 

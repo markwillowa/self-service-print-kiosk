@@ -14,5 +14,14 @@ class Company extends Model
         'address',
         'email',
         'contact_number',
+        'black_price_per_page',
+        'color_price_per_page',
+        'allow_custom_pricing',
+    ];
+
+    protected $casts = [
+        'black_price_per_page' => 'integer',
+        'color_price_per_page' => 'integer',
+        'allow_custom_pricing' => 'boolean',
     ];
 }

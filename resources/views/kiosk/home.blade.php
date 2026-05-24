@@ -48,9 +48,15 @@
                         </div>
                     </div>
 
-                    <div class="text-xl font-black text-slate-950">
-                        ₱1/page
-                    </div>
+                    @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
+                        <div class="text-xl font-black text-slate-950">
+                            ₱1/page
+                        </div>
+                    @else
+                        <div class="text-xl font-black text-slate-950 leading-tight">
+                            ₱{{ $globalCompany?->black_price_per_page ?? 1 }}/page
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
