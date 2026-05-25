@@ -95,13 +95,19 @@
                     </div>
                 @endif
 
-                <button
-                    type="button"
-                    onclick="openShutdownModal()"
-                    class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
+                <form
+                    method="POST"
+                    action="{{ route('kiosk.shutdown') }}"
                 >
-                    <x-heroicon-o-power class="w-5 h-5" />
-                </button>
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-xl bg-red-600 text-white px-4 py-3 flex items-center justify-center active:scale-95 transition"
+                    >
+                        <x-heroicon-o-power class="w-5 h-5" />
+                    </button>
+                </form>
             </div>
         </header>
 

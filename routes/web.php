@@ -287,7 +287,7 @@ Route::get('/kiosk-credit', function () {
     ]);
 })->name('kiosk.credit');
 
-Route::post('/admin/shutdown', function () {
+Route::post('/shutdown', function () {
     $process = new Process([
         'sudo',
         '/sbin/shutdown',
@@ -296,5 +296,8 @@ Route::post('/admin/shutdown', function () {
 
     $process->start();
 
-    return redirect()->route('kiosk.home');
-})->middleware('admin.auth')->name('admin.shutdown');
+    return response('Shutting down...');
+})->middleware([
+    'kiosk.registered',
+    'kiosk.local',
+])->name('kiosk.shutdown');
