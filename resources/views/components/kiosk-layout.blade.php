@@ -94,6 +94,14 @@
                         Colored: ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
                     </div>
                 @endif
+
+                <button
+                    type="button"
+                    onclick="openShutdownModal()"
+                    class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
+                >
+                    <x-heroicon-o-power class="w-5 h-5" />
+                </button>
             </div>
         </header>
 
@@ -147,6 +155,49 @@
     </div>
 </div>
 
+<div
+    id="shutdownModal"
+    class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
+>
+    <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl text-center">
+        <div class="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+            <x-heroicon-o-power class="w-10 h-10" />
+        </div>
+
+        <h3 class="text-2xl font-black text-slate-950 mb-2">
+            Turn Off Device?
+        </h3>
+
+        <p class="text-sm text-slate-500 font-bold mb-5">
+            This will safely shut down the Raspberry Pi.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2">
+            <button
+                type="button"
+                onclick="closeShutdownModal()"
+                class="rounded-xl bg-slate-200 text-slate-900 px-4 py-3 text-sm font-black active:scale-95 transition"
+            >
+                Cancel
+            </button>
+
+            <form
+                method="POST"
+                action="{{ route('admin.shutdown') }}"
+            >
+                @csrf
+
+                <button
+                    type="submit"
+                    class="w-full rounded-xl bg-red-600 text-white px-4 py-3 text-sm font-black active:scale-95 transition"
+                >
+                    Turn Off
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     let adminTapCount = 0;
     let adminTapTimer;
@@ -195,11 +246,37 @@
         modal.classList.add('hidden');
     }
 
+    function openShutdownModal() {
+        const modal = document.getElementById(
+            'shutdownModal'
+        );
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeShutdownModal() {
+        const modal = document.getElementById(
+            'shutdownModal'
+        );
+
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
     document
         .getElementById('adminPinModal')
         ?.addEventListener('click', (event) => {
             if (event.target.id === 'adminPinModal') {
                 closeAdminModal();
+            }
+        });
+
+    document
+        .getElementById('shutdownModal')
+        ?.addEventListener('click', (event) => {
+            if (event.target.id === 'shutdownModal') {
+                closeShutdownModal();
             }
         });
 

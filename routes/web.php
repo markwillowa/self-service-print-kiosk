@@ -8,6 +8,7 @@ use App\Models\PrintJob;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Symfony\Component\Process\Process;
 
 /*
 |--------------------------------------------------------------------------
@@ -285,3 +286,15 @@ Route::get('/kiosk-credit', function () {
             ->balance(),
     ]);
 })->name('kiosk.credit');
+
+Route::post('/admin/shutdown', function () {
+    $process = new Process([
+        'sudo',
+        '/sbin/shutdown',
+        'now',
+    ]);
+
+    $process->start();
+
+    return redirect()->route('kiosk.home');
+})->middleware('admin.auth')->name('admin.shutdown');
