@@ -425,10 +425,12 @@ class KioskController extends Controller
 
     public function connect(): View
     {
+        $baseUrl = config('app.url');
+
         return view('kiosk.connect', [
-            'wifiSsid' => 'PisoPrint',
+            'wifiSsid' => $globalKioskName ?? 'PisoPrint',
             'wifiPassword' => '12345678',
-            'uploadUrl' => url('/upload'),
+            'uploadUrl' => $baseUrl . '/upload',
             'wifiQr' => 'WIFI:T:WPA;S:PisoPrint;P:12345678;;',
         ]);
     }
@@ -436,7 +438,7 @@ class KioskController extends Controller
     public function transfer(): View
     {
         return view('kiosk.transfer', [
-            'uploadUrl' => url('/mobile-upload'),
+            'uploadUrl' => config('app.url') . '/mobile-upload',
         ]);
     }
 
