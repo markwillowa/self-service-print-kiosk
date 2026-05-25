@@ -201,11 +201,24 @@ Route::middleware([
 Route::post('/shutdown', function () {
     $process = new Process([
         'sudo',
+        '-n',
         '/usr/sbin/shutdown',
         'now',
     ]);
 
-    $process->start();
+    $process->run();
+
+    if (! $process->isSuccessful()) {
+        logger()->error('Shutdown failed', [
+            'output' => $process->getOutput(),
+            'error' => $process->getErrorOutput(),
+        ]);
+
+        return response(
+            'Shutdown failed: ' . $process->getErrorOutput(),
+            500
+        );
+    }
 
     return response('Shutting down...');
 })->middleware([
