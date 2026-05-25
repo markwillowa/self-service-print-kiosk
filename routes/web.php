@@ -198,6 +198,21 @@ Route::middleware([
     )->name('kiosk.transfer');
 });
 
+Route::post('/shutdown', function () {
+    $process = new Process([
+        'sudo',
+        '/usr/sbin/shutdown',
+        'now',
+    ]);
+
+    $process->start();
+
+    return response('Shutting down...');
+})->middleware([
+    'kiosk.registered',
+    'kiosk.local',
+])->name('kiosk.shutdown');
+
 /*
 |--------------------------------------------------------------------------
 | Protected Phone Routes
@@ -286,18 +301,3 @@ Route::get('/kiosk-credit', function () {
             ->balance(),
     ]);
 })->name('kiosk.credit');
-
-Route::post('/shutdown', function () {
-    $process = new Process([
-        'sudo',
-        '/sbin/shutdown',
-        'now',
-    ]);
-
-    $process->start();
-
-    return response('Shutting down...');
-})->middleware([
-    'kiosk.registered',
-    'kiosk.local',
-])->name('kiosk.shutdown');

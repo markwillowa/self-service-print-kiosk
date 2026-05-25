@@ -95,19 +95,13 @@
                     </div>
                 @endif
 
-                <form
-                    method="POST"
-                    action="{{ route('kiosk.shutdown') }}"
+                <button
+                    type="button"
+                    onclick="openShutdownModal()"
+                    class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
                 >
-                    @csrf
-
-                    <button
-                        type="submit"
-                        class="w-full rounded-xl bg-red-600 text-white px-4 py-3 flex items-center justify-center active:scale-95 transition"
-                    >
-                        <x-heroicon-o-power class="w-5 h-5" />
-                    </button>
-                </form>
+                    <x-heroicon-o-power class="w-5 h-5" />
+                </button>
             </div>
         </header>
 
@@ -189,15 +183,15 @@
 
             <form
                 method="POST"
-                action="{{ route('admin.shutdown') }}"
+                action="{{ route('kiosk.shutdown') }}"
             >
                 @csrf
 
                 <button
                     type="submit"
-                    class="w-full rounded-xl bg-red-600 text-white px-4 py-3 text-sm font-black active:scale-95 transition"
+                    class="w-full rounded-xl bg-red-600 text-white px-4 py-3 flex items-center justify-center active:scale-95 transition"
                 >
-                    Turn Off
+                    <x-heroicon-o-power class="w-5 h-5" />
                 </button>
             </form>
         </div>
