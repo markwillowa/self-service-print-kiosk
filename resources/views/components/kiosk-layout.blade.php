@@ -198,6 +198,33 @@
     </div>
 </div>
 
+<div
+    id="printerOfflineModal"
+    class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
+>
+    <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl text-center">
+        <div class="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+            <x-heroicon-o-printer class="w-10 h-10" />
+        </div>
+
+        <h3 class="text-2xl font-black text-slate-950 mb-2">
+            Printer Offline
+        </h3>
+
+        <p class="text-sm text-slate-500 font-bold mb-5">
+            Please turn on the printer or contact the operator.
+        </p>
+
+        <button
+            type="button"
+            onclick="closePrinterOfflineModal()"
+            class="w-full rounded-xl bg-slate-950 text-white px-4 py-3 text-sm font-black active:scale-95 transition"
+        >
+            OK
+        </button>
+    </div>
+</div>
+
 <script>
     let adminTapCount = 0;
     let adminTapTimer;
@@ -264,6 +291,24 @@
         modal.classList.add('hidden');
     }
 
+    function openPrinterOfflineModal() {
+        const modal = document.getElementById(
+            'printerOfflineModal'
+        );
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closePrinterOfflineModal() {
+        const modal = document.getElementById(
+            'printerOfflineModal'
+        );
+
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
     document
         .getElementById('adminPinModal')
         ?.addEventListener('click', (event) => {
@@ -312,6 +357,30 @@
     refreshKioskCredit();
 
     setInterval(refreshKioskCredit, 300);
+</script>
+
+<script>
+    /*async function checkPrinterStatus() {
+        try {
+            const response = await fetch('{{ route('kiosk.printer-status') }}', {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (! data.online) {
+                openPrinterOfflineModal();
+            }
+        } catch (error) {
+            openPrinterOfflineModal();
+        }
+    }*/
+
+    checkPrinterStatus();
+
+    setInterval(checkPrinterStatus, 5000);
 </script>
 
 @include('kiosk.partials.kiosk-lockdown')

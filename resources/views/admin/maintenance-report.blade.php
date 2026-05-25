@@ -12,13 +12,56 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        main,
+        section,
+        header,
+        footer {
+            break-inside: auto;
+        }
+
+        section,
+        .print-block {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .print-text-box {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
         @media print {
             .no-print {
                 display: none !important;
             }
 
+            html,
             body {
                 background: white !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            body {
+                padding: 0 !important;
+            }
+
+            main {
+                max-width: none !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+
+            section,
+            footer,
+            .print-block,
+            .print-text-box {
+                break-inside: avoid;
+                page-break-inside: avoid;
             }
 
             @page {
@@ -86,13 +129,13 @@
         </div>
     </header>
 
-    <section class="text-center mb-6">
+    <section class="text-center mb-6 print-block">
         <h2 class="text-3xl font-black tracking-wide">
             MAINTENANCE REPORT
         </h2>
     </section>
 
-    <section class="mb-6">
+    <section class="mb-6 print-block">
         <h3 class="text-lg font-black border-b border-slate-300 pb-2 mb-3">
             Organization Information
         </h3>
@@ -140,7 +183,7 @@
         </div>
     </section>
 
-    <section class="mb-8">
+    <section class="mb-8 print-block">
         <h3 class="text-lg font-black border-b border-slate-300 pb-2 mb-3">
             Maintenance Information
         </h3>
@@ -260,49 +303,49 @@
         </div>
 
         <div class="space-y-4 text-sm">
-            <div>
+            <div class="print-block">
                 <div class="font-black text-slate-500 uppercase text-xs mb-1">
                     Issue Reported
                 </div>
 
-                <div class="border rounded-xl p-3 min-h-[50px] font-bold">
+                <div class="border rounded-xl p-3 min-h-[50px] font-bold print-text-box">
                     {{ $maintenance->issue_reported ?? '-' }}
                 </div>
             </div>
 
-            <div>
+            <div class="print-block">
                 <div class="font-black text-slate-500 uppercase text-xs mb-1">
                     Action Taken
                 </div>
 
-                <div class="border rounded-xl p-3 min-h-[50px] font-bold">
+                <div class="border rounded-xl p-3 min-h-[50px] font-bold print-text-box">
                     {{ $maintenance->action_taken ?? '-' }}
                 </div>
             </div>
 
-            <div>
+            <div class="print-block">
                 <div class="font-black text-slate-500 uppercase text-xs mb-1">
                     Parts Replaced
                 </div>
 
-                <div class="border rounded-xl p-3 min-h-[45px] font-bold">
+                <div class="border rounded-xl p-3 min-h-[45px] font-bold print-text-box">
                     {{ $maintenance->parts_replaced ?? '-' }}
                 </div>
             </div>
 
-            <div>
+            <div class="print-block">
                 <div class="font-black text-slate-500 uppercase text-xs mb-1">
                     Notes
                 </div>
 
-                <div class="border rounded-xl p-3 min-h-[45px] font-bold">
+                <div class="border rounded-xl p-3 min-h-[45px] font-bold print-text-box">
                     {{ $maintenance->notes ?? '-' }}
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="grid grid-cols-2 gap-16 pt-12">
+    <footer class="grid grid-cols-2 gap-16 pt-12 print-block">
         <div class="text-center">
             <div class="border-t border-slate-900 pt-2 font-black">
                 Maintenance

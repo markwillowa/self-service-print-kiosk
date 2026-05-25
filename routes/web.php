@@ -226,6 +226,30 @@ Route::post('/shutdown', function () {
     'kiosk.local',
 ])->name('kiosk.shutdown');
 
+Route::get('/printer-status', function () {
+    $printerName = config('services.printer.name');
+
+    $process = new Process([
+        'lpstat',
+        '-p',
+        $printerName,
+    ]);
+
+    $process->run();
+
+    return response()->json([
+        'online' => $process->isSuccessful(),
+        'message' => $process->isSuccessful()
+            ? 'Printer is online.'
+            : 'Printer is offline or not available.',
+        'output' => $process->getOutput(),
+        'error' => $process->getErrorOutput(),
+    ]);
+})->middleware([
+    'kiosk.registered',
+    'kiosk.local',
+])->name('kiosk.printer-status');
+
 /*
 |--------------------------------------------------------------------------
 | Protected Phone Routes
