@@ -311,7 +311,7 @@
 
     refreshKioskCredit();
 
-    setInterval(refreshKioskCredit, 1000);
+    setInterval(refreshKioskCredit, 300);
 </script>
 
 @include('kiosk.partials.kiosk-lockdown')

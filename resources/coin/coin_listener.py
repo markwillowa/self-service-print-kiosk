@@ -11,6 +11,7 @@ DEBOUNCE_TIME = 0.035
 MIN_PULSE_LOW_TIME = 0.01
 COIN_COOLDOWN = 0.8
 STARTUP_DELAY = 2
+CREDIT_SEND_DELAY = 0.03
 
 PULSE_MAP = {
     1: 1,
@@ -54,12 +55,10 @@ def send_credit_pulses(amount):
                 f"Status: {response.status_code}"
             )
 
-            time.sleep(0.15)
+            time.sleep(CREDIT_SEND_DELAY)
 
         except Exception as error:
-            print(
-                f"Failed to send credit: {error}"
-            )
+            print(f"Failed to send credit: {error}")
 
 
 print("Coin listener active on GPIO26")
@@ -80,7 +79,6 @@ print("Waiting for coin pulses...\n")
 try:
     while True:
         current_state = GPIO.input(PIN)
-
         now = time.time()
 
         if (
@@ -102,9 +100,7 @@ try:
                     now - last_coin_sent_time >= COIN_COOLDOWN
                 ):
                     pulse_count += 1
-
                     last_pulse_time = now
-
                     last_valid_edge_time = now
 
                     print(
@@ -118,9 +114,7 @@ try:
             pulse_count > 0 and
             now - last_pulse_time >= PULSE_GAP
         ):
-            amount = amount_from_pulses(
-                pulse_count
-            )
+            amount = amount_from_pulses(pulse_count)
 
             if amount > 0:
                 print(
@@ -132,15 +126,10 @@ try:
                 send_credit_pulses(amount)
 
                 last_coin_sent_time = now
-
             else:
-                print(
-                    f"Unknown pulse count: "
-                    f"{pulse_count}"
-                )
+                print(f"Unknown pulse count: {pulse_count}")
 
             pulse_count = 0
-
             low_started_at = None
 
         last_state = current_state
