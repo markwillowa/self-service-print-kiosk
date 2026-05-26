@@ -1,5 +1,64 @@
 @php
+    use App\Models\Maintenance;
+    use App\Models\PrintJob;
     use Illuminate\Support\Facades\Storage;
+
+    $previousMaintenance = Maintenance::query()
+        ->where('id', '<', $maintenance->id)
+        ->latest('performed_at')
+        ->first();
+
+    $statisticsStartDate = $previousMaintenance?->performed_at;
+
+    $jobsQuery = PrintJob::query()
+        ->where('status', 'completed');
+
+    if ($statisticsStartDate) {
+        $jobsQuery->whereBetween('created_at', [
+            $statisticsStartDate,
+            now(),
+        ]);
+    }
+
+    $completedJobs = $jobsQuery->get();
+
+    $totalPrintJobs = $completedJobs->count();
+
+    $totalBlack = $completedJobs
+        ->where('print_mode', 'black')
+        ->count();
+
+    $totalColored = $completedJobs
+        ->where('print_mode', 'color')
+        ->count();
+
+    $totalCopies = $completedJobs->sum(function ($job) {
+        return $job->copies ?: 1;
+    });
+
+    $totalLong = $completedJobs
+        ->where('paper_size', 'long')
+        ->count();
+
+    $totalShort = $completedJobs
+        ->where('paper_size', 'short')
+        ->count();
+
+    $totalLandscape = $completedJobs
+        ->where('orientation', 'landscape')
+        ->count();
+
+    $totalPortrait = $completedJobs
+        ->where('orientation', 'portrait')
+        ->count();
+
+    $totalPages = $completedJobs->sum(function ($job) {
+        return
+            ($job->selected_pages_count ?: $job->pages) *
+            ($job->copies ?: 1);
+    });
+
+    $totalAmount = $completedJobs->sum('total_amount');
 @endphp
 
     <!DOCTYPE html>
@@ -31,6 +90,11 @@
             white-space: pre-wrap;
             overflow-wrap: break-word;
             word-break: break-word;
+        }
+
+        .page-break {
+            break-before: page;
+            page-break-before: always;
         }
 
         @media print {
@@ -183,7 +247,132 @@
         </div>
     </section>
 
-    <section class="mb-8 print-block">
+    <section class="mb-6 print-block">
+        <h3 class="text-lg font-black border-b border-slate-300 pb-2 mb-3">
+            Printing Statistics
+        </h3>
+
+        <p class="text-xs font-bold text-slate-500 mb-3">
+            Period:
+            @if ($statisticsStartDate)
+                {{ $statisticsStartDate->format('M d, Y') }} to {{ now()->format('M d, Y') }}
+            @else
+                All completed print jobs
+            @endif
+        </p>
+
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Print Jobs
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalPrintJobs }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Amount
+                </div>
+
+                <div class="font-bold">
+                    ₱{{ number_format($totalAmount, 2) }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Black
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalBlack }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Colored
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalColored }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Copies
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalCopies }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Pages
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalPages }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Long
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalLong }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Short
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalShort }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Landscape
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalLandscape }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total Portrait
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalPortrait }}
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <div class="font-black text-slate-500 uppercase text-xs mb-2">
+                Total Collected
+            </div>
+
+            <div class="border-b border-slate-900 h-8"></div>
+        </div>
+    </section>
+
+    <section class="mb-8 print-block page-break">
         <h3 class="text-lg font-black border-b border-slate-300 pb-2 mb-3">
             Maintenance Information
         </h3>
