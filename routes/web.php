@@ -102,6 +102,18 @@ Route::middleware([
             '/admin/maintenance/{maintenance}/report',
             [AdminController::class, 'maintenanceReport']
         )->name('admin.maintenance.report');
+
+        Route::middleware('super.admin')->group(function () {
+            Route::get(
+                '/admin/users',
+                [AdminController::class, 'users']
+            )->name('admin.users');
+
+            Route::post(
+                '/admin/users',
+                [AdminController::class, 'storeUser']
+            )->name('admin.users.store');
+        });
     });
 
     Route::get(

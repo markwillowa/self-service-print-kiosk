@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -201,5 +203,63 @@ class AdminController extends Controller
                 'admin',
             ]),
         ]);
+    }
+
+    public function users(): View
+    {
+        return view('admin.users', [
+            'users' => Admin::query()
+                ->latest()
+                ->get(),
+        ]);
+    }
+
+    public function storeUser(
+        Request $request
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:admins,username',
+            ],
+
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+            ],
+
+            'pin_code' => [
+                'required',
+                'digits_between:4,6',
+            ],
+        ]);
+
+        $organizationId = Admin::query()
+            ->value('organization_id');
+
+        Admin::create([
+            'organization_id' => $organizationId,
+
+            'name' => $validated['name'],
+
+            'username' => $validated['username'],
+
+            'password' => Hash::make(
+                $validated['password']
+            ),
+
+            'pin_code' => Hash::make(
+                $validated['pin_code']
+            ),
+
+            'is_super_admin' => false,
+        ]);
+
+        return back()->with('success', 'User created.');
     }
 }

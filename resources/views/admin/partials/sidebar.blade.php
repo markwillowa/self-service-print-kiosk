@@ -46,6 +46,15 @@
             Profile
         </a>
 
+        @if (session('admin_username') === 'admin')
+            <a
+                href="{{ route('admin.users') }}"
+                class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.users*') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"
+            >
+                Users
+            </a>
+        @endif
+
         <a
             href="{{ route('admin.settings') }}"
             class="block rounded-xl px-3 py-3 text-sm font-black {{ request()->routeIs('admin.settings') ? 'bg-white text-slate-950' : 'bg-slate-800 text-white' }}"

@@ -245,7 +245,7 @@
                 </div>
 
                 <div class="font-bold">
-                    {{ $maintenance->admin?->name ?? 'Maintenance Staff' }}
+                    {{ session('admin_name') ?? $maintenance->admin?->name ?? 'Maintenance Staff' }}
                 </div>
             </div>
         </div>

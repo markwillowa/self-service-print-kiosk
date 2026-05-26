@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureAdminAuthenticated;
 use App\Http\Middleware\EnsureKioskRegistered;
 use App\Http\Middleware\RestrictKioskAccess;
+use App\Http\Middleware\SuperAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'kiosk.registered' => EnsureKioskRegistered::class,
             'admin.auth' => EnsureAdminAuthenticated::class,
+            'super.admin' => SuperAdminMiddleware::class,
             'kiosk.local' => RestrictKioskAccess::class,
         ]);
 

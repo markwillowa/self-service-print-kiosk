@@ -36,6 +36,16 @@ class AdminAuthController extends Controller
                 );
 
                 session()->put(
+                    'admin_name',
+                    $admin->name
+                );
+
+                session()->put(
+                    'admin_username',
+                    $admin->username
+                );
+
+                session()->put(
                     'admin_expires_at',
                     now()->addMinutes(10)
                 );
@@ -56,6 +66,8 @@ class AdminAuthController extends Controller
         session()->forget([
             'admin_authenticated',
             'admin_id',
+            'admin_name',
+            'admin_username',
             'admin_expires_at',
         ]);
 
