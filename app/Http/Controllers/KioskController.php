@@ -190,6 +190,8 @@ class KioskController extends Controller
         PrintJob $printJob,
         PrintJobStateService $stateService
     ): RedirectResponse {
+        $printJob->refresh();
+
         abort_if(
             $printJob->expires_at &&
             now()->greaterThan($printJob->expires_at),
@@ -197,6 +199,11 @@ class KioskController extends Controller
         );
 
         abort_if($printJob->status !== 'paid', 403);
+
+        abort_if(
+            $printJob->paid_amount < $printJob->total_amount,
+            403
+        );
 
         try {
             $stateService->transition($printJob, 'queued');

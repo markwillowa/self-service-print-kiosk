@@ -56,6 +56,8 @@ class PrinterService
     private function printViaCups(
         PrintJob $printJob
     ): bool {
+        $printJob->refresh();
+
         $relativePath =
             $printJob->preview_pdf_path
                 ?: $printJob->filtered_pdf_path
@@ -82,6 +84,20 @@ class PrinterService
             $command[] = '-d';
             $command[] = $printerName;
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Copies
+        |--------------------------------------------------------------------------
+        */
+
+        $copies = max(
+            (int) ($printJob->copies ?: 1),
+            1
+        );
+
+        $command[] = '-n';
+        $command[] = (string) $copies;
 
         /*
         |--------------------------------------------------------------------------
@@ -138,6 +154,7 @@ class PrinterService
 
         logger()->info('Printing via CUPS', [
             'command' => $command,
+            'copies' => $copies,
             'print_job_id' => $printJob->id,
         ]);
 
