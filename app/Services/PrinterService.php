@@ -115,12 +115,6 @@ class PrinterService
         }
 
         $command[] = '-o';
-        $command[] = 'print-quality=5';
-
-        $command[] = '-o';
-        $command[] = 'Resolution=600dpi';
-
-        $command[] = '-o';
         $command[] = 'fit-to-page';
 
         $command[] = $path;
