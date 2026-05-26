@@ -57,24 +57,31 @@
             @if ($printJob->status === 'paid')
                 <div class="h-full rounded-2xl bg-emerald-100 border border-emerald-200 p-5 text-center shadow-xl flex flex-col items-center justify-center">
                     <div class="w-20 h-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-xl mb-4">
-                        <span class="text-5xl">✓</span>
+                        <x-heroicon-o-check class="w-12 h-12" />
                     </div>
 
-                    <p class="text-4xl font-black text-emerald-800 mb-5 leading-none">
+                    <p class="text-4xl font-black text-emerald-800 mb-3 leading-none">
                         Payment Complete
                     </p>
 
-                    <form method="POST" action="{{ route('kiosk.print', $printJob) }}">
-                        @csrf
+                    <p class="text-lg font-black text-emerald-700">
+                        Printing automatically...
+                    </p>
 
-                        <button
-                            type="submit"
-                            class="rounded-2xl bg-slate-950 text-white text-2xl font-black px-10 py-4 shadow-xl active:scale-95 transition"
-                        >
-                            Print Now
-                        </button>
+                    <form
+                        id="autoPrintForm"
+                        method="POST"
+                        action="{{ route('kiosk.print', $printJob) }}"
+                    >
+                        @csrf
                     </form>
                 </div>
+
+                <script>
+                    setTimeout(() => {
+                        document.getElementById('autoPrintForm')?.submit();
+                    }, 800);
+                </script>
             @else
                 <div class="h-full rounded-2xl bg-white/90 border border-white p-5 shadow-xl flex flex-col items-center justify-center text-center">
                     <div class="w-20 h-20 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-xl mb-4 animate-pulse">
