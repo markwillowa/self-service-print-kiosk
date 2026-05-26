@@ -409,6 +409,14 @@ class KioskController extends Controller
         KioskSessionLock $kioskSessionLock,
         KioskCreditService $creditService
     ): RedirectResponse {
+        if (! in_array($printJob->status, [
+            'uploaded',
+            'pending_payment',
+            'paid',
+        ], true)) {
+            return redirect()->route('kiosk.home');
+        }
+
         if ($printJob->status === 'pending_payment') {
             $creditService->refundFrom($printJob);
         }
