@@ -331,29 +331,29 @@
     });
 </script>
 
-<script>
-    async function checkPrinterStatus() {
-        try {
-            const response = await fetch('{{ route('kiosk.printer-status') }}', {
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
+{{--<script>--}}
+{{--    async function checkPrinterStatus() {--}}
+{{--        try {--}}
+{{--            const response = await fetch('{{ route('kiosk.printer-status') }}', {--}}
+{{--                headers: {--}}
+{{--                    'Accept': 'application/json',--}}
+{{--                },--}}
+{{--            });--}}
 
-            const data = await response.json();
+{{--            const data = await response.json();--}}
 
-            if (! data.online) {
-                openPrinterOfflineModal();
-            }
-        } catch (error) {
-            openPrinterOfflineModal();
-        }
-    }
+{{--            if (! data.online) {--}}
+{{--                openPrinterOfflineModal();--}}
+{{--            }--}}
+{{--        } catch (error) {--}}
+{{--            openPrinterOfflineModal();--}}
+{{--        }--}}
+{{--    }--}}
 
-    checkPrinterStatus();
+{{--    checkPrinterStatus();--}}
 
-    setInterval(checkPrinterStatus, 5000);
-</script>
+{{--    setInterval(checkPrinterStatus, 5000);--}}
+{{--</script>--}}
 
 @include('kiosk.partials.kiosk-lockdown')
 </body>

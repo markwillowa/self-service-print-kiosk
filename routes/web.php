@@ -132,6 +132,11 @@ Route::middleware([
     )->name('kiosk.store');
 
     Route::post(
+        '/preview/{printJob}/back',
+        [KioskController::class, 'backFromPreview']
+    )->name('kiosk.preview.back');
+
+    Route::post(
         '/upload/{printJob}/select',
         [KioskController::class, 'selectUploadedFile']
     )->name('kiosk.select-upload');

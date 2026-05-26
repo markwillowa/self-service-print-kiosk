@@ -49,12 +49,16 @@
                     </div>
                 </div>
 
-                <a
-                    href="{{ route('kiosk.upload') }}"
-                    class="rounded-xl bg-slate-200 px-3 h-11 flex items-center justify-center text-sm font-black text-slate-900 active:scale-95 transition"
-                >
-                    Back
-                </a>
+                <form method="POST" action="{{ route('kiosk.preview.back', $printJob) }}">
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="rounded-xl bg-slate-200 px-3 h-11 flex items-center justify-center text-sm font-black text-slate-900 active:scale-95 transition"
+                    >
+                        Back
+                    </button>
+                </form>
 
                 <button
                     type="button"

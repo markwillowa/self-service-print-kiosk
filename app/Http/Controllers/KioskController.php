@@ -564,4 +564,21 @@ class KioskController extends Controller
                 'The document failed to upload. Please try a smaller file or use JPG/PNG/PDF.',
         ];
     }
+
+    public function backFromPreview(
+        PrintJob $printJob,
+        KioskSessionLock $kioskSessionLock
+    ): RedirectResponse {
+        if ($printJob->status === 'pending_payment') {
+            $printJob->update([
+                'status' => 'uploaded',
+                'paid_amount' => 0,
+                'expires_at' => null,
+            ]);
+        }
+
+        $kioskSessionLock->unlock();
+
+        return redirect()->route('kiosk.upload');
+    }
 }
