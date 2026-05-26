@@ -76,13 +76,6 @@
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-                <div
-                    id="kioskCreditBadge"
-                    class="rounded-xl bg-emerald-600 text-white px-3 py-2 font-black text-sm"
-                >
-                    Credit: ₱{{ $kioskCreditBalance ?? 0 }}
-                </div>
-
                 @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
                     <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
                         ₱1/page
@@ -292,6 +285,10 @@
     }
 
     function openPrinterOfflineModal() {
+        if (sessionStorage.getItem('admin_mode') === '1') {
+            return;
+        }
+
         const modal = document.getElementById(
             'printerOfflineModal'
         );
@@ -335,32 +332,7 @@
 </script>
 
 <script>
-    async function refreshKioskCredit() {
-        try {
-            const response = await fetch('{{ route('kiosk.credit') }}', {
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-
-            const data = await response.json();
-
-            const badge = document.getElementById('kioskCreditBadge');
-
-            if (badge) {
-                badge.textContent = 'Credit: ₱' + data.credit_balance;
-            }
-        } catch (error) {
-        }
-    }
-
-    refreshKioskCredit();
-
-    setInterval(refreshKioskCredit, 300);
-</script>
-
-<script>
-    /*async function checkPrinterStatus() {
+    async function checkPrinterStatus() {
         try {
             const response = await fetch('{{ route('kiosk.printer-status') }}', {
                 headers: {
@@ -376,7 +348,7 @@
         } catch (error) {
             openPrinterOfflineModal();
         }
-    }*/
+    }
 
     checkPrinterStatus();
 
