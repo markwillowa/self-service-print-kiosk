@@ -133,6 +133,9 @@ class PrinterService
         if ($printJob->print_mode === 'black') {
             $command[] = '-o';
             $command[] = 'ColorModel=Gray';
+        } else {
+            $command[] = '-o';
+            $command[] = 'ColorModel=RGB';
         }
 
         /*
