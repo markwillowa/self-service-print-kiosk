@@ -27,9 +27,7 @@ class AppServiceProvider extends ServiceProvider
                 'globalCompany',
                 $company
             );
-        });
 
-        View::composer('kiosk.*', function ($view) {
             $view->with(
                 'kioskCreditBalance',
                 app(KioskCreditService::class)->balance()

@@ -76,6 +76,10 @@
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
+                <div class="rounded-xl bg-emerald-400 text-emerald-900 px-3 py-2 font-black text-sm">
+                    Credit: ₱{{ $kioskCreditBalance ?? 0 }}
+                </div>
+
                 @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
                     <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
                         ₱1/page
