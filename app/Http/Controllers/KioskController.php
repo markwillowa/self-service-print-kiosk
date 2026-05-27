@@ -208,6 +208,10 @@ class KioskController extends Controller
         try {
             $stateService->transition($printJob, 'queued');
 
+            $printJob->update([
+                'expires_at' => null,
+            ]);
+
             ProcessPrintJob::dispatch($printJob);
         } catch (RuntimeException) {
             abort(403);

@@ -7,19 +7,16 @@ use Illuminate\Console\Command;
 
 class CancelExpiredPrintJobs extends Command
 {
-    protected $signature =
-        'print:cancel-expired';
+    protected $signature = 'print:cancel-expired';
 
-    protected $description =
-        'Cancel expired print jobs';
+    protected $description = 'Cancel expired print jobs';
 
     public function handle(): int
     {
         $jobs = PrintJob::query()
-            ->whereNotIn('status', [
-                'completed',
-                'cancelled',
-                'failed',
+            ->whereIn('status', [
+                'uploaded',
+                'pending_payment',
             ])
             ->whereNotNull('expires_at')
             ->where('expires_at', '<=', now())
@@ -28,6 +25,7 @@ class CancelExpiredPrintJobs extends Command
         foreach ($jobs as $job) {
             $job->update([
                 'status' => 'cancelled',
+                'cancelled_at' => now(),
             ]);
 
             $this->info(
