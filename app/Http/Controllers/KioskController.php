@@ -389,9 +389,10 @@ class KioskController extends Controller
 
             'copies' => $copies,
 
-            'converted_pdf_path' =>
-                'print-jobs/converted/' .
-                basename($workingPdf),
+            'converted_pdf_path' => $this->relativePdfPathFor(
+                printJob: $printJob,
+                workingPdf: $workingPdf
+            ),
 
             'filtered_pdf_path' => $relativeFilteredPath,
 
@@ -413,6 +414,23 @@ class KioskController extends Controller
         $this->refreshExpiration($printJob);
 
         return back();
+    }
+
+    private function relativePdfPathFor(
+        PrintJob $printJob,
+        string $workingPdf
+    ): string {
+        if ($printJob->original_extension === 'pdf') {
+            return $printJob->original_file_path;
+        }
+
+        $convertedDirectory = storage_path('app/print-jobs/converted');
+
+        if (str_starts_with($workingPdf, $convertedDirectory)) {
+            return 'print-jobs/converted/' . basename($workingPdf);
+        }
+
+        return $printJob->converted_pdf_path;
     }
 
     public function cancel(
@@ -506,6 +524,11 @@ class KioskController extends Controller
         $extension = strtolower(
             $printJob->original_extension ?? ''
         );
+
+        if ($extension === 'pdf') {
+            return Storage::disk('local')
+                ->path($printJob->original_file_path);
+        }
 
         $editableExtensions = [
             'doc',
