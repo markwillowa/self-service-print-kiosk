@@ -60,32 +60,32 @@
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
 >
 <main class="w-screen h-screen overflow-hidden bg-slate-100">
-    <section class="h-full flex flex-col p-3">
-        <header class="h-[52px] shrink-0 flex items-center justify-between mb-2">
-            <div class="min-w-0">
-                <p class="text-[9px] uppercase tracking-[0.22em] text-slate-500 font-black leading-none mb-1">
+    <section class="h-full flex flex-col p-4">
+        <header class="h-[64px] shrink-0 flex items-center justify-between mb-3 gap-3">
+            <div class="min-w-0 flex-1">
+                <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500 font-black leading-none mb-1">
                     Self-Service Kiosk
                 </p>
 
                 <h1
                     id="adminUnlockLogo"
-                    class="text-2xl font-black text-slate-950 leading-none truncate max-w-[360px]"
+                    class="text-3xl font-black text-slate-950 leading-none truncate max-w-[520px]"
                 >
                     {{ $globalKioskName ?? 'Piso Print' }}
                 </h1>
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-                <div class="rounded-xl bg-emerald-400 text-emerald-900 px-3 py-2 font-black text-sm">
+                <div class="rounded-2xl bg-emerald-400 text-emerald-950 px-4 py-3 font-black text-base whitespace-nowrap shadow-sm">
                     Credit: ₱{{ $kioskCreditBalance ?? 0 }}
                 </div>
 
                 @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
-                    <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
+                    <div class="rounded-2xl bg-slate-950 text-white px-4 py-3 font-black text-base whitespace-nowrap shadow-sm">
                         ₱1/page
                     </div>
                 @else
-                    <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
+                    <div class="rounded-2xl bg-slate-950 text-white px-4 py-3 font-black text-base whitespace-nowrap shadow-sm">
                         Black: ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
                         |
                         Colored: ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
@@ -95,9 +95,9 @@
                 <button
                     type="button"
                     onclick="openShutdownModal()"
-                    class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
+                    class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition shrink-0"
                 >
-                    <x-heroicon-o-power class="w-5 h-5" />
+                    <x-heroicon-o-power class="w-6 h-6" />
                 </button>
             </div>
         </header>
@@ -112,8 +112,8 @@
     id="adminPinModal"
     class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50"
 >
-    <div class="w-[320px] rounded-2xl bg-white p-5 shadow-2xl">
-        <h2 class="text-2xl font-black text-center mb-4">
+    <div class="w-[380px] rounded-3xl bg-white p-6 shadow-2xl">
+        <h2 class="text-3xl font-black text-center mb-5">
             Admin Access
         </h2>
 
@@ -131,12 +131,12 @@
                 placeholder="Enter PIN"
                 required
                 autofocus
-                class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-xl font-black text-center"
+                class="w-full rounded-2xl bg-slate-100 px-4 py-4 text-2xl font-black text-center"
             >
 
             <button
                 type="submit"
-                class="w-full rounded-2xl bg-slate-950 text-white py-3 text-lg font-black"
+                class="w-full rounded-2xl bg-slate-950 text-white py-4 text-xl font-black"
             >
                 Unlock
             </button>
@@ -144,7 +144,7 @@
             <button
                 type="button"
                 onclick="closeAdminModal()"
-                class="w-full rounded-2xl bg-slate-200 text-slate-900 py-3 text-lg font-black"
+                class="w-full rounded-2xl bg-slate-200 text-slate-900 py-4 text-xl font-black"
             >
                 Cancel
             </button>
@@ -156,24 +156,24 @@
     id="shutdownModal"
     class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
 >
-    <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl text-center">
-        <div class="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
-            <x-heroicon-o-power class="w-10 h-10" />
+    <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl text-center">
+        <div class="w-20 h-20 rounded-3xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-5">
+            <x-heroicon-o-power class="w-12 h-12" />
         </div>
 
-        <h3 class="text-2xl font-black text-slate-950 mb-2">
+        <h3 class="text-3xl font-black text-slate-950 mb-3">
             Turn Off Device?
         </h3>
 
-        <p class="text-sm text-slate-500 font-bold mb-5">
+        <p class="text-base text-slate-500 font-bold mb-6">
             This will safely shut down the Raspberry Pi.
         </p>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-3">
             <button
                 type="button"
                 onclick="closeShutdownModal()"
-                class="rounded-xl bg-slate-200 text-slate-900 px-4 py-3 text-sm font-black active:scale-95 transition"
+                class="rounded-2xl bg-slate-200 text-slate-900 px-4 py-4 text-base font-black active:scale-95 transition"
             >
                 Cancel
             </button>
@@ -186,9 +186,9 @@
 
                 <button
                     type="submit"
-                    class="w-full rounded-xl bg-red-600 text-white px-4 py-3 flex items-center justify-center active:scale-95 transition"
+                    class="w-full rounded-2xl bg-red-600 text-white px-4 py-4 flex items-center justify-center active:scale-95 transition"
                 >
-                    <x-heroicon-o-power class="w-5 h-5" />
+                    <x-heroicon-o-power class="w-6 h-6" />
                 </button>
             </form>
         </div>
@@ -199,23 +199,23 @@
     id="printerOfflineModal"
     class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
 >
-    <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl text-center">
-        <div class="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
-            <x-heroicon-o-printer class="w-10 h-10" />
+    <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl text-center">
+        <div class="w-20 h-20 rounded-3xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-5">
+            <x-heroicon-o-printer class="w-12 h-12" />
         </div>
 
-        <h3 class="text-2xl font-black text-slate-950 mb-2">
+        <h3 class="text-3xl font-black text-slate-950 mb-3">
             Printer Offline
         </h3>
 
-        <p class="text-sm text-slate-500 font-bold mb-5">
+        <p class="text-base text-slate-500 font-bold mb-6">
             Please turn on the printer or contact the operator.
         </p>
 
         <button
             type="button"
             onclick="closePrinterOfflineModal()"
-            class="w-full rounded-xl bg-slate-950 text-white px-4 py-3 text-sm font-black active:scale-95 transition"
+            class="w-full rounded-2xl bg-slate-950 text-white px-4 py-4 text-base font-black active:scale-95 transition"
         >
             OK
         </button>
@@ -334,30 +334,6 @@
         event.preventDefault();
     });
 </script>
-
-{{--<script>--}}
-{{--    async function checkPrinterStatus() {--}}
-{{--        try {--}}
-{{--            const response = await fetch('{{ route('kiosk.printer-status') }}', {--}}
-{{--                headers: {--}}
-{{--                    'Accept': 'application/json',--}}
-{{--                },--}}
-{{--            });--}}
-
-{{--            const data = await response.json();--}}
-
-{{--            if (! data.online) {--}}
-{{--                openPrinterOfflineModal();--}}
-{{--            }--}}
-{{--        } catch (error) {--}}
-{{--            openPrinterOfflineModal();--}}
-{{--        }--}}
-{{--    }--}}
-
-{{--    checkPrinterStatus();--}}
-
-{{--    setInterval(checkPrinterStatus, 5000);--}}
-{{--</script>--}}
 
 @include('kiosk.partials.kiosk-lockdown')
 </body>

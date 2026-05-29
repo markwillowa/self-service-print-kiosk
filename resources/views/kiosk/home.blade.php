@@ -1,59 +1,60 @@
 <x-kiosk-layout title="{{ $globalKioskName ?? 'Piso Print' }}">
-    <div class="h-full grid grid-cols-[1.1fr_0.9fr] gap-3 items-center">
-        <div class="min-w-0 pr-1">
-            <div class="mb-2">
-                <div class="w-14 h-14 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-xl">
-                    <x-heroicon-o-printer class="w-8 h-8" />
+    <div class="h-full grid grid-cols-[1.15fr_0.85fr] gap-5 items-center">
+        <div class="min-w-0 pr-3">
+            <div class="mb-4">
+                <div class="w-20 h-20 rounded-3xl bg-slate-950 text-white flex items-center justify-center shadow-xl">
+                    <x-heroicon-o-printer class="w-11 h-11" />
                 </div>
             </div>
 
-            <div class="inline-flex items-center gap-2 rounded-full bg-emerald-100 border border-emerald-200 px-3 py-1.5 mb-3">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-emerald-100 border border-emerald-200 px-4 py-2 mb-4">
+                <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
 
-                <span class="text-xs font-black text-emerald-900">
+                <span class="text-sm font-black text-emerald-900">
                     Wireless Transfer Ready
                 </span>
             </div>
 
-            <h2 class="text-[2.4rem] font-black leading-[0.95] mb-3 text-slate-950 tracking-tight">
+            <h2 class="text-[4rem] font-black leading-[0.9] mb-4 text-slate-950 tracking-tight">
                 Print your documents instantly
             </h2>
 
-            <p class="text-sm text-slate-600 leading-snug mb-3 max-w-md font-bold">
+            <p class="text-lg text-slate-600 leading-relaxed mb-5 max-w-2xl font-bold">
                 Transfer files from your phone using the local Wi-Fi,
-                then preview and print directly on this kiosk.
+                preview your document, choose print settings,
+                and print directly from this kiosk.
             </p>
 
-            <div class="grid grid-cols-2 gap-2 max-w-md">
-                <div class="rounded-2xl bg-white/80 border border-white p-3 shadow-lg">
-                    <div class="flex items-center gap-2 mb-1">
-                        <x-heroicon-o-wifi class="w-5 h-5 text-slate-900" />
+            <div class="grid grid-cols-2 gap-4 max-w-2xl">
+                <div class="rounded-3xl bg-white border border-white p-5 shadow-lg">
+                    <div class="flex items-center gap-3 mb-2">
+                        <x-heroicon-o-wifi class="w-7 h-7 text-slate-900" />
 
-                        <div class="text-[10px] font-black text-slate-500 uppercase">
-                            Wi-Fi
+                        <div class="text-xs font-black text-slate-500 uppercase">
+                            Wi-Fi Network
                         </div>
                     </div>
 
-                    <div class="text-xl font-black text-slate-950">
+                    <div class="text-3xl font-black text-slate-950 truncate">
                         {{ $globalKioskName ?? 'Piso Print' }}
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-white/80 border border-white p-3 shadow-lg">
-                    <div class="flex items-center gap-2 mb-1">
-                        <x-heroicon-o-banknotes class="w-5 h-5 text-slate-900" />
+                <div class="rounded-3xl bg-white border border-white p-5 shadow-lg">
+                    <div class="flex items-center gap-3 mb-2">
+                        <x-heroicon-o-banknotes class="w-7 h-7 text-slate-900" />
 
-                        <div class="text-[10px] font-black text-slate-500 uppercase">
-                            Price
+                        <div class="text-xs font-black text-slate-500 uppercase">
+                            Printing Price
                         </div>
                     </div>
 
                     @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
-                        <div class="text-xl font-black text-slate-950">
+                        <div class="text-3xl font-black text-slate-950">
                             ₱1/page
                         </div>
                     @else
-                        <div class="text-xl font-black text-slate-950 leading-tight">
+                        <div class="text-3xl font-black text-slate-950">
                             ₱{{ $globalCompany?->black_price_per_page ?? 1 }}/page
                         </div>
                     @endif
@@ -61,8 +62,18 @@
             </div>
         </div>
 
-        <div class="bg-white/90 rounded-2xl p-3 shadow-xl border border-white">
-            <div class="space-y-2 mb-3">
+        <div class="bg-white rounded-3xl p-5 shadow-xl border border-white h-full flex flex-col">
+            <div class="mb-4">
+                <h3 class="text-2xl font-black text-slate-950 mb-1">
+                    How It Works
+                </h3>
+
+                <p class="text-sm font-bold text-slate-500">
+                    Complete printing in four easy steps
+                </p>
+            </div>
+
+            <div class="space-y-3 flex-1">
                 @foreach ([
                     [
                         'icon' => 'wifi',
@@ -81,33 +92,33 @@
                         'label' => 'Insert coins and print',
                     ],
                 ] as $step => $item)
-                    <div class="flex items-center gap-2 rounded-xl bg-slate-50 p-2 border border-slate-100">
-                        <div class="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
+                    <div class="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
                             @switch($item['icon'])
                                 @case('wifi')
-                                    <x-heroicon-o-wifi class="w-5 h-5" />
+                                    <x-heroicon-o-wifi class="w-7 h-7" />
                                     @break
 
                                 @case('arrow-up-tray')
-                                    <x-heroicon-o-arrow-up-tray class="w-5 h-5" />
+                                    <x-heroicon-o-arrow-up-tray class="w-7 h-7" />
                                     @break
 
                                 @case('magnifying-glass')
-                                    <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                                    <x-heroicon-o-magnifying-glass class="w-7 h-7" />
                                     @break
 
                                 @case('banknotes')
-                                    <x-heroicon-o-banknotes class="w-5 h-5" />
+                                    <x-heroicon-o-banknotes class="w-7 h-7" />
                                     @break
                             @endswitch
                         </div>
 
                         <div>
-                            <div class="text-[9px] font-black text-slate-400 uppercase leading-none mb-0.5">
+                            <div class="text-xs font-black text-slate-400 uppercase mb-1">
                                 Step {{ $step + 1 }}
                             </div>
 
-                            <div class="text-sm font-black text-slate-800 leading-tight">
+                            <div class="text-lg font-black text-slate-800">
                                 {{ $item['label'] }}
                             </div>
                         </div>
@@ -115,25 +126,25 @@
                 @endforeach
             </div>
 
-            <div class="rounded-xl bg-emerald-50 p-2 border border-emerald-200 mb-3">
-                <div class="flex items-center gap-2 mb-1">
-                    <x-heroicon-o-signal class="w-4 h-4 text-emerald-900" />
+            <div class="rounded-2xl bg-emerald-50 p-4 border border-emerald-200 mt-4 mb-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <x-heroicon-o-signal class="w-5 h-5 text-emerald-900" />
 
-                    <h3 class="text-sm font-black text-emerald-900">
+                    <h3 class="text-base font-black text-emerald-900">
                         Wireless Transfer
                     </h3>
                 </div>
 
-                <p class="text-[11px] text-emerald-800 leading-snug font-bold">
-                    Upload documents from your phone through local Wi-Fi.
+                <p class="text-sm text-emerald-800 font-bold">
+                    Upload documents directly from your phone through the local Wi-Fi connection.
                 </p>
             </div>
 
             <a
                 href="{{ route('kiosk.connect') }}"
-                class="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-950 text-white text-lg font-black py-3 text-center shadow-xl active:scale-95 transition"
+                class="flex items-center justify-center gap-3 w-full rounded-2xl bg-slate-950 text-white text-2xl font-black py-5 text-center shadow-xl active:scale-95 transition"
             >
-                <x-heroicon-o-printer class="w-5 h-5" />
+                <x-heroicon-o-printer class="w-7 h-7" />
 
                 Start Printing
             </a>
