@@ -60,44 +60,44 @@
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
 >
 <main class="w-screen h-screen overflow-hidden bg-slate-100">
-    <section class="h-full flex flex-col p-3">
-        <header class="h-[52px] shrink-0 flex items-center justify-between mb-2">
-            <div class="min-w-0">
-                <p class="text-[9px] uppercase tracking-[0.22em] text-slate-500 font-black leading-none mb-1">
+    <section class="h-full flex flex-col p-2">
+        <header class="h-[48px] shrink-0 flex items-center justify-between mb-2 gap-2">
+            <div class="min-w-0 flex-1">
+                <p class="text-[8px] uppercase tracking-[0.18em] text-slate-500 font-black leading-none mb-1">
                     Self-Service Kiosk
                 </p>
 
                 <h1
                     id="adminUnlockLogo"
-                    class="text-2xl font-black text-slate-950 leading-none truncate max-w-[360px]"
+                    class="text-xl font-black text-slate-950 leading-none truncate"
                 >
                     {{ $globalKioskName ?? 'Piso Print' }}
                 </h1>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
-                <div class="rounded-xl bg-emerald-400 text-emerald-900 px-3 py-2 font-black text-sm">
-                    Credit: ₱{{ $kioskCreditBalance ?? 0 }}
+            <div class="flex items-center gap-1.5 shrink-0">
+                <div class="rounded-lg bg-emerald-100 text-emerald-900 px-2.5 py-1.5 text-xs font-black whitespace-nowrap">
+                    Credit ₱{{ $kioskCreditBalance ?? 0 }}
                 </div>
 
                 @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
-                    <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
+                    <div class="rounded-lg bg-slate-950 text-white px-2.5 py-1.5 text-xs font-black whitespace-nowrap">
                         ₱1/page
                     </div>
                 @else
-                    <div class="rounded-xl bg-slate-950 text-white px-3 py-2 font-black text-sm">
-                        Black: ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
+                    <div class="rounded-lg bg-slate-950 text-white px-2.5 py-1.5 text-xs font-black whitespace-nowrap">
+                        B: ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
                         |
-                        Colored: ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
+                        C: ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
                     </div>
                 @endif
 
                 <button
                     type="button"
                     onclick="openShutdownModal()"
-                    class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition"
+                    class="w-9 h-9 rounded-lg bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition shrink-0"
                 >
-                    <x-heroicon-o-power class="w-5 h-5" />
+                    <x-heroicon-o-power class="w-4 h-4" />
                 </button>
             </div>
         </header>
