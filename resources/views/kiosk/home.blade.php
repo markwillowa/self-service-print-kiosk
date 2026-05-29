@@ -127,6 +127,20 @@
             </div>
 
             <div class="shrink-0 mt-3">
+                <div class="rounded-2xl bg-emerald-50 p-3 border border-emerald-200 mb-3">
+                    <div class="flex items-center gap-2 mb-1">
+                        <x-heroicon-o-signal class="w-4 h-4 text-emerald-900" />
+
+                        <h3 class="text-sm font-black text-emerald-900">
+                            Wireless Transfer
+                        </h3>
+                    </div>
+
+                    <p class="text-xs text-emerald-800 leading-snug font-bold">
+                        Upload documents directly from your phone through the kiosk Wi-Fi network.
+                    </p>
+                </div>
+
                 <a
                     href="{{ route('kiosk.connect') }}"
                     class="flex items-center justify-center gap-3 w-full rounded-2xl bg-slate-950 text-white text-2xl font-black py-4 text-center shadow-xl active:scale-95 transition"
