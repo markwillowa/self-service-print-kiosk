@@ -1,5 +1,5 @@
 <x-kiosk-layout title="{{ $globalKioskName ?? 'Piso Print' }}">
-    <div class="h-full grid grid-cols-[1.15fr_0.85fr] gap-5 items-stretch">
+    <div class="h-full grid grid-cols-[1.15fr_0.85fr] gap-5 items-center py-4">
         <div class="min-w-0 pr-3 flex flex-col justify-center">
             <div class="mb-4">
                 <div class="w-20 h-20 rounded-3xl bg-slate-950 text-white flex items-center justify-center shadow-xl">
@@ -15,11 +15,11 @@
                 </span>
             </div>
 
-            <h2 class="text-[3.6rem] font-black leading-[0.92] mb-4 text-slate-950 tracking-tight">
+            <h2 class="text-[3.1rem] font-black leading-[0.92] mb-3 text-slate-950 tracking-tight">
                 Print your documents instantly
             </h2>
 
-            <p class="text-lg text-slate-600 leading-snug mb-5 max-w-2xl font-bold">
+            <p class="text-base text-slate-600 leading-snug mb-4 max-w-2xl font-bold">
                 Transfer files from your phone using the local Wi-Fi,
                 preview your document, choose print settings,
                 and print directly from this kiosk.
@@ -62,8 +62,8 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-3xl p-3 shadow-xl border border-white h-full flex flex-col min-h-0">
-            <div class="shrink-0 mb-2">
+        <div class="bg-white rounded-3xl p-4 shadow-xl border border-white h-full max-h-[520px] flex flex-col min-h-0">
+            <div class="shrink-0 mb-3">
                 <h3 class="text-xl font-black text-slate-950 leading-none mb-1">
                     How It Works
                 </h3>
@@ -73,42 +73,30 @@
                 </p>
             </div>
 
-            <div class="space-y-2 flex-1 min-h-0">
+            <div class="grid grid-rows-4 gap-2 shrink-0">
                 @foreach ([
-                    [
-                        'icon' => 'wifi',
-                        'label' => 'Connect to local Wi-Fi',
-                    ],
-                    [
-                        'icon' => 'arrow-up-tray',
-                        'label' => 'Transfer your file',
-                    ],
-                    [
-                        'icon' => 'magnifying-glass',
-                        'label' => 'Select and preview',
-                    ],
-                    [
-                        'icon' => 'banknotes',
-                        'label' => 'Insert coins and print',
-                    ],
+                    ['icon' => 'wifi', 'label' => 'Connect to local Wi-Fi'],
+                    ['icon' => 'arrow-up-tray', 'label' => 'Transfer your file'],
+                    ['icon' => 'magnifying-glass', 'label' => 'Select and preview'],
+                    ['icon' => 'banknotes', 'label' => 'Insert coins and print'],
                 ] as $step => $item)
-                    <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-2.5 border border-slate-100">
-                        <div class="w-11 h-11 rounded-xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
+                    <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-2 border border-slate-100">
+                        <div class="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
                             @switch($item['icon'])
                                 @case('wifi')
-                                    <x-heroicon-o-wifi class="w-6 h-6" />
+                                    <x-heroicon-o-wifi class="w-5 h-5" />
                                     @break
 
                                 @case('arrow-up-tray')
-                                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
+                                    <x-heroicon-o-arrow-up-tray class="w-5 h-5" />
                                     @break
 
                                 @case('magnifying-glass')
-                                    <x-heroicon-o-magnifying-glass class="w-6 h-6" />
+                                    <x-heroicon-o-magnifying-glass class="w-5 h-5" />
                                     @break
 
                                 @case('banknotes')
-                                    <x-heroicon-o-banknotes class="w-6 h-6" />
+                                    <x-heroicon-o-banknotes class="w-5 h-5" />
                                     @break
                             @endswitch
                         </div>
@@ -126,8 +114,8 @@
                 @endforeach
             </div>
 
-            <div class="shrink-0 mt-2">
-                <div class="rounded-xl bg-emerald-50 p-2 border border-emerald-200 mb-2">
+            <div class="mt-auto pt-3 pb-1 shrink-0">
+                <div class="rounded-xl bg-emerald-50 p-2 border border-emerald-200 mb-3">
                     <div class="flex items-center gap-2 mb-0.5">
                         <x-heroicon-o-signal class="w-4 h-4 text-emerald-900" />
 
@@ -143,7 +131,7 @@
 
                 <a
                     href="{{ route('kiosk.connect') }}"
-                    class="flex items-center justify-center gap-3 w-full rounded-2xl bg-slate-950 text-white text-xl font-black py-3.5 text-center shadow-xl active:scale-95 transition"
+                    class="flex items-center justify-center gap-3 w-full rounded-2xl bg-slate-950 text-white text-xl font-black py-3 text-center shadow-xl active:scale-95 transition"
                 >
                     <x-heroicon-o-printer class="w-6 h-6" />
 

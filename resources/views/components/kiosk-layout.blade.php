@@ -77,7 +77,7 @@
         ></div>
     </div>
 
-    <section class="relative z-10 h-full flex flex-col p-4">
+    <section class="relative z-10 h-full flex flex-col px-5 py-4">
         <header class="h-[64px] shrink-0 flex items-center justify-between mb-3 gap-3">
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500 font-black leading-none mb-1">
