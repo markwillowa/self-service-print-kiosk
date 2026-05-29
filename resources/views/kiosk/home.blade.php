@@ -73,7 +73,7 @@
                 </p>
             </div>
 
-            <div class="space-y-2 flex-1 min-h-0">
+            <div class="space-y-3 flex-1 min-h-0">
                 @foreach ([
                     [
                         'icon' => 'wifi',
@@ -93,32 +93,32 @@
                     ],
                 ] as $step => $item)
                     <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-3 border border-slate-100">
-                        <div class="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
                             @switch($item['icon'])
                                 @case('wifi')
-                                    <x-heroicon-o-wifi class="w-6 h-6" />
+                                    <x-heroicon-o-wifi class="w-7 h-7" />
                                     @break
 
                                 @case('arrow-up-tray')
-                                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
+                                    <x-heroicon-o-arrow-up-tray class="w-7 h-7" />
                                     @break
 
                                 @case('magnifying-glass')
-                                    <x-heroicon-o-magnifying-glass class="w-6 h-6" />
+                                    <x-heroicon-o-magnifying-glass class="w-7 h-7" />
                                     @break
 
                                 @case('banknotes')
-                                    <x-heroicon-o-banknotes class="w-6 h-6" />
+                                    <x-heroicon-o-banknotes class="w-7 h-7" />
                                     @break
                             @endswitch
                         </div>
 
                         <div>
-                            <div class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">
+                            <div class="text-xs font-black text-slate-400 uppercase leading-none mb-1">
                                 Step {{ $step + 1 }}
                             </div>
 
-                            <div class="text-base font-black text-slate-800 leading-tight">
+                            <div class="text-lg font-black text-slate-800 leading-tight">
                                 {{ $item['label'] }}
                             </div>
                         </div>
