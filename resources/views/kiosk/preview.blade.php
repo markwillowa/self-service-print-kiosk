@@ -369,7 +369,7 @@
 
     <script>
         function openKeyboard() {
-            fetch('/open-keyboard', {
+            fetch('{{ route('kiosk.open-keyboard') }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
