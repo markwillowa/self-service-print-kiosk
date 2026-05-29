@@ -18,7 +18,7 @@ body {
 }
 
 body {
-    touch-action: manipulation;
+    touch-action: auto;
 }
 
 #app {

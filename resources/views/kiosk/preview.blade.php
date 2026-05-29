@@ -231,6 +231,8 @@
                         inputmode="numeric"
                         pattern="[0-9]*"
                         class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        autocomplete="off"
+                        spellcheck="false"
                     >
                 </div>
 
@@ -246,6 +248,8 @@
                         value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
                         placeholder="All or 1-3,5"
                         class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        autocomplete="off"
+                        spellcheck="false"
                     >
 
                     <p class="mt-2 text-xs font-bold text-slate-500">
