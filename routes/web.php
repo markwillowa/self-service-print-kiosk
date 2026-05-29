@@ -171,17 +171,6 @@ Route::middleware([
         [KioskController::class, 'preview']
     )->name('kiosk.preview');
 
-    Route::post('/open-keyboard', function () {
-        shell_exec('DISPLAY=:0 onboard >/dev/null 2>&1 &');
-
-        return response()->json([
-            'success' => true,
-        ]);
-    })->middleware([
-        'kiosk.registered',
-        'kiosk.local',
-    ])->name('kiosk.open-keyboard');
-
     Route::post(
         '/preview/{printJob}/confirm',
         [KioskController::class, 'confirm']
