@@ -62,10 +62,7 @@
                     Edit
                 </button>
 
-                <form
-                    method="POST"
-                    action="{{ route('kiosk.confirm', $printJob) }}"
-                >
+                <form method="POST" action="{{ route('kiosk.confirm', $printJob) }}">
                     @csrf
 
                     <button
@@ -231,6 +228,9 @@
                         min="1"
                         max="99"
                         required
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        onfocus="openKeyboard()"
                         class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
                     >
                 </div>
@@ -243,6 +243,8 @@
                     <input
                         type="text"
                         name="page_selection"
+                        inputmode="numeric"
+                        onfocus="openKeyboard()"
                         value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
                         placeholder="All or 1-3,5"
                         class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
@@ -297,10 +299,7 @@
                     No
                 </button>
 
-                <form
-                    method="POST"
-                    action="{{ route('kiosk.cancel', $printJob) }}"
-                >
+                <form method="POST" action="{{ route('kiosk.cancel', $printJob) }}">
                     @csrf
 
                     <button
@@ -339,6 +338,16 @@
             document.querySelector('input[name="page_selection"]').value = '';
 
             document.querySelector('input[name="copies"]').value = '1';
+        }
+
+        function openKeyboard() {
+            fetch('{{ route('kiosk.open-keyboard') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+            }).catch(() => {});
         }
 
         function openCancelModal() {
