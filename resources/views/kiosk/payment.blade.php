@@ -1,22 +1,22 @@
 <x-kiosk-layout title="Insert Coins">
     <meta http-equiv="refresh" content="1">
 
-    <div class="h-full flex flex-col min-h-0 gap-3">
+    <div class="h-full flex flex-col min-h-0 gap-4 py-2">
         <div class="flex justify-between items-start shrink-0">
             <div class="min-w-0">
-                <h2 class="text-3xl font-black text-slate-950 leading-none mb-1">
+                <h2 class="text-4xl font-black text-slate-950 leading-none mb-2">
                     Insert Coins
                 </h2>
 
-                <p class="text-sm text-slate-600 truncate max-w-[420px] font-bold">
+                <p class="text-base text-slate-600 truncate max-w-[600px] font-bold">
                     {{ $printJob->original_filename }}
                 </p>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-3 shrink-0">
                 <a
                     href="{{ route('kiosk.preview', $printJob) }}"
-                    class="rounded-xl bg-slate-200 px-4 h-11 flex items-center justify-center text-sm font-black text-slate-900 shadow-lg active:scale-95 transition"
+                    class="rounded-2xl bg-slate-200 px-5 h-14 flex items-center justify-center text-base font-black text-slate-900 shadow-lg active:scale-95 transition"
                 >
                     Back
                 </a>
@@ -26,7 +26,7 @@
 
                     <button
                         type="submit"
-                        class="rounded-xl bg-red-100 px-4 h-11 text-sm font-black text-red-700 shadow-lg active:scale-95 transition"
+                        class="rounded-2xl bg-red-100 px-5 h-14 text-base font-black text-red-700 shadow-lg active:scale-95 transition"
                     >
                         Cancel
                     </button>
@@ -34,19 +34,19 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-2 shrink-0">
+        <div class="grid grid-cols-4 gap-4 shrink-0">
             @foreach ([
                 ['Pages', $printJob->selected_pages_count],
                 ['Total', '₱' . $printJob->total_amount],
                 ['Paid', '₱' . $printJob->paid_amount],
                 ['Credit', '₱' . ($kioskCreditBalance ?? 0)],
             ] as [$label, $value])
-                <div class="rounded-2xl bg-white/90 border border-white p-3 shadow-lg text-center">
-                    <div class="text-[10px] text-slate-500 font-black uppercase mb-1">
+                <div class="rounded-3xl bg-white border border-white p-5 shadow-lg text-center">
+                    <div class="text-xs text-slate-500 font-black uppercase mb-2">
                         {{ $label }}
                     </div>
 
-                    <div class="text-2xl font-black text-slate-950 leading-none">
+                    <div class="text-4xl font-black text-slate-950 leading-none">
                         {{ $value }}
                     </div>
                 </div>
@@ -55,16 +55,16 @@
 
         <div class="flex-1 min-h-0">
             @if ($printJob->status === 'paid')
-                <div class="h-full rounded-2xl bg-emerald-100 border border-emerald-200 p-5 text-center shadow-xl flex flex-col items-center justify-center">
-                    <div class="w-20 h-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-xl mb-4">
-                        <x-heroicon-o-check class="w-12 h-12" />
+                <div class="h-full rounded-3xl bg-emerald-100 border border-emerald-200 p-8 text-center shadow-xl flex flex-col items-center justify-center">
+                    <div class="w-28 h-28 rounded-3xl bg-emerald-600 text-white flex items-center justify-center shadow-xl mb-6">
+                        <x-heroicon-o-check class="w-16 h-16" />
                     </div>
 
-                    <p class="text-4xl font-black text-emerald-800 mb-3 leading-none">
+                    <p class="text-6xl font-black text-emerald-800 mb-4 leading-none">
                         Payment Complete
                     </p>
 
-                    <p class="text-lg font-black text-emerald-700">
+                    <p class="text-2xl font-black text-emerald-700">
                         Printing automatically...
                     </p>
 
@@ -83,26 +83,26 @@
                     }, 800);
                 </script>
             @else
-                <div class="h-full rounded-2xl bg-white/90 border border-white p-5 shadow-xl flex flex-col items-center justify-center text-center">
-                    <div class="w-20 h-20 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-xl mb-4 animate-pulse">
-                        <x-heroicon-o-banknotes class="w-10 h-10" />
+                <div class="h-full rounded-3xl bg-white border border-white p-8 shadow-xl flex flex-col items-center justify-center text-center">
+                    <div class="w-28 h-28 rounded-3xl bg-slate-950 text-white flex items-center justify-center shadow-xl mb-6 animate-pulse">
+                        <x-heroicon-o-banknotes class="w-14 h-14" />
                     </div>
 
-                    <p class="text-3xl font-black text-slate-950 mb-3">
+                    <p class="text-5xl font-black text-slate-950 mb-4 leading-none">
                         Please Insert Coins
                     </p>
 
-                    <p class="text-2xl font-black text-slate-700 mb-5">
+                    <p class="text-4xl font-black text-slate-700 mb-6">
                         Remaining:
                         <span class="text-emerald-700">
                             ₱{{ max($printJob->total_amount - $printJob->paid_amount, 0) }}
                         </span>
                     </p>
 
-                    <div class="inline-flex items-center gap-2 rounded-full bg-emerald-100 border border-emerald-200 px-4 py-2">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <div class="inline-flex items-center gap-3 rounded-full bg-emerald-100 border border-emerald-200 px-6 py-3">
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
 
-                        <span class="text-sm font-black text-emerald-900">
+                        <span class="text-lg font-black text-emerald-900">
                             Waiting for coin slot payment...
                         </span>
                     </div>
