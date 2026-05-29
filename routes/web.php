@@ -173,7 +173,7 @@ Route::middleware([
 
     Route::post('/open-keyboard', function () {
         shell_exec(
-            'WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 squeekboard >/dev/null 2>&1 &'
+            'WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 matchbox-keyboard >/dev/null 2>&1 &'
         );
 
         return response()->json([
