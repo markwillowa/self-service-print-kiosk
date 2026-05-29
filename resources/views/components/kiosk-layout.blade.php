@@ -59,8 +59,25 @@
     draggable="false"
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
 >
-<main class="w-screen h-screen overflow-hidden bg-slate-100">
-    <section class="h-full flex flex-col p-4">
+<main class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-200/40 blur-3xl"></div>
+
+        <div class="absolute top-16 right-0 w-[30rem] h-[30rem] rounded-full bg-emerald-200/35 blur-3xl"></div>
+
+        <div class="absolute bottom-0 left-1/3 w-[26rem] h-[26rem] rounded-full bg-indigo-200/30 blur-3xl"></div>
+
+        <div
+            class="absolute inset-0 opacity-[0.035]"
+            style="
+                background-image:
+                radial-gradient(circle at 1px 1px, #000 1px, transparent 0);
+                background-size: 24px 24px;
+            "
+        ></div>
+    </div>
+
+    <section class="relative z-10 h-full flex flex-col p-4">
         <header class="h-[64px] shrink-0 flex items-center justify-between mb-3 gap-3">
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500 font-black leading-none mb-1">

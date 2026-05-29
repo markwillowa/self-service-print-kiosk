@@ -62,18 +62,18 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-3xl p-4 shadow-xl border border-white h-full flex flex-col min-h-0">
-            <div class="shrink-0 mb-3">
-                <h3 class="text-2xl font-black text-slate-950 leading-none mb-1">
+        <div class="bg-white rounded-3xl p-3 shadow-xl border border-white h-full flex flex-col min-h-0">
+            <div class="shrink-0 mb-2">
+                <h3 class="text-xl font-black text-slate-950 leading-none mb-1">
                     How It Works
                 </h3>
 
-                <p class="text-sm font-bold text-slate-500">
+                <p class="text-xs font-bold text-slate-500">
                     Complete printing in four easy steps
                 </p>
             </div>
 
-            <div class="space-y-3 flex-1 min-h-0">
+            <div class="space-y-2 flex-1 min-h-0">
                 @foreach ([
                     [
                         'icon' => 'wifi',
@@ -92,33 +92,33 @@
                         'label' => 'Insert coins and print',
                     ],
                 ] as $step => $item)
-                    <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-3 border border-slate-100">
-                        <div class="w-14 h-14 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
+                    <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-2.5 border border-slate-100">
+                        <div class="w-11 h-11 rounded-xl bg-slate-950 text-white flex items-center justify-center shadow shrink-0">
                             @switch($item['icon'])
                                 @case('wifi')
-                                    <x-heroicon-o-wifi class="w-7 h-7" />
+                                    <x-heroicon-o-wifi class="w-6 h-6" />
                                     @break
 
                                 @case('arrow-up-tray')
-                                    <x-heroicon-o-arrow-up-tray class="w-7 h-7" />
+                                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
                                     @break
 
                                 @case('magnifying-glass')
-                                    <x-heroicon-o-magnifying-glass class="w-7 h-7" />
+                                    <x-heroicon-o-magnifying-glass class="w-6 h-6" />
                                     @break
 
                                 @case('banknotes')
-                                    <x-heroicon-o-banknotes class="w-7 h-7" />
+                                    <x-heroicon-o-banknotes class="w-6 h-6" />
                                     @break
                             @endswitch
                         </div>
 
                         <div>
-                            <div class="text-xs font-black text-slate-400 uppercase leading-none mb-1">
+                            <div class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">
                                 Step {{ $step + 1 }}
                             </div>
 
-                            <div class="text-lg font-black text-slate-800 leading-tight">
+                            <div class="text-base font-black text-slate-800 leading-tight">
                                 {{ $item['label'] }}
                             </div>
                         </div>
@@ -126,26 +126,26 @@
                 @endforeach
             </div>
 
-            <div class="shrink-0 mt-3">
-                <div class="rounded-2xl bg-emerald-50 p-3 border border-emerald-200 mb-3">
-                    <div class="flex items-center gap-2 mb-1">
+            <div class="shrink-0 mt-2">
+                <div class="rounded-xl bg-emerald-50 p-2 border border-emerald-200 mb-2">
+                    <div class="flex items-center gap-2 mb-0.5">
                         <x-heroicon-o-signal class="w-4 h-4 text-emerald-900" />
 
-                        <h3 class="text-sm font-black text-emerald-900">
+                        <h3 class="text-xs font-black text-emerald-900">
                             Wireless Transfer
                         </h3>
                     </div>
 
-                    <p class="text-xs text-emerald-800 leading-snug font-bold">
-                        Upload documents directly from your phone through the kiosk Wi-Fi network.
+                    <p class="text-[11px] text-emerald-800 leading-snug font-bold">
+                        Upload documents through the kiosk Wi-Fi network.
                     </p>
                 </div>
 
                 <a
                     href="{{ route('kiosk.connect') }}"
-                    class="flex items-center justify-center gap-3 w-full rounded-2xl bg-slate-950 text-white text-2xl font-black py-4 text-center shadow-xl active:scale-95 transition"
+                    class="flex items-center justify-center gap-3 w-full rounded-2xl bg-slate-950 text-white text-xl font-black py-3.5 text-center shadow-xl active:scale-95 transition"
                 >
-                    <x-heroicon-o-printer class="w-7 h-7" />
+                    <x-heroicon-o-printer class="w-6 h-6" />
 
                     Start Printing
                 </a>
