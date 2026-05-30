@@ -35,178 +35,105 @@
                 </div>
             </div>
 
-            <div class="admin-scroll flex-1 min-h-0 overflow-y-auto pr-2">
-                <div class="grid grid-cols-2 gap-4">
-                    <section class="rounded-3xl bg-slate-100 p-5">
-                        <h3 class="text-2xl font-black text-slate-950 mb-4">
-                            Company
-                        </h3>
+            <div class="admin-scroll flex-1 min-h-0 overflow-y-scroll pr-2">
+                <section class="rounded-3xl bg-slate-100 p-5 mb-4">
+                    <h3 class="text-2xl font-black text-slate-950 mb-4">
+                        Company
+                    </h3>
 
-                        <div class="space-y-4">
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Kiosk Name
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $company?->kiosk_name ?? 'Piso Print' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Company Name
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $company?->name ?? 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Owner
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $company?->owner ?? 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Contact Number
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $company?->contact_number ?? 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Email
+                    <div class="grid grid-cols-2 gap-4">
+                        @foreach ([
+                            ['Kiosk Name', $company?->kiosk_name ?? 'Piso Print'],
+                            ['Company Name', $company?->name ?? 'Not set'],
+                            ['Owner', $company?->owner ?? 'Not set'],
+                            ['Contact Number', $company?->contact_number ?? 'Not set'],
+                            ['Email', $company?->email ?? 'Not set'],
+                            ['Address', $company?->address ?? 'Not set'],
+                        ] as [$label, $value])
+                            <div class="rounded-2xl bg-white p-4 shadow-sm">
+                                <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                    {{ $label }}
                                 </div>
 
                                 <div class="text-xl font-black text-slate-950 break-words">
-                                    {{ $company?->email ?? 'Not set' }}
+                                    {{ $value }}
                                 </div>
                             </div>
+                        @endforeach
+                    </div>
+                </section>
 
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Address
-                                </div>
+                <section class="rounded-3xl bg-slate-100 p-5 mb-4">
+                    <h3 class="text-2xl font-black text-slate-950 mb-4">
+                        Pricing
+                    </h3>
 
-                                <div class="text-base font-bold text-slate-800 leading-snug">
-                                    {{ $company?->address ?? 'Not set' }}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="rounded-3xl bg-slate-100 p-5">
-                        <h3 class="text-2xl font-black text-slate-950 mb-4">
-                            Kiosk / Pricing
-                        </h3>
-
-                        <div class="grid grid-cols-2 gap-4 mb-5">
-                            <div class="rounded-2xl bg-white p-4 shadow-sm">
-                                <div class="text-xs font-black text-slate-500 uppercase mb-2">
-                                    Black Price
-                                </div>
-
-                                <div class="text-3xl font-black text-slate-950 leading-none">
-                                    ₱{{ $company?->black_price_per_page ?? 1 }}
-                                </div>
-
-                                <div class="text-sm font-bold text-slate-500 mt-1">
-                                    per page
-                                </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Black Price
                             </div>
 
-                            <div class="rounded-2xl bg-white p-4 shadow-sm">
-                                <div class="text-xs font-black text-slate-500 uppercase mb-2">
-                                    Colored Price
-                                </div>
+                            <div class="text-4xl font-black text-slate-950 leading-none">
+                                ₱{{ $company?->black_price_per_page ?? 1 }}
+                            </div>
 
-                                <div class="text-3xl font-black text-slate-950 leading-none">
-                                    ₱{{ $company?->color_price_per_page ?? 3 }}
-                                </div>
-
-                                <div class="text-sm font-bold text-slate-500 mt-1">
-                                    per page
-                                </div>
+                            <div class="text-sm font-bold text-slate-500 mt-2">
+                                per page
                             </div>
                         </div>
 
-                        <div class="rounded-2xl bg-white p-4 shadow-sm mb-5">
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Colored Price
+                            </div>
+
+                            <div class="text-4xl font-black text-slate-950 leading-none">
+                                ₱{{ $company?->color_price_per_page ?? 3 }}
+                            </div>
+
+                            <div class="text-sm font-bold text-slate-500 mt-2">
+                                per page
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
                             <div class="text-xs font-black text-slate-500 uppercase mb-2">
                                 Custom Pricing
                             </div>
 
-                            <div class="text-xl font-black text-slate-950">
+                            <div class="text-2xl font-black text-slate-950">
                                 {{ $company?->allow_custom_pricing ? 'Enabled' : 'Disabled' }}
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <h3 class="text-2xl font-black text-slate-950 mb-4">
-                            Organization
-                        </h3>
+                <section class="rounded-3xl bg-slate-100 p-5 mb-4">
+                    <h3 class="text-2xl font-black text-slate-950 mb-4">
+                        Organization
+                    </h3>
 
-                        <div class="space-y-4">
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    School Name
+                    <div class="grid grid-cols-2 gap-4">
+                        @foreach ([
+                            ['School Name', $organization?->school_name ?? 'Not set'],
+                            ['Serial Number', $organization?->unit_serial_number ?? 'Not set'],
+                            ['Contact Person', $organization?->contact_person ?? 'Not set'],
+                            ['Contact Number', $organization?->contact_number ?? 'Not set'],
+                            ['Address', $organization?->address ?? 'Not set'],
+                        ] as [$label, $value])
+                            <div class="rounded-2xl bg-white p-4 shadow-sm">
+                                <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                    {{ $label }}
                                 </div>
 
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $organization?->school_name ?? 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Serial Number
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $organization?->unit_serial_number ?? 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Contact Person
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $organization?->contact_person ?? 'Not set' }}
+                                <div class="text-xl font-black text-slate-950 break-words">
+                                    {{ $value }}
                                 </div>
                             </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Contact Number
-                                </div>
-
-                                <div class="text-xl font-black text-slate-950">
-                                    {{ $organization?->contact_number ?? 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="text-xs font-black text-slate-500 uppercase mb-1">
-                                    Address
-                                </div>
-
-                                <div class="text-base font-bold text-slate-800 leading-snug">
-                                    {{ $organization?->address ?? 'Not set' }}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
+                        @endforeach
+                    </div>
+                </section>
             </div>
         </main>
     </div>

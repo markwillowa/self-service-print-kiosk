@@ -1,14 +1,10 @@
 <x-kiosk-layout title="Settings">
     <style>
-        .admin-scroll::-webkit-scrollbar {
-            width: 18px;
-        }
-
+        .admin-scroll::-webkit-scrollbar { width: 18px; }
         .admin-scroll::-webkit-scrollbar-track {
             background: rgba(148, 163, 184, 0.15);
             border-radius: 999px;
         }
-
         .admin-scroll::-webkit-scrollbar-thumb {
             background: rgba(71, 85, 105, 0.75);
             border-radius: 999px;
@@ -35,105 +31,123 @@
                 </div>
             </div>
 
-            <div class="admin-scroll flex-1 min-h-0 overflow-y-auto pr-2">
-                <div class="grid grid-cols-3 gap-4 mb-5">
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Kiosk Name
+            <div class="admin-scroll flex-1 min-h-0 overflow-y-scroll pr-2">
+                <section class="rounded-3xl bg-slate-100 p-5 mb-4">
+                    <h3 class="text-2xl font-black text-slate-950 mb-4">
+                        Kiosk & Pricing
+                    </h3>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Kiosk Name
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950 break-words">
+                                {{ $globalCompany?->kiosk_name ?? 'Piso Print' }}
+                            </div>
                         </div>
 
-                        <div class="text-3xl font-black text-slate-950 leading-tight">
-                            {{ $globalCompany?->kiosk_name ?? 'Piso Print' }}
-                        </div>
-                    </div>
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Black Price
+                            </div>
 
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Black Price
-                        </div>
+                            <div class="text-4xl font-black text-slate-950 leading-none">
+                                ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
+                            </div>
 
-                        <div class="text-4xl font-black text-slate-950 leading-none">
-                            ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
-                        </div>
-
-                        <div class="text-sm font-bold text-slate-500 mt-2">
-                            per page
-                        </div>
-                    </div>
-
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Colored Price
+                            <div class="text-sm font-bold text-slate-500 mt-2">
+                                per page
+                            </div>
                         </div>
 
-                        <div class="text-4xl font-black text-slate-950 leading-none">
-                            ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
-                        </div>
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Colored Price
+                            </div>
 
-                        <div class="text-sm font-bold text-slate-500 mt-2">
-                            per page
-                        </div>
-                    </div>
-                </div>
+                            <div class="text-4xl font-black text-slate-950 leading-none">
+                                ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
+                            </div>
 
-                <div class="grid grid-cols-2 gap-4 mb-5">
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Printer Mode
-                        </div>
-
-                        <div class="text-2xl font-black text-slate-950">
-                            {{ config('services.printer.mode') }}
+                            <div class="text-sm font-bold text-slate-500 mt-2">
+                                per page
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Printer Name
+                <section class="rounded-3xl bg-slate-100 p-5 mb-4">
+                    <h3 class="text-2xl font-black text-slate-950 mb-4">
+                        Printer
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Printer Mode
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950">
+                                {{ config('services.printer.mode') }}
+                            </div>
                         </div>
 
-                        <div class="text-2xl font-black text-slate-950 break-words">
-                            {{ config('services.printer.name') ?: 'Default Printer' }}
-                        </div>
-                    </div>
-                </div>
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Printer Name
+                            </div>
 
-                <div class="grid grid-cols-3 gap-4 mb-5">
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Wi-Fi Name
-                        </div>
-
-                        <div class="text-2xl font-black text-slate-950">
-                            {{ $globalKioskName ?? 'Piso Print' }}
-                        </div>
-                    </div>
-
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Wi-Fi Password
-                        </div>
-
-                        <div class="text-2xl font-black text-slate-950">
-                            12345678
+                            <div class="text-2xl font-black text-slate-950 break-words">
+                                {{ config('services.printer.name') ?: 'Default Printer' }}
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    <div class="rounded-3xl bg-slate-100 p-5">
-                        <div class="text-sm font-black text-slate-500 uppercase mb-3">
-                            Queue Driver
+                <section class="rounded-3xl bg-slate-100 p-5 mb-4">
+                    <h3 class="text-2xl font-black text-slate-950 mb-4">
+                        Network & Queue
+                    </h3>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Wi-Fi Name
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950 break-words">
+                                {{ $globalKioskName ?? 'Piso Print' }}
+                            </div>
                         </div>
 
-                        <div class="text-2xl font-black text-slate-950">
-                            {{ config('queue.default') }}
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Wi-Fi Password
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950">
+                                12345678
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl bg-white p-4 shadow-sm">
+                            <div class="text-xs font-black text-slate-500 uppercase mb-2">
+                                Queue Driver
+                            </div>
+
+                            <div class="text-2xl font-black text-slate-950">
+                                {{ config('queue.default') }}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="rounded-3xl bg-slate-950 text-white p-5">
-                    <div class="text-lg font-black uppercase mb-4">
+                <section class="rounded-3xl bg-slate-950 text-white p-5 mb-4">
+                    <h3 class="text-2xl font-black mb-4">
                         System Information
-                    </div>
+                    </h3>
 
                     <div class="grid grid-cols-2 gap-4 text-base font-bold">
                         <div>
@@ -164,7 +178,7 @@
                             </span>
                         </div>
                     </div>
-                </div>
+                </section>
             </div>
         </main>
     </div>
