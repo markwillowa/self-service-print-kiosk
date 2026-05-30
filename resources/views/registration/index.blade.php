@@ -1,5 +1,24 @@
 <x-kiosk-layout title="Register Kiosk">
-    <div class="h-full flex flex-col min-h-0 gap-4 py-2">
+    <style>
+        .registration-scroll::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .registration-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .registration-scroll::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.35);
+            border-radius: 999px;
+        }
+
+        .registration-scroll {
+            scrollbar-width: thin;
+        }
+    </style>
+
+    <div class="h-full flex flex-col min-h-0 gap-4 py-2 max-h-full">
         <div class="flex items-center gap-4 shrink-0">
             <div class="w-20 h-20 rounded-3xl bg-slate-950 text-white flex items-center justify-center shrink-0 shadow-xl">
                 <x-heroicon-o-building-office-2 class="w-11 h-11" />
@@ -27,11 +46,11 @@
             method="POST"
             action="{{ route('registration.store') }}"
             enctype="multipart/form-data"
-            class="flex-1 min-h-0 flex flex-col"
+            class="flex-1 min-h-0 flex flex-col overflow-hidden"
         >
             @csrf
 
-            <div class="bg-white/90 rounded-3xl p-5 shadow-xl border border-white flex-1 min-h-0 overflow-y-auto">
+            <div class="registration-scroll bg-white/90 rounded-3xl p-5 shadow-xl border border-white flex-1 min-h-0 overflow-y-auto">
                 <div class="grid grid-cols-3 gap-3 mb-5">
                     <div
                         id="stepIndicator1"
