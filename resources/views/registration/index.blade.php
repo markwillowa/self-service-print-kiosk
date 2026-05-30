@@ -1,20 +1,29 @@
 <x-kiosk-layout title="Register Kiosk">
     <style>
         .registration-scroll::-webkit-scrollbar {
-            width: 10px;
+            width: 20px;
         }
 
         .registration-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .registration-scroll::-webkit-scrollbar-thumb {
-            background: rgba(100, 116, 139, 0.35);
+            background: rgba(148, 163, 184, 0.15);
             border-radius: 999px;
         }
 
+        .registration-scroll::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0.75);
+            border-radius: 999px;
+            border: 3px solid transparent;
+            background-clip: content-box;
+        }
+
+        .registration-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(51, 65, 85, 0.9);
+            background-clip: content-box;
+        }
+
         .registration-scroll {
-            scrollbar-width: thin;
+            scrollbar-width: auto;
+            scrollbar-color: rgba(71, 85, 105, 0.75) rgba(148, 163, 184, 0.15);
         }
     </style>
 
