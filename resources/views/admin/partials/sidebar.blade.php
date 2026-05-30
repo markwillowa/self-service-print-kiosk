@@ -1,5 +1,5 @@
-<aside class="bg-slate-950 text-white rounded-3xl p-4 flex flex-col shadow-xl">
-    <div class="mb-5">
+<aside class="bg-slate-950 text-white rounded-3xl p-4 flex flex-col h-full shadow-xl overflow-hidden">
+    <div class="mb-5 shrink-0">
         <h1 class="text-3xl font-black leading-none">
             Admin
         </h1>
@@ -9,7 +9,7 @@
         </p>
     </div>
 
-    <nav class="space-y-2 flex-1 overflow-y-auto pr-1">
+    <nav class="flex-1 overflow-y-auto pr-2 space-y-2 min-h-0">
         @foreach ([
             ['route' => 'admin.dashboard', 'label' => 'Dashboard'],
             ['route' => 'admin.print-jobs', 'label' => 'Print Jobs'],
@@ -40,7 +40,7 @@
     <form
         method="POST"
         action="{{ route('admin.logout') }}"
-        class="pt-4"
+        class="pt-4 shrink-0"
     >
         @csrf
 
