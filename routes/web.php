@@ -171,16 +171,6 @@ Route::middleware([
         [KioskController::class, 'preview']
     )->name('kiosk.preview');
 
-    Route::post('/open-keyboard', function () {
-        shell_exec(
-            'env WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 squeekboard >/dev/null 2>&1 &'
-        );
-
-        return response()->json([
-            'success' => true,
-        ]);
-    })->name('kiosk.open-keyboard');
-
     Route::post(
         '/preview/{printJob}/confirm',
         [KioskController::class, 'confirm']
