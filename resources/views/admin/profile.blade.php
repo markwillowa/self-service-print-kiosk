@@ -15,10 +15,10 @@
         }
     </style>
 
-    <div class="h-full grid grid-cols-[240px_1fr] gap-4">
+    <div class="h-full min-h-0 grid grid-cols-[240px_1fr] gap-4">
         @include('admin.partials.sidebar')
 
-        <main class="bg-white rounded-3xl p-5 shadow-xl overflow-hidden flex flex-col min-h-0">
+        <main class="bg-white rounded-3xl p-5 shadow-xl overflow-hidden flex flex-col h-full">
             <div class="flex items-center gap-4 mb-5 shrink-0">
                 <div class="w-16 h-16 rounded-3xl bg-slate-950 text-white flex items-center justify-center shrink-0 shadow-xl">
                     <x-heroicon-o-building-office-2 class="w-9 h-9" />
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="admin-scroll flex-1 min-h-0 overflow-y-scroll pr-2">
+            <div class="admin-scroll h-full overflow-y-auto pr-2">
                 <section class="rounded-3xl bg-slate-100 p-5 mb-4">
                     <h3 class="text-2xl font-black text-slate-950 mb-4">
                         Company
