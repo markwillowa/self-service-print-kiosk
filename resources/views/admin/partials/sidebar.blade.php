@@ -9,7 +9,7 @@
         </p>
     </div>
 
-    <nav class="flex-1 overflow-y-auto pr-2 space-y-2 min-h-0">
+    <nav class="flex-1 overflow-y-auto pr-2 space-y-2 min-h-0 pb-4">
         @foreach ([
             ['route' => 'admin.dashboard', 'label' => 'Dashboard'],
             ['route' => 'admin.print-jobs', 'label' => 'Print Jobs'],
@@ -40,7 +40,7 @@
     <form
         method="POST"
         action="{{ route('admin.logout') }}"
-        class="pt-4 shrink-0"
+        class="pt-6 mt-4 border-t border-slate-800 shrink-0"
     >
         @csrf
 

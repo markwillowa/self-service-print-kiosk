@@ -1,60 +1,78 @@
 <x-kiosk-layout title="Coins">
-    <div class="h-full grid grid-cols-[180px_1fr] gap-3">
+    <style>
+        .admin-scroll::-webkit-scrollbar {
+            width: 18px;
+        }
+
+        .admin-scroll::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.15);
+            border-radius: 999px;
+        }
+
+        .admin-scroll::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0.75);
+            border-radius: 999px;
+        }
+    </style>
+
+    <div class="h-full grid grid-cols-[240px_1fr] gap-4">
         @include('admin.partials.sidebar')
 
-        <main class="bg-white rounded-2xl p-3 shadow-sm overflow-y-auto">
-            <div class="flex items-center justify-between mb-3">
+        <main class="bg-white rounded-3xl p-5 shadow-xl overflow-hidden flex flex-col min-h-0">
+            <div class="flex items-center justify-between mb-5 shrink-0">
                 <div>
-                    <h2 class="text-3xl font-black text-slate-950">
+                    <h2 class="text-4xl font-black text-slate-950 leading-none mb-2">
                         Coins & Credits
                     </h2>
 
-                    <p class="text-sm text-slate-500 font-bold">
+                    <p class="text-base text-slate-500 font-bold">
                         Coin transaction history
                     </p>
                 </div>
 
-                <div class="rounded-xl bg-emerald-100 px-4 py-3">
-                    <div class="text-[10px] uppercase font-black text-emerald-700">
+                <div class="rounded-3xl bg-emerald-100 px-5 py-4 shadow-sm">
+                    <div class="text-xs uppercase font-black text-emerald-700 mb-1">
                         Total Credits
                     </div>
 
-                    <div class="text-2xl font-black text-emerald-900">
+                    <div class="text-4xl font-black text-emerald-900 leading-none">
                         ₱{{ $totalCredits }}
                     </div>
                 </div>
             </div>
 
-            <table class="w-full text-left">
-                <thead>
-                <tr class="border-b text-[10px] text-slate-500 uppercase">
-                    <th class="py-2">Amount</th>
-                    <th class="py-2">Source</th>
-                    <th class="py-2">Date</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                @foreach ($transactions as $transaction)
-                    <tr class="border-b">
-                        <td class="py-2 text-sm font-bold">
-                            ₱{{ $transaction->amount }}
-                        </td>
-
-                        <td class="py-2 text-sm font-bold">
-                            {{ $transaction->source }}
-                        </td>
-
-                        <td class="py-2 text-xs font-bold text-slate-500">
-                            {{ $transaction->created_at->format('M d, h:i A') }}
-                        </td>
+            <div class="admin-scroll flex-1 min-h-0 overflow-y-auto pr-2">
+                <table class="w-full text-left">
+                    <thead class="sticky top-0 bg-white z-10">
+                    <tr class="border-b text-xs text-slate-500 uppercase">
+                        <th class="py-3">Amount</th>
+                        <th class="py-3">Source</th>
+                        <th class="py-3">Date</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
 
-            <div class="mt-3">
-                {{ $transactions->links() }}
+                    <tbody>
+                    @foreach ($transactions as $transaction)
+                        <tr class="border-b last:border-b-0">
+                            <td class="py-4 text-base font-bold text-slate-900">
+                                ₱{{ $transaction->amount }}
+                            </td>
+
+                            <td class="py-4 text-base font-bold text-slate-900">
+                                {{ $transaction->source }}
+                            </td>
+
+                            <td class="py-4 text-sm font-bold text-slate-500">
+                                {{ $transaction->created_at->format('M d, h:i A') }}
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+
+                <div class="mt-4">
+                    {{ $transactions->links() }}
+                </div>
             </div>
         </main>
     </div>
