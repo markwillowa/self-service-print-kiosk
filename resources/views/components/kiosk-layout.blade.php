@@ -59,21 +59,34 @@
     draggable="false"
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
 >
-<main class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200">
+<main class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-slate-100 to-emerald-50">
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-200/40 blur-3xl"></div>
+        <div class="absolute -top-28 -left-28 w-[32rem] h-[32rem] rounded-full bg-blue-400/35 blur-3xl"></div>
 
-        <div class="absolute top-16 right-0 w-[30rem] h-[30rem] rounded-full bg-emerald-200/35 blur-3xl"></div>
+        <div class="absolute top-10 right-[-6rem] w-[36rem] h-[36rem] rounded-full bg-emerald-400/35 blur-3xl"></div>
 
-        <div class="absolute bottom-0 left-1/3 w-[26rem] h-[26rem] rounded-full bg-indigo-200/30 blur-3xl"></div>
+        <div class="absolute bottom-[-8rem] left-[25%] w-[34rem] h-[34rem] rounded-full bg-indigo-400/30 blur-3xl"></div>
+
+        <div class="absolute top-[35%] left-[45%] w-[18rem] h-[18rem] rounded-full bg-amber-300/25 blur-3xl"></div>
 
         <div
-            class="absolute inset-0 opacity-[0.035]"
+            class="absolute inset-0 opacity-[0.08]"
             style="
-                background-image:
-                radial-gradient(circle at 1px 1px, #000 1px, transparent 0);
-                background-size: 24px 24px;
-            "
+            background-image:
+            linear-gradient(rgba(15, 23, 42, 0.12) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(15, 23, 42, 0.12) 1px, transparent 1px);
+            background-size: 32px 32px;
+        "
+        ></div>
+
+        <div
+            class="absolute inset-0 opacity-[0.12]"
+            style="
+            background-image:
+            radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.35), transparent 28%),
+            radial-gradient(circle at 80% 25%, rgba(16, 185, 129, 0.35), transparent 30%),
+            radial-gradient(circle at 45% 90%, rgba(99, 102, 241, 0.35), transparent 32%);
+        "
         ></div>
     </div>
 

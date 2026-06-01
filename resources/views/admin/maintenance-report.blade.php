@@ -61,7 +61,7 @@
     $totalAmount = $completedJobs->sum('total_amount');
 @endphp
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -71,6 +71,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            overflow-y: auto;
+        }
+
         main,
         section,
         header,
@@ -95,6 +104,22 @@
         .page-break {
             break-before: page;
             page-break-before: always;
+        }
+
+        ::-webkit-scrollbar {
+            width: 18px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.15);
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(71, 85, 105, 0.75);
+            border-radius: 999px;
+            border: 4px solid transparent;
+            background-clip: content-box;
         }
 
         @media print {
@@ -136,7 +161,7 @@
     </style>
 </head>
 
-<body class="bg-slate-100 p-6">
+<body class="bg-slate-100 p-6 min-h-screen overflow-y-auto">
 <div class="no-print max-w-4xl mx-auto mb-4 flex justify-end">
     <button
         onclick="window.print()"
