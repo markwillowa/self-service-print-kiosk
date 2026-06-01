@@ -57,17 +57,17 @@ class AdminController extends Controller
 
             'recentJobs' => PrintJob::query()
                 ->latest()
-                ->take(10)
-                ->get(),
+                ->paginate(10)
+                ->withQueryString(),
         ]);
     }
 
-    public function printJobs(): View
+    public function printJobs()
     {
         return view('admin.print-jobs', [
             'jobs' => PrintJob::query()
                 ->latest()
-                ->paginate(20),
+                ->paginate(10),
         ]);
     }
 
@@ -76,7 +76,7 @@ class AdminController extends Controller
         return view('admin.coins', [
             'transactions' => CreditTransaction::query()
                 ->latest()
-                ->paginate(20),
+                ->paginate(10),
 
             'totalCredits' => CreditTransaction::sum('amount'),
         ]);
@@ -261,5 +261,31 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'User created.');
+    }
+
+    public function updatePricing(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'black_price_per_page' => ['required', 'integer', 'min:1', 'max:999'],
+            'color_price_per_page' => ['required', 'integer', 'min:1', 'max:999'],
+        ]);
+
+        $company = Company::query()
+            ->latest()
+            ->firstOrFail();
+
+        if ($company->kiosk_name !== 'Self-Service Print') {
+            return back()->withErrors([
+                'pricing' => 'Pricing can only be edited for Self-Service Print.',
+            ]);
+        }
+
+        $company->update([
+            'black_price_per_page' => $validated['black_price_per_page'],
+            'color_price_per_page' => $validated['color_price_per_page'],
+            'allow_custom_pricing' => true,
+        ]);
+
+        return back()->with('success', 'Pricing updated successfully.');
     }
 }

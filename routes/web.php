@@ -113,6 +113,11 @@ Route::middleware([
                 '/admin/users',
                 [AdminController::class, 'storeUser']
             )->name('admin.users.store');
+
+            Route::post(
+                '/admin/profile/pricing',
+                [AdminController::class, 'updatePricing']
+            )->name('admin.profile.pricing.update');
         });
     });
 

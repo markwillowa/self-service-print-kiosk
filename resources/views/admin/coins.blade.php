@@ -36,7 +36,23 @@
                     </div>
 
                     <div class="text-4xl font-black text-emerald-900 leading-none">
-                        ₱{{ $totalCredits }}
+                        ₱{{ number_format($totalCredits, 2) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-4 shrink-0">
+                <h3 class="text-2xl font-black text-slate-950">
+                    Transactions
+                </h3>
+
+                <div class="rounded-2xl bg-slate-100 px-4 py-3">
+                    <div class="text-xs font-black uppercase text-slate-500">
+                        Total Records
+                    </div>
+
+                    <div class="text-2xl font-black text-slate-950">
+                        {{ $transactions->total() }}
                     </div>
                 </div>
             </div>
@@ -52,10 +68,10 @@
                     </thead>
 
                     <tbody>
-                    @foreach ($transactions as $transaction)
+                    @forelse ($transactions as $transaction)
                         <tr class="border-b last:border-b-0">
-                            <td class="py-4 text-base font-bold text-slate-900">
-                                ₱{{ $transaction->amount }}
+                            <td class="py-4 text-base font-bold text-emerald-700">
+                                ₱{{ number_format($transaction->amount, 2) }}
                             </td>
 
                             <td class="py-4 text-base font-bold text-slate-900">
@@ -63,15 +79,58 @@
                             </td>
 
                             <td class="py-4 text-sm font-bold text-slate-500">
-                                {{ $transaction->created_at->format('M d, h:i A') }}
+                                {{ $transaction->created_at->format('M d, Y h:i A') }}
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td
+                                colspan="3"
+                                class="py-16 text-center text-slate-400 font-black text-lg"
+                            >
+                                No transactions found.
+                            </td>
+                        </tr>
+                    @endforelse
                     </tbody>
                 </table>
+            </div>
 
-                <div class="mt-4">
-                    {{ $transactions->links() }}
+            <div class="pt-5 border-t border-slate-200 mt-4 shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-black text-slate-500">
+                        Page {{ $transactions->currentPage() }}
+                        of
+                        {{ $transactions->lastPage() }}
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        @if ($transactions->onFirstPage())
+                            <span class="rounded-2xl bg-slate-100 text-slate-400 px-6 py-3 text-base font-black">
+                                Previous
+                            </span>
+                        @else
+                            <a
+                                href="{{ $transactions->previousPageUrl() }}"
+                                class="rounded-2xl bg-slate-200 text-slate-900 px-6 py-3 text-base font-black active:scale-95 transition"
+                            >
+                                Previous
+                            </a>
+                        @endif
+
+                        @if ($transactions->hasMorePages())
+                            <a
+                                href="{{ $transactions->nextPageUrl() }}"
+                                class="rounded-2xl bg-slate-950 text-white px-6 py-3 text-base font-black shadow-lg active:scale-95 transition"
+                            >
+                                Next
+                            </a>
+                        @else
+                            <span class="rounded-2xl bg-slate-100 text-slate-400 px-6 py-3 text-base font-black">
+                                Next
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </main>
