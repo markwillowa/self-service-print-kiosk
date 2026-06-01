@@ -137,7 +137,7 @@
             <form
                 method="POST"
                 action="{{ route('kiosk.update-settings', $printJob) }}"
-                class="grid grid-cols-[1fr_360px] gap-5"
+                class="grid grid-cols-[1fr_320px] gap-5"
             >
                 @csrf
 
@@ -296,7 +296,7 @@
                         <button
                             type="button"
                             onclick="keyboardBackspace()"
-                            class="col-span-1 rounded-2xl bg-red-100 text-red-700 h-16 text-base font-black active:scale-95 transition"
+                            class="rounded-2xl bg-red-100 text-red-700 h-16 text-base font-black active:scale-95 transition"
                         >
                             Delete
                         </button>
@@ -388,18 +388,14 @@
         }
 
         function openCancelModal() {
-            const modal = document.getElementById(
-                'cancelModal'
-            );
+            const modal = document.getElementById('cancelModal');
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
 
         function closeCancelModal() {
-            const modal = document.getElementById(
-                'cancelModal'
-            );
+            const modal = document.getElementById('cancelModal');
 
             modal.classList.remove('flex');
             modal.classList.add('hidden');
@@ -410,25 +406,46 @@
             activeKeyboardMode = mode;
 
             document.querySelectorAll('.keyboard-input').forEach((input) => {
-                input.classList.remove('border-slate-950', 'bg-white');
-                input.classList.add('border-transparent', 'bg-slate-100');
+                input.classList.remove(
+                    'border-slate-950',
+                    'bg-white',
+                    'ring-4',
+                    'ring-slate-300'
+                );
+
+                input.classList.add(
+                    'border-transparent',
+                    'bg-slate-100'
+                );
             });
 
-            activeKeyboardInput.classList.remove('border-transparent', 'bg-slate-100');
-            activeKeyboardInput.classList.add('border-slate-950', 'bg-white');
+            activeKeyboardInput.classList.remove(
+                'border-transparent',
+                'bg-slate-100'
+            );
 
-            const hint = document.getElementById('keyboardHint');
+            activeKeyboardInput.classList.add(
+                'border-slate-950',
+                'bg-white',
+                'ring-4',
+                'ring-slate-300'
+            );
+
             const pageKeys = document.querySelectorAll('.keyboard-page-key');
 
             if (mode === 'copies') {
-                hint.textContent = 'Copies: numbers only';
                 pageKeys.forEach((button) => {
-                    button.classList.add('opacity-40', 'pointer-events-none');
+                    button.classList.add(
+                        'opacity-40',
+                        'pointer-events-none'
+                    );
                 });
             } else {
-                hint.textContent = 'Pages: numbers, comma, and dash allowed';
                 pageKeys.forEach((button) => {
-                    button.classList.remove('opacity-40', 'pointer-events-none');
+                    button.classList.remove(
+                        'opacity-40',
+                        'pointer-events-none'
+                    );
                 });
             }
         }
@@ -463,19 +480,6 @@
             }
 
             activeKeyboardInput.value = '';
-        }
-
-        function keyboardDone() {
-            if (! activeKeyboardInput) {
-                return;
-            }
-
-            if (
-                activeKeyboardMode === 'copies' &&
-                activeKeyboardInput.value === ''
-            ) {
-                activeKeyboardInput.value = '1';
-            }
         }
 
         @if ($errors->any())
