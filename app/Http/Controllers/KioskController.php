@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessPrintJob;
+use App\Models\Company;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
 use App\Services\FileConverter;
@@ -462,13 +463,32 @@ class KioskController extends Controller
 
     public function connect(): View
     {
+        $company = Company::query()
+            ->latest()
+            ->first();
+
+        $kioskName =
+            $company?->kiosk_name
+            ?? 'Piso Print';
+
+        $wifiSsid = match ($kioskName) {
+            'Self-Service Print' => 'SelfServicePrint',
+            default => 'PisoPrint',
+        };
+
         $baseUrl = config('app.url');
 
         return view('kiosk.connect', [
-            'wifiSsid' => $globalKioskName ?? 'PisoPrint',
+            'wifiSsid' => $wifiSsid,
+
             'wifiPassword' => '12345678',
-            'uploadUrl' => $baseUrl . '/upload',
-            'wifiQr' => 'WIFI:T:WPA;S:PisoPrint;P:12345678;;',
+
+            'uploadUrl' => $baseUrl . '/mobile-upload',
+
+            'wifiQr' =>
+                'WIFI:T:WPA;S:' .
+                $wifiSsid .
+                ';P:12345678;;',
         ]);
     }
 

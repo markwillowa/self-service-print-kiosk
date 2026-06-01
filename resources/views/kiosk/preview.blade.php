@@ -107,7 +107,7 @@
         id="editModal"
         class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
     >
-        <div class="w-full max-w-[860px] max-h-[620px] overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl">
+        <div class="w-full max-w-[1100px] max-h-[650px] overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-5">
                 <div>
                     <h3 class="text-3xl font-black text-slate-950 leading-none mb-2">
@@ -115,7 +115,7 @@
                     </h3>
 
                     <p class="text-sm text-slate-500 font-bold">
-                        Default: Black, Short, Portrait, All pages, 1 copy.
+                        Tap Copies or Page Selection, then use the keypad.
                     </p>
                 </div>
 
@@ -137,140 +137,179 @@
             <form
                 method="POST"
                 action="{{ route('kiosk.update-settings', $printJob) }}"
-                class="grid grid-cols-2 gap-4"
+                class="grid grid-cols-[1fr_360px] gap-5"
             >
                 @csrf
 
-                <div>
-                    <label class="block text-sm font-black mb-2 text-slate-700">
-                        Color
-                    </label>
+                <div class="grid grid-cols-2 gap-4 content-start">
+                    <div>
+                        <label class="block text-sm font-black mb-2 text-slate-700">
+                            Color
+                        </label>
 
-                    <select
-                        name="print_mode"
-                        class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        <select
+                            name="print_mode"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        >
+                            <option value="black" @selected(old('print_mode', $currentPrintMode) === 'black')>
+                                Black
+                            </option>
+
+                            <option value="color" @selected(old('print_mode', $currentPrintMode) === 'color')>
+                                Colored
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-black mb-2 text-slate-700">
+                            Paper Size
+                        </label>
+
+                        <select
+                            name="paper_size"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        >
+                            <option value="short" @selected(old('paper_size', $currentPaperSize) === 'short')>
+                                Short
+                            </option>
+
+                            <option value="long" @selected(old('paper_size', $currentPaperSize) === 'long')>
+                                Long
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-black mb-2 text-slate-700">
+                            Orientation
+                        </label>
+
+                        <select
+                            name="orientation"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        >
+                            <option value="portrait" @selected(old('orientation', $currentOrientation) === 'portrait')>
+                                Portrait
+                            </option>
+
+                            <option value="landscape" @selected(old('orientation', $currentOrientation) === 'landscape')>
+                                Landscape
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-black mb-2 text-slate-700">
+                            Copies
+                        </label>
+
+                        <input
+                            id="copiesInput"
+                            type="text"
+                            name="copies"
+                            value="{{ old('copies', $printJob->copies ?: 1) }}"
+                            readonly
+                            required
+                            class="keyboard-input w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black cursor-pointer border-4 border-transparent"
+                            autocomplete="off"
+                            spellcheck="false"
+                            onclick="selectKeyboardField('copiesInput', 'copies')"
+                        >
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block text-sm font-black mb-2 text-slate-700">
+                            Page Selection
+                        </label>
+
+                        <input
+                            id="pageSelectionInput"
+                            type="text"
+                            name="page_selection"
+                            value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
+                            placeholder="All or 1-3,5"
+                            readonly
+                            class="keyboard-input w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black cursor-pointer border-4 border-transparent"
+                            autocomplete="off"
+                            spellcheck="false"
+                            onclick="selectKeyboardField('pageSelectionInput', 'pages')"
+                        >
+
+                        <p class="mt-2 text-xs font-bold text-slate-500">
+                            Leave blank for all pages. Example: 1-3,5
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="resetDefaultSettings()"
+                        class="rounded-2xl bg-slate-200 text-slate-900 h-14 text-lg font-black active:scale-95 transition"
                     >
-                        <option
-                            value="black"
-                            @selected(old('print_mode', $currentPrintMode) === 'black')
-                        >
-                            Black
-                        </option>
+                        Reset Default
+                    </button>
 
-                        <option
-                            value="color"
-                            @selected(old('print_mode', $currentPrintMode) === 'color')
-                        >
-                            Colored
-                        </option>
-                    </select>
+                    <button
+                        type="submit"
+                        class="rounded-2xl bg-slate-950 text-white h-14 text-lg font-black shadow-lg active:scale-95 transition"
+                    >
+                        Apply Settings
+                    </button>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-black mb-2 text-slate-700">
-                        Paper Size
-                    </label>
+                <div class="rounded-3xl bg-slate-100 p-4">
+                    <div class="grid grid-cols-3 gap-2">
+                        @foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9] as $number)
+                            <button
+                                type="button"
+                                onclick="keyboardPress('{{ $number }}')"
+                                class="rounded-2xl bg-slate-950 text-white h-16 text-2xl font-black active:scale-95 transition"
+                            >
+                                {{ $number }}
+                            </button>
+                        @endforeach
 
-                    <select
-                        name="paper_size"
-                        class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
-                    >
-                        <option
-                            value="short"
-                            @selected(old('paper_size', $currentPaperSize) === 'short')
+                        <button
+                            type="button"
+                            onclick="keyboardPress('-')"
+                            class="keyboard-page-key rounded-2xl bg-slate-200 text-slate-950 h-16 text-2xl font-black active:scale-95 transition"
                         >
-                            Short
-                        </option>
+                            -
+                        </button>
 
-                        <option
-                            value="long"
-                            @selected(old('paper_size', $currentPaperSize) === 'long')
+                        <button
+                            type="button"
+                            onclick="keyboardPress('0')"
+                            class="rounded-2xl bg-slate-950 text-white h-16 text-2xl font-black active:scale-95 transition"
                         >
-                            Long
-                        </option>
-                    </select>
-                </div>
+                            0
+                        </button>
 
-                <div>
-                    <label class="block text-sm font-black mb-2 text-slate-700">
-                        Orientation
-                    </label>
-
-                    <select
-                        name="orientation"
-                        class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
-                    >
-                        <option
-                            value="portrait"
-                            @selected(old('orientation', $currentOrientation) === 'portrait')
+                        <button
+                            type="button"
+                            onclick="keyboardPress(',')"
+                            class="keyboard-page-key rounded-2xl bg-slate-200 text-slate-950 h-16 text-2xl font-black active:scale-95 transition"
                         >
-                            Portrait
-                        </option>
+                            ,
+                        </button>
 
-                        <option
-                            value="landscape"
-                            @selected(old('orientation', $currentOrientation) === 'landscape')
+                        <button
+                            type="button"
+                            onclick="keyboardBackspace()"
+                            class="col-span-1 rounded-2xl bg-red-100 text-red-700 h-16 text-base font-black active:scale-95 transition"
                         >
-                            Landscape
-                        </option>
-                    </select>
+                            Delete
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="keyboardClear()"
+                            class="col-span-2 rounded-2xl bg-slate-300 text-slate-950 h-16 text-base font-black active:scale-95 transition"
+                        >
+                            Clear
+                        </button>
+                    </div>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-black mb-2 text-slate-700">
-                        Copies
-                    </label>
-
-                    <input
-                        type="number"
-                        name="copies"
-                        value="{{ old('copies', $printJob->copies ?: 1) }}"
-                        min="1"
-                        max="99"
-                        required
-                        inputmode="numeric"
-                        pattern="[0-9]*"
-                        class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
-                        autocomplete="off"
-                        spellcheck="false"
-                    >
-                </div>
-
-                <div class="col-span-2">
-                    <label class="block text-sm font-black mb-2 text-slate-700">
-                        Page Selection
-                    </label>
-
-                    <input
-                        type="text"
-                        name="page_selection"
-                        inputmode="numeric"
-                        value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
-                        placeholder="All or 1-3,5"
-                        class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
-                        autocomplete="off"
-                        spellcheck="false"
-                    >
-
-                    <p class="mt-2 text-xs font-bold text-slate-500">
-                        Leave blank for all pages.
-                    </p>
-                </div>
-
-                <button
-                    type="button"
-                    onclick="resetDefaultSettings()"
-                    class="rounded-2xl bg-slate-200 text-slate-900 h-14 text-lg font-black active:scale-95 transition"
-                >
-                    Reset Default
-                </button>
-
-                <button
-                    type="submit"
-                    class="rounded-2xl bg-slate-950 text-white h-14 text-lg font-black shadow-lg active:scale-95 transition"
-                >
-                    Apply Settings
-                </button>
             </form>
         </div>
     </div>
@@ -316,11 +355,18 @@
     </div>
 
     <script>
+        let activeKeyboardInput = null;
+        let activeKeyboardMode = 'copies';
+
         function openEditModal() {
             const modal = document.getElementById('editModal');
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            setTimeout(() => {
+                selectKeyboardField('copiesInput', 'copies');
+            }, 50);
         }
 
         function closeEditModal() {
@@ -332,14 +378,13 @@
 
         function resetDefaultSettings() {
             document.querySelector('select[name="print_mode"]').value = 'black';
-
             document.querySelector('select[name="paper_size"]').value = 'short';
-
             document.querySelector('select[name="orientation"]').value = 'portrait';
 
-            document.querySelector('input[name="page_selection"]').value = '';
+            document.getElementById('pageSelectionInput').value = '';
+            document.getElementById('copiesInput').value = '1';
 
-            document.querySelector('input[name="copies"]').value = '1';
+            selectKeyboardField('copiesInput', 'copies');
         }
 
         function openCancelModal() {
@@ -358,6 +403,79 @@
 
             modal.classList.remove('flex');
             modal.classList.add('hidden');
+        }
+
+        function selectKeyboardField(inputId, mode) {
+            activeKeyboardInput = document.getElementById(inputId);
+            activeKeyboardMode = mode;
+
+            document.querySelectorAll('.keyboard-input').forEach((input) => {
+                input.classList.remove('border-slate-950', 'bg-white');
+                input.classList.add('border-transparent', 'bg-slate-100');
+            });
+
+            activeKeyboardInput.classList.remove('border-transparent', 'bg-slate-100');
+            activeKeyboardInput.classList.add('border-slate-950', 'bg-white');
+
+            const hint = document.getElementById('keyboardHint');
+            const pageKeys = document.querySelectorAll('.keyboard-page-key');
+
+            if (mode === 'copies') {
+                hint.textContent = 'Copies: numbers only';
+                pageKeys.forEach((button) => {
+                    button.classList.add('opacity-40', 'pointer-events-none');
+                });
+            } else {
+                hint.textContent = 'Pages: numbers, comma, and dash allowed';
+                pageKeys.forEach((button) => {
+                    button.classList.remove('opacity-40', 'pointer-events-none');
+                });
+            }
+        }
+
+        function keyboardPress(value) {
+            if (! activeKeyboardInput) {
+                return;
+            }
+
+            if (
+                activeKeyboardMode === 'copies' &&
+                ! /^[0-9]$/.test(value)
+            ) {
+                return;
+            }
+
+            activeKeyboardInput.value += value;
+        }
+
+        function keyboardBackspace() {
+            if (! activeKeyboardInput) {
+                return;
+            }
+
+            activeKeyboardInput.value =
+                activeKeyboardInput.value.slice(0, -1);
+        }
+
+        function keyboardClear() {
+            if (! activeKeyboardInput) {
+                return;
+            }
+
+            activeKeyboardInput.value = '';
+        }
+
+        function keyboardDone() {
+            if (! activeKeyboardInput) {
+                return;
+            }
+
+            if (
+                activeKeyboardMode === 'copies' &&
+                activeKeyboardInput.value === ''
+            ) {
+                activeKeyboardInput.value = '1';
+            }
         }
 
         @if ($errors->any())

@@ -23,8 +23,8 @@
                         Wi-Fi Name
                     </div>
 
-                    <div class="text-3xl font-black text-slate-900 truncate">
-                        {{ $globalKioskName ?? 'Piso Print' }}
+                    <div class="text-[1.65rem] font-black text-slate-900 leading-tight break-words">
+                        {{ $wifiSsid ?? 'PisoPrint' }}
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
 
                         <ol class="text-base text-blue-800 space-y-1 list-decimal pl-5 font-bold leading-snug">
                             <li>Scan the QR code</li>
-                            <li>Connect to {{ $globalKioskName ?? 'Piso Print' }} Wi-Fi</li>
+                            <li>Connect to {{ $wifiSsid ?? 'Piso Print' }} Wi-Fi</li>
                             <li>Tap Next when connected</li>
                         </ol>
                     </div>
