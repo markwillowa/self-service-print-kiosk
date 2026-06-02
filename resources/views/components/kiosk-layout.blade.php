@@ -59,7 +59,9 @@
     draggable="false"
     class="w-screen h-screen overflow-hidden bg-slate-950 select-none touch-manipulation"
 >
-<main class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-slate-100 to-emerald-50">
+<main
+    class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-slate-100 to-emerald-50 p-4"
+>
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="absolute -top-28 -left-28 w-[32rem] h-[32rem] rounded-full bg-blue-400/35 blur-3xl"></div>
         <div class="absolute top-10 right-[-6rem] w-[36rem] h-[36rem] rounded-full bg-emerald-400/35 blur-3xl"></div>
@@ -475,6 +477,35 @@
 
     document.addEventListener('dragstart', (event) => {
         event.preventDefault();
+    });
+</script>
+
+<script>
+    async function checkPrinterStatus() {
+        try {
+            const response = await fetch('{{ route('kiosk.printer-status') }}', {
+                cache: 'no-store',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (! data.online) {
+                openPrinterOfflineModal();
+            }
+        } catch (error) {
+            openPrinterOfflineModal();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        checkPrinterStatus();
+
+        setInterval(() => {
+            checkPrinterStatus();
+        }, 10000);
     });
 </script>
 
