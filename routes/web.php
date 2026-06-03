@@ -251,21 +251,56 @@ Route::post('/shutdown', function () {
 Route::get('/printer-status', function () {
     $printerName = config('services.printer.name');
 
-    $process = new Process([
+    $lpstatProcess = new Process([
         'lpstat',
         '-p',
         $printerName,
     ]);
 
-    $process->run();
+    $lpstatProcess->run();
+
+    $lpstatOutput =
+        $lpstatProcess->getOutput() .
+        "\n" .
+        $lpstatProcess->getErrorOutput();
+
+    $usbProcess = new Process([
+        'lpinfo',
+        '-v',
+    ]);
+
+    $usbProcess->run();
+
+    $usbOutput =
+        $usbProcess->getOutput() .
+        "\n" .
+        $usbProcess->getErrorOutput();
+
+    $printerExistsInCups = $lpstatProcess->isSuccessful();
+
+    $printerLooksAccepting =
+        str_contains($lpstatOutput, 'is idle') ||
+        str_contains($lpstatOutput, 'now printing');
+
+    $usbPrinterDetected =
+        str_contains(strtolower($usbOutput), 'usb://') ||
+        str_contains(strtolower($usbOutput), 'epson');
+
+    $online =
+        $printerExistsInCups &&
+        $printerLooksAccepting &&
+        $usbPrinterDetected;
 
     return response()->json([
-        'online' => $process->isSuccessful(),
-        'message' => $process->isSuccessful()
+        'online' => $online,
+        'message' => $online
             ? 'Printer is online.'
-            : 'Printer is offline or not available.',
-        'output' => $process->getOutput(),
-        'error' => $process->getErrorOutput(),
+            : 'Printer is offline or not detected.',
+        'cups_ok' => $printerExistsInCups,
+        'cups_status_ok' => $printerLooksAccepting,
+        'usb_detected' => $usbPrinterDetected,
+        'lpstat_output' => trim($lpstatOutput),
+        'lpinfo_output' => trim($usbOutput),
     ]);
 })->middleware([
     'kiosk.registered',
