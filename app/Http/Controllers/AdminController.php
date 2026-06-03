@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Process\Process;
 
 class AdminController extends Controller
 {
@@ -287,5 +288,84 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Pricing updated successfully.');
+    }
+
+    public function systemUpdate(): RedirectResponse
+    {
+        $projectPath = '/var/www/self-service-print-kiosk';
+
+        $gitPull = new Process([
+            'git',
+            'pull',
+        ], $projectPath);
+
+        $gitPull->setTimeout(300);
+        $gitPull->run();
+
+        if (! $gitPull->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Git pull failed: ' . $gitPull->getErrorOutput(),
+            ]);
+        }
+
+        $output = trim(
+            $gitPull->getOutput() .
+            "\n" .
+            $gitPull->getErrorOutput()
+        );
+
+        $upToDate =
+            str_contains($output, 'Already up to date') ||
+            str_contains($output, 'Already up-to-date');
+
+        if ($upToDate) {
+            return back()->with(
+                'system_update',
+                'System is already up to date.'
+            );
+        }
+
+        $npmBuild = new Process([
+            'npm',
+            'run',
+            'build',
+        ], $projectPath);
+
+        $npmBuild->setTimeout(600);
+        $npmBuild->run();
+
+        if (! $npmBuild->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Update downloaded, but npm build failed: ' .
+                    $npmBuild->getErrorOutput(),
+            ]);
+        }
+
+        return back()->with(
+            'system_update',
+            'System update completed. Please restart the device to apply changes.'
+        );
+    }
+
+    public function systemReboot(): RedirectResponse
+    {
+        $process = new Process([
+            'sudo',
+            '-n',
+            '/usr/sbin/reboot',
+        ]);
+
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Reboot failed: ' . $process->getErrorOutput(),
+            ]);
+        }
+
+        return back();
     }
 }

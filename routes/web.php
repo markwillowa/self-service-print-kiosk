@@ -94,6 +94,16 @@ Route::middleware([
         )->name('admin.maintenance');
 
         Route::post(
+            '/admin/system-update',
+            [AdminController::class, 'systemUpdate']
+        )->name('admin.system-update');
+
+        Route::post(
+            '/admin/system-reboot',
+            [AdminController::class, 'systemReboot']
+        )->name('admin.system-reboot');
+
+        Route::post(
             '/admin/maintenance',
             [AdminController::class, 'storeMaintenance']
         )->name('admin.maintenance.store');

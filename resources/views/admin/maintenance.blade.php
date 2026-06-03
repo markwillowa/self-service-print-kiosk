@@ -44,18 +44,57 @@
                     </p>
                 </div>
 
-                <button
-                    type="button"
-                    onclick="openMaintenanceModal()"
-                    class="rounded-2xl bg-slate-950 text-white px-6 h-14 text-base font-black shadow-lg active:scale-95 transition"
-                >
-                    Add Record
-                </button>
+                <div class="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onclick="openSystemUpdateModal()"
+                        class="rounded-2xl bg-blue-600 text-white px-6 h-14 text-base font-black shadow-lg active:scale-95 transition"
+                    >
+                        System Update
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="openMaintenanceModal()"
+                        class="rounded-2xl bg-slate-950 text-white px-6 h-14 text-base font-black shadow-lg active:scale-95 transition"
+                    >
+                        Add Record
+                    </button>
+                </div>
             </div>
 
             @if (session('success'))
                 <div class="mb-4 rounded-2xl bg-emerald-100 text-emerald-800 p-4 text-base font-black shrink-0">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('system_update'))
+                <div class="mb-4 rounded-2xl bg-blue-100 text-blue-800 p-4 text-base font-black shrink-0">
+                    {{ session('system_update') }}
+
+                    @if (str_contains(session('system_update'), 'completed'))
+                        <form
+                            method="POST"
+                            action="{{ route('admin.system-reboot') }}"
+                            class="mt-3"
+                        >
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="rounded-2xl bg-red-600 text-white px-6 h-14 text-base font-black shadow-lg active:scale-95 transition"
+                            >
+                                Restart Device Now
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            @endif
+
+            @if ($errors->has('system_update'))
+                <div class="mb-4 rounded-2xl bg-red-100 text-red-700 p-4 text-base font-black shrink-0">
+                    {{ $errors->first('system_update') }}
                 </div>
             @endif
 
@@ -133,6 +172,45 @@
     </div>
 
     <div
+        id="systemUpdateModal"
+        class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
+    >
+        <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl text-center">
+            <h3 class="text-3xl font-black text-slate-950 mb-3">
+                Run System Update?
+            </h3>
+
+            <p class="text-base text-slate-500 font-bold mb-6">
+                This will pull the latest code, rebuild assets, and may require a device restart.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    type="button"
+                    onclick="closeSystemUpdateModal()"
+                    class="rounded-2xl bg-slate-200 text-slate-900 px-4 py-4 text-base font-black active:scale-95 transition"
+                >
+                    Cancel
+                </button>
+
+                <form
+                    method="POST"
+                    action="{{ route('admin.system-update') }}"
+                >
+                    @csrf
+
+                    <button
+                        type="submit"
+                        class="w-full rounded-2xl bg-blue-600 text-white px-4 py-4 text-base font-black active:scale-95 transition"
+                    >
+                        Update
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div
         id="maintenanceModal"
         class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
     >
@@ -157,7 +235,7 @@
                 </button>
             </div>
 
-            @if ($errors->any())
+            @if ($errors->any() && ! $errors->has('system_update'))
                 <div class="mx-6 mb-4 rounded-2xl bg-red-100 text-red-700 p-4 text-base font-black shrink-0">
                     {{ $errors->first() }}
                 </div>
@@ -416,7 +494,25 @@
             modal.classList.add('hidden');
         }
 
-        @if ($errors->any())
+        function openSystemUpdateModal() {
+            const modal = document.getElementById(
+                'systemUpdateModal'
+            );
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeSystemUpdateModal() {
+            const modal = document.getElementById(
+                'systemUpdateModal'
+            );
+
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        @if ($errors->any() && ! $errors->has('system_update'))
         openMaintenanceModal();
         @endif
     </script>
