@@ -77,15 +77,25 @@
                                         </div>
 
                                         <div class="text-base text-slate-500 mt-1 font-bold">
-                                            {{ $printJob->pages }} pages
-                                            •
-                                            {{ strtoupper($printJob->original_extension) }}
+                                            @if ($printJob->conversion_status === 'completed')
+                                                {{ $printJob->pages }} pages
+                                                •
+                                                {{ strtoupper($printJob->original_extension) }}
+                                            @else
+                                                Ready
+                                                •
+                                                {{ strtoupper($printJob->original_extension) }}
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center gap-2 rounded-2xl bg-slate-950 text-white px-6 py-3 text-base font-black shrink-0 shadow">
-                                    Select
+                                    @if ($printJob->conversion_status === 'completed')
+                                        Select
+                                    @else
+                                        Prepare
+                                    @endif
 
                                     <x-heroicon-o-arrow-right class="w-5 h-5" />
                                 </div>

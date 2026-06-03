@@ -480,34 +480,34 @@
     });
 </script>
 
-<script>
-    async function checkPrinterStatus() {
-        try {
-            const response = await fetch('{{ route('kiosk.printer-status') }}', {
-                cache: 'no-store',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
+{{--<script>--}}
+{{--    async function checkPrinterStatus() {--}}
+{{--        try {--}}
+{{--            const response = await fetch('{{ route('kiosk.printer-status') }}', {--}}
+{{--                cache: 'no-store',--}}
+{{--                headers: {--}}
+{{--                    'Accept': 'application/json',--}}
+{{--                },--}}
+{{--            });--}}
 
-            const data = await response.json();
+{{--            const data = await response.json();--}}
 
-            if (! data.online) {
-                openPrinterOfflineModal();
-            }
-        } catch (error) {
-            openPrinterOfflineModal();
-        }
-    }
+{{--            if (! data.online) {--}}
+{{--                openPrinterOfflineModal();--}}
+{{--            }--}}
+{{--        } catch (error) {--}}
+{{--            openPrinterOfflineModal();--}}
+{{--        }--}}
+{{--    }--}}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        checkPrinterStatus();
+{{--    document.addEventListener('DOMContentLoaded', () => {--}}
+{{--        checkPrinterStatus();--}}
 
-        setInterval(() => {
-            checkPrinterStatus();
-        }, 10000);
-    });
-</script>
+{{--        setInterval(() => {--}}
+{{--            checkPrinterStatus();--}}
+{{--        }, 10000);--}}
+{{--    });--}}
+{{--</script>--}}
 
 @include('kiosk.partials.kiosk-lockdown')
 </body>
