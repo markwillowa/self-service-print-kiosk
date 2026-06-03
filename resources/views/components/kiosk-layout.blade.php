@@ -124,7 +124,7 @@
                 <button
                     type="button"
                     onclick="openRebootModal()"
-                    class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-lg active:scale-95 transition shrink-0"
+                    class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition shrink-0"
                 >
                     <x-heroicon-o-arrow-path class="w-6 h-6" />
                 </button>
@@ -260,7 +260,7 @@
     class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
 >
     <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl text-center">
-        <div class="w-20 h-20 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-5">
+        <div class="w-20 h-20 rounded-3xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-5">
             <x-heroicon-o-arrow-path class="w-12 h-12" />
         </div>
 
@@ -289,7 +289,7 @@
 
                 <button
                     type="submit"
-                    class="w-full rounded-2xl bg-amber-500 text-white px-4 py-4 flex items-center justify-center active:scale-95 transition"
+                    class="w-full rounded-2xl bg-blue-600 text-white px-4 py-4 flex items-center justify-center active:scale-95 transition"
                 >
                     <x-heroicon-o-arrow-path class="w-6 h-6" />
                 </button>
