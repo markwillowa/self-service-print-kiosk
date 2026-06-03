@@ -60,10 +60,29 @@ class KioskController extends Controller
 
     public function selectUploadedFile(
         PrintJob $printJob,
-        KioskSessionLock $kioskSessionLock
+        KioskSessionLock $kioskSessionLock,
+        PrintJobFactory $printJobFactory
     ): RedirectResponse {
         if ($printJob->status !== 'uploaded') {
             return redirect()->route('kiosk.upload');
+        }
+
+        try {
+            $printJob = $printJobFactory->prepareUploadedJob(
+                $printJob
+            );
+        } catch (Throwable $exception) {
+            logger()->error('Uploaded file preparation failed', [
+                'print_job_id' => $printJob->id,
+                'message' => $exception->getMessage(),
+                'exception' => $exception,
+            ]);
+
+            return redirect()
+                ->route('kiosk.upload')
+                ->withErrors([
+                    'document' => $exception->getMessage(),
+                ]);
         }
 
         $printJob->update([
@@ -514,7 +533,7 @@ class KioskController extends Controller
         );
 
         try {
-            $printJob = $printJobFactory->createFromUploadedFile(
+            $printJobFactory->createUploadedOnly(
                 $validated['document']
             );
         } catch (Throwable $exception) {
@@ -527,10 +546,6 @@ class KioskController extends Controller
                 'document' => $exception->getMessage(),
             ]);
         }
-
-        $printJob->update([
-            'status' => 'uploaded',
-        ]);
 
         return view('kiosk.mobile-upload-success');
     }
