@@ -481,7 +481,16 @@
 </script>
 
 <script>
+    let printerOfflineFailures = 0;
+    let printerStatusChecking = false;
+
     async function checkPrinterStatus() {
+        if (printerStatusChecking) {
+            return;
+        }
+
+        printerStatusChecking = true;
+
         try {
             const response = await fetch('{{ route('kiosk.printer-status') }}', {
                 cache: 'no-store',
@@ -492,20 +501,36 @@
 
             const data = await response.json();
 
-            if (! data.online) {
-                openPrinterOfflineModal();
+            if (data.online) {
+                printerOfflineFailures = 0;
+
+                closePrinterOfflineModal();
+            } else {
+                printerOfflineFailures++;
+
+                if (printerOfflineFailures >= 3) {
+                    openPrinterOfflineModal();
+                }
             }
         } catch (error) {
-            openPrinterOfflineModal();
+            printerOfflineFailures++;
+
+            if (printerOfflineFailures >= 3) {
+                openPrinterOfflineModal();
+            }
+        } finally {
+            printerStatusChecking = false;
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        checkPrinterStatus();
+        setTimeout(() => {
+            checkPrinterStatus();
+        }, 3000);
 
         setInterval(() => {
             checkPrinterStatus();
-        }, 10000);
+        }, 15000);
     });
 </script>
 

@@ -267,39 +267,48 @@ Route::get('/printer-status', function () {
         $printerName,
     ]);
 
+    $lpstatProcess->setTimeout(3);
     $lpstatProcess->run();
 
     $lpstatOutput =
-        $lpstatProcess->getOutput() .
+        strtolower($lpstatProcess->getOutput()) .
         "\n" .
-        $lpstatProcess->getErrorOutput();
-
-    $usbProcess = new Process([
-        'lpinfo',
-        '-v',
-    ]);
-
-    $usbProcess->run();
-
-    $usbOutput =
-        $usbProcess->getOutput() .
-        "\n" .
-        $usbProcess->getErrorOutput();
+        strtolower($lpstatProcess->getErrorOutput());
 
     $printerExistsInCups = $lpstatProcess->isSuccessful();
 
-    $printerLooksAccepting =
+    $cupsReady =
         str_contains($lpstatOutput, 'is idle') ||
-        str_contains($lpstatOutput, 'now printing');
+        str_contains($lpstatOutput, 'now printing') ||
+        str_contains($lpstatOutput, 'enabled');
 
-    $usbPrinterDetected =
-        str_contains(strtolower($usbOutput), 'usb://') ||
-        str_contains(strtolower($usbOutput), 'epson');
+    $isDisabled =
+        str_contains($lpstatOutput, 'disabled') ||
+        str_contains($lpstatOutput, 'not available');
+
+    $lsusbProcess = new Process([
+        'lsusb',
+    ]);
+
+    $lsusbProcess->setTimeout(3);
+    $lsusbProcess->run();
+
+    $lsusbOutput = strtolower(
+        $lsusbProcess->getOutput() .
+        "\n" .
+        $lsusbProcess->getErrorOutput()
+    );
+
+    $usbDetected =
+        str_contains($lsusbOutput, 'epson') ||
+        str_contains($lsusbOutput, 'seiko') ||
+        str_contains($lsusbOutput, 'printer');
 
     $online =
         $printerExistsInCups &&
-        $printerLooksAccepting &&
-        $usbPrinterDetected;
+        $cupsReady &&
+        ! $isDisabled &&
+        $usbDetected;
 
     return response()->json([
         'online' => $online,
@@ -307,10 +316,11 @@ Route::get('/printer-status', function () {
             ? 'Printer is online.'
             : 'Printer is offline or not detected.',
         'cups_ok' => $printerExistsInCups,
-        'cups_status_ok' => $printerLooksAccepting,
-        'usb_detected' => $usbPrinterDetected,
+        'cups_ready' => $cupsReady,
+        'cups_disabled' => $isDisabled,
+        'usb_detected' => $usbDetected,
         'lpstat_output' => trim($lpstatOutput),
-        'lpinfo_output' => trim($usbOutput),
+        'lsusb_output' => trim($lsusbOutput),
     ]);
 })->middleware([
     'kiosk.registered',
