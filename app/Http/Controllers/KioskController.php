@@ -35,7 +35,30 @@ class KioskController extends Controller
                 ->where('uuid', $activeJobUuid)
                 ->first();
 
-            if ($printJob) {
+            if (! $printJob) {
+                $kioskSessionLock->unlock();
+
+                return view('kiosk.home');
+            }
+
+            if (in_array($printJob->status, [
+                'queued',
+                'printing',
+            ], true)) {
+                return redirect()->route('kiosk.status', $printJob);
+            }
+
+            if ($printJob->status === 'completed') {
+                $kioskSessionLock->unlock();
+
+                return view('kiosk.home');
+            }
+
+            if (in_array($printJob->status, [
+                'uploaded',
+                'pending_payment',
+                'paid',
+            ], true)) {
                 return redirect()->route('kiosk.preview', $printJob);
             }
 
@@ -249,17 +272,31 @@ class KioskController extends Controller
 
     public function status(PrintJob $printJob): RedirectResponse|View
     {
+        $printJob->refresh();
+
+        if ($printJob->status === 'cancelled') {
+            return redirect()->route('kiosk.home');
+        }
+
         if (
-            $printJob->status === 'cancelled' ||
-            (
-                $printJob->expires_at &&
-                now()->greaterThan($printJob->expires_at)
-            )
+            ! in_array($printJob->status, [
+                'queued',
+                'printing',
+                'completed',
+            ], true) &&
+            $printJob->expires_at &&
+            now()->greaterThan($printJob->expires_at)
         ) {
             return redirect()->route('kiosk.home');
         }
 
-        $this->refreshExpiration($printJob);
+        if (! in_array($printJob->status, [
+            'queued',
+            'printing',
+            'completed',
+        ], true)) {
+            $this->refreshExpiration($printJob);
+        }
 
         return view('kiosk.status', [
             'printJob' => $printJob,
@@ -268,12 +305,23 @@ class KioskController extends Controller
 
     public function preview(PrintJob $printJob): RedirectResponse|View
     {
+        $printJob->refresh();
+
+        if ($printJob->status === 'cancelled') {
+            return redirect()->route('kiosk.home');
+        }
+
+        if (in_array($printJob->status, [
+            'queued',
+            'printing',
+            'completed',
+        ], true)) {
+            return redirect()->route('kiosk.status', $printJob);
+        }
+
         if (
-            $printJob->status === 'cancelled' ||
-            (
-                $printJob->expires_at &&
-                now()->greaterThan($printJob->expires_at)
-            )
+            $printJob->expires_at &&
+            now()->greaterThan($printJob->expires_at)
         ) {
             return redirect()->route('kiosk.home');
         }
@@ -458,6 +506,16 @@ class KioskController extends Controller
         KioskSessionLock $kioskSessionLock,
         KioskCreditService $creditService
     ): RedirectResponse {
+        $printJob->refresh();
+
+        if (in_array($printJob->status, [
+            'queued',
+            'printing',
+            'completed',
+        ], true)) {
+            return redirect()->route('kiosk.status', $printJob);
+        }
+
         if (! in_array($printJob->status, [
             'uploaded',
             'pending_payment',
@@ -473,6 +531,7 @@ class KioskController extends Controller
         $printJob->update([
             'status' => 'cancelled',
             'cancelled_at' => now(),
+            'expires_at' => null,
         ]);
 
         $kioskSessionLock->unlock();

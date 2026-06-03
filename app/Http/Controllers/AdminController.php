@@ -326,20 +326,90 @@ class AdminController extends Controller
             );
         }
 
+        $composerInstall = new Process([
+            'composer',
+            'install',
+            '--no-dev',
+            '--optimize-autoloader',
+        ], $projectPath);
+
+        $composerInstall->setTimeout(900);
+        $composerInstall->run();
+
+        if (! $composerInstall->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Update downloaded, but Composer install failed: ' .
+                    $composerInstall->getErrorOutput(),
+            ]);
+        }
+
+        $migrate = new Process([
+            'php',
+            'artisan',
+            'migrate',
+            '--force',
+        ], $projectPath);
+
+        $migrate->setTimeout(300);
+        $migrate->run();
+
+        if (! $migrate->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Update downloaded, but database migration failed: ' .
+                    $migrate->getErrorOutput(),
+            ]);
+        }
+
+        $optimizeClear = new Process([
+            'php',
+            'artisan',
+            'optimize:clear',
+        ], $projectPath);
+
+        $optimizeClear->setTimeout(120);
+        $optimizeClear->run();
+
+        if (! $optimizeClear->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Update downloaded, but optimize clear failed: ' .
+                    $optimizeClear->getErrorOutput(),
+            ]);
+        }
+
         $npmBuild = new Process([
             'npm',
             'run',
             'build',
         ], $projectPath);
 
-        $npmBuild->setTimeout(600);
+        $npmBuild->setTimeout(900);
         $npmBuild->run();
 
         if (! $npmBuild->isSuccessful()) {
             return back()->withErrors([
                 'system_update' =>
-                    'Update downloaded, but npm build failed: ' .
+                    'Update downloaded, but NPM build failed: ' .
                     $npmBuild->getErrorOutput(),
+            ]);
+        }
+
+        $optimize = new Process([
+            'php',
+            'artisan',
+            'optimize',
+        ], $projectPath);
+
+        $optimize->setTimeout(120);
+        $optimize->run();
+
+        if (! $optimize->isSuccessful()) {
+            return back()->withErrors([
+                'system_update' =>
+                    'Update downloaded, but optimize failed: ' .
+                    $optimize->getErrorOutput(),
             ]);
         }
 

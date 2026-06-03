@@ -11,33 +11,17 @@ class CleanupPrintJobs extends Command
     protected $signature = 'print:cleanup';
 
     protected $description =
-        'Delete old print jobs and files';
+        'Delete old print job files but keep job history';
 
     public function handle(): int
     {
         $jobs = PrintJob::query()
-            ->where(function ($query) {
-                $query
-                    ->whereIn('status', [
-                        'completed',
-                        'cancelled',
-                        'failed',
-                    ])
-                    ->where(
-                        'updated_at',
-                        '<=',
-                        now()->subHour()
-                    );
-            })
-            ->orWhere(function ($query) {
-                $query
-                    ->where('status', 'pending_payment')
-                    ->where(
-                        'updated_at',
-                        '<=',
-                        now()->subMinutes(30)
-                    );
-            })
+            ->whereIn('status', [
+                'completed',
+                'cancelled',
+                'failed',
+            ])
+            ->where('updated_at', '<=', now()->subHour())
             ->get();
 
         foreach ($jobs as $job) {
@@ -45,6 +29,7 @@ class CleanupPrintJobs extends Command
                 $job->original_file_path,
                 $job->converted_pdf_path,
                 $job->filtered_pdf_path,
+                $job->preview_pdf_path,
             ];
 
             foreach ($paths as $path) {
@@ -57,11 +42,9 @@ class CleanupPrintJobs extends Command
             }
 
             $this->info(
-                'Deleted print job: ' .
+                'Cleaned files for print job: ' .
                 $job->original_filename
             );
-
-            $job->delete();
         }
 
         return self::SUCCESS;

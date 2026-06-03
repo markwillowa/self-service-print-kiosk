@@ -24,18 +24,7 @@ class PrinterService
             if ($mode === 'dummy') {
                 sleep(2);
 
-                try {
-                    $this->stateService->transition(
-                        $printJob,
-                        'completed'
-                    );
-                } catch (RuntimeException) {
-                    return false;
-                }
-
-                $this->kioskSessionLock->unlock();
-
-                return true;
+                return $this->completePrintJob($printJob);
             }
 
             if ($mode === 'cups') {
@@ -53,10 +42,28 @@ class PrinterService
         }
     }
 
-    private function printViaCups(
-        PrintJob $printJob
-    ): bool {
+    private function printViaCups(PrintJob $printJob): bool
+    {
         $printJob->refresh();
+
+        if ($printJob->status === 'queued') {
+            try {
+                $this->stateService->transition(
+                    $printJob,
+                    'printing'
+                );
+
+                $printJob->refresh();
+            } catch (RuntimeException $exception) {
+                logger()->error('Failed to mark print job as printing', [
+                    'print_job_id' => $printJob->id,
+                    'status' => $printJob->status,
+                    'message' => $exception->getMessage(),
+                ]);
+
+                return false;
+            }
+        }
 
         $relativePath =
             $printJob->preview_pdf_path
@@ -69,6 +76,7 @@ class PrinterService
         if (! file_exists($path)) {
             logger()->error('Print file not found', [
                 'path' => $path,
+                'print_job_id' => $printJob->id,
             ]);
 
             return false;
@@ -126,9 +134,7 @@ class PrinterService
         ]);
 
         $process = new Process($command);
-
         $process->setTimeout(300);
-
         $process->run();
 
         if (! $process->isSuccessful()) {
@@ -136,22 +142,72 @@ class PrinterService
                 'command' => $command,
                 'output' => $process->getOutput(),
                 'error_output' => $process->getErrorOutput(),
+                'print_job_id' => $printJob->id,
+            ]);
+
+            try {
+                $this->stateService->transition(
+                    $printJob,
+                    'failed'
+                );
+            } catch (RuntimeException) {
+                // Keep original status if failed transition is not allowed.
+            }
+
+            return false;
+        }
+
+        return $this->completePrintJob($printJob);
+    }
+
+    private function completePrintJob(PrintJob $printJob): bool
+    {
+        try {
+            $printJob->refresh();
+
+            if ($printJob->status === 'queued') {
+                $this->stateService->transition(
+                    $printJob,
+                    'printing'
+                );
+
+                $printJob->refresh();
+            }
+
+            if ($printJob->status === 'printing') {
+                $this->stateService->transition(
+                    $printJob,
+                    'completed'
+                );
+
+                $printJob->refresh();
+            }
+
+            if ($printJob->status !== 'completed') {
+                logger()->error('Print job could not be completed', [
+                    'print_job_id' => $printJob->id,
+                    'status' => $printJob->status,
+                ]);
+
+                return false;
+            }
+
+            $printJob->update([
+                'expires_at' => null,
+                'completed_at' => now(),
+            ]);
+
+            $this->kioskSessionLock->unlock();
+
+            return true;
+        } catch (RuntimeException $exception) {
+            logger()->error('Failed to complete print job state transition', [
+                'print_job_id' => $printJob->id,
+                'status' => $printJob->status,
+                'message' => $exception->getMessage(),
             ]);
 
             return false;
         }
-
-        try {
-            $this->stateService->transition(
-                $printJob,
-                'completed'
-            );
-        } catch (RuntimeException) {
-            return false;
-        }
-
-        $this->kioskSessionLock->unlock();
-
-        return true;
     }
 }

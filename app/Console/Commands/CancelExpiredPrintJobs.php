@@ -17,6 +17,7 @@ class CancelExpiredPrintJobs extends Command
             ->whereIn('status', [
                 'uploaded',
                 'pending_payment',
+                'paid',
             ])
             ->whereNotNull('expires_at')
             ->where('expires_at', '<=', now())
@@ -26,6 +27,7 @@ class CancelExpiredPrintJobs extends Command
             $job->update([
                 'status' => 'cancelled',
                 'cancelled_at' => now(),
+                'expires_at' => null,
             ]);
 
             $this->info(

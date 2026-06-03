@@ -47,6 +47,8 @@ return new class extends Migration
                 ->nullable();
             $table->timestamp('cancelled_at')
                 ->nullable();
+            $table->timestamp('completed_at')
+                ->nullable();
             $table->string('print_mode')
                 ->default('black');
             $table->string('orientation')

@@ -34,6 +34,13 @@ class PrintJob extends Model
         'status',
         'expires_at',
         'cancelled_at',
+        'completed_at',
+    ];
+
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function creditTransactions(): HasMany
