@@ -123,6 +123,14 @@
 
                 <button
                     type="button"
+                    onclick="openRebootModal()"
+                    class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-lg active:scale-95 transition shrink-0"
+                >
+                    <x-heroicon-o-arrow-path class="w-6 h-6" />
+                </button>
+
+                <button
+                    type="button"
                     onclick="openShutdownModal()"
                     class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition shrink-0"
                 >
@@ -244,6 +252,49 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<div
+    id="rebootModal"
+    class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
+>
+    <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl text-center">
+        <div class="w-20 h-20 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-5">
+            <x-heroicon-o-arrow-path class="w-12 h-12" />
+        </div>
+
+        <h3 class="text-3xl font-black text-slate-950 mb-3">
+            Restart Device?
+        </h3>
+
+        <p class="text-base text-slate-500 font-bold mb-6">
+            This will safely reboot the Raspberry Pi.
+        </p>
+
+        <div class="grid grid-cols-2 gap-3">
+            <button
+                type="button"
+                onclick="closeRebootModal()"
+                class="rounded-2xl bg-slate-200 text-slate-900 px-4 py-4 text-base font-black active:scale-95 transition"
+            >
+                Cancel
+            </button>
+
+            <form
+                method="POST"
+                action="{{ route('kiosk.reboot') }}"
+            >
+                @csrf
+
+                <button
+                    type="submit"
+                    class="w-full rounded-2xl bg-amber-500 text-white px-4 py-4 flex items-center justify-center active:scale-95 transition"
+                >
+                    <x-heroicon-o-arrow-path class="w-6 h-6" />
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -413,6 +464,24 @@
         }
 
         input.value = '';
+    }
+
+    function openRebootModal() {
+        const modal = document.getElementById(
+            'rebootModal'
+        );
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeRebootModal() {
+        const modal = document.getElementById(
+            'rebootModal'
+        );
+
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
     }
 
     function openShutdownModal() {

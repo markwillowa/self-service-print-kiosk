@@ -230,6 +230,33 @@ Route::middleware([
     )->name('kiosk.transfer');
 });
 
+Route::post('/reboot', function () {
+    $process = new Process([
+        'sudo',
+        '-n',
+        '/usr/sbin/reboot',
+    ]);
+
+    $process->run();
+
+    if (! $process->isSuccessful()) {
+        logger()->error('Reboot failed', [
+            'output' => $process->getOutput(),
+            'error' => $process->getErrorOutput(),
+        ]);
+
+        return response(
+            'Reboot failed: ' . $process->getErrorOutput(),
+            500
+        );
+    }
+
+    return response('Rebooting...');
+})->middleware([
+    'kiosk.registered',
+    'kiosk.local',
+])->name('kiosk.reboot');
+
 Route::post('/shutdown', function () {
     $process = new Process([
         'sudo',
