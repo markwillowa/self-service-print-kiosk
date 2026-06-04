@@ -162,8 +162,17 @@
 </head>
 
 <body class="bg-slate-100 p-6 min-h-screen overflow-y-auto">
-<div class="no-print max-w-4xl mx-auto mb-4 flex justify-end">
+<div class="no-print max-w-4xl mx-auto mb-4 flex justify-end gap-3">
     <button
+        type="button"
+        onclick="window.close(); setTimeout(() => history.back(), 150);"
+        class="rounded-xl bg-red-600 text-white px-5 py-3 text-sm font-black"
+    >
+        Close
+    </button>
+
+    <button
+        type="button"
         onclick="window.print()"
         class="rounded-xl bg-slate-950 text-white px-5 py-3 text-sm font-black"
     >

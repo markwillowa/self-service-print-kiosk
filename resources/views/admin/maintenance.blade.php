@@ -15,17 +15,19 @@
         }
 
         .modal-scroll::-webkit-scrollbar {
-            width: 18px;
+            width: 22px;
         }
 
         .modal-scroll::-webkit-scrollbar-track {
-            background: rgba(148, 163, 184, 0.15);
+            background: rgba(148, 163, 184, 0.20);
             border-radius: 999px;
         }
 
         .modal-scroll::-webkit-scrollbar-thumb {
-            background: rgba(71, 85, 105, 0.75);
+            background: rgba(71, 85, 105, 0.90);
             border-radius: 999px;
+            border: 3px solid transparent;
+            background-clip: content-box;
         }
     </style>
 
@@ -181,7 +183,7 @@
             </h3>
 
             <p class="text-base text-slate-500 font-bold mb-6">
-                This will pull the latest code, rebuild assets, and may require a device restart.
+                This will pull the latest code, run migrations, rebuild assets, and may require a device restart.
             </p>
 
             <div class="grid grid-cols-2 gap-3">
@@ -214,7 +216,7 @@
         id="maintenanceModal"
         class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
     >
-        <div class="w-full max-w-[980px] max-h-[640px] rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col">
+        <div class="w-full max-w-[1100px] h-[90vh] rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col">
             <div class="flex items-center justify-between p-6 pb-4 shrink-0">
                 <div>
                     <h3 class="text-3xl font-black text-slate-950 leading-none mb-2">
@@ -241,7 +243,7 @@
                 </div>
             @endif
 
-            <div class="modal-scroll flex-1 min-h-0 overflow-y-auto px-6 pb-6 pr-3">
+            <div class="modal-scroll flex-1 overflow-y-scroll px-6 pb-6 pr-4">
                 <form
                     method="POST"
                     action="{{ route('admin.maintenance.store') }}"
