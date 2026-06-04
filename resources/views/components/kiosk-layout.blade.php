@@ -49,7 +49,7 @@
             border: 0;
         }
 
-        ::-webkit-scrollbar {
+        body::-webkit-scrollbar {
             display: none;
         }
     </style>
