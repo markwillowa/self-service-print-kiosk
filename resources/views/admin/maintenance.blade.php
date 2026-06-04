@@ -1,33 +1,27 @@
 <x-kiosk-layout title="Maintenance">
     <style>
-        .admin-scroll::-webkit-scrollbar {
-            width: 18px;
-        }
-
-        .admin-scroll::-webkit-scrollbar-track {
-            background: rgba(148, 163, 184, 0.15);
-            border-radius: 999px;
-        }
-
-        .admin-scroll::-webkit-scrollbar-thumb {
-            background: rgba(71, 85, 105, 0.75);
-            border-radius: 999px;
-        }
-
+        .admin-scroll::-webkit-scrollbar,
         .modal-scroll::-webkit-scrollbar {
-            width: 22px;
+            width: 24px;
         }
 
+        .admin-scroll::-webkit-scrollbar-track,
         .modal-scroll::-webkit-scrollbar-track {
             background: rgba(148, 163, 184, 0.20);
             border-radius: 999px;
         }
 
+        .admin-scroll::-webkit-scrollbar-thumb,
         .modal-scroll::-webkit-scrollbar-thumb {
             background: rgba(71, 85, 105, 0.90);
             border-radius: 999px;
             border: 3px solid transparent;
             background-clip: content-box;
+        }
+
+        .modal-scroll {
+            scrollbar-width: auto;
+            scrollbar-color: rgba(71, 85, 105, 0.90) rgba(148, 163, 184, 0.20);
         }
     </style>
 
@@ -76,11 +70,7 @@
                     {{ session('system_update') }}
 
                     @if (str_contains(session('system_update'), 'completed'))
-                        <form
-                            method="POST"
-                            action="{{ route('admin.system-reboot') }}"
-                            class="mt-3"
-                        >
+                        <form method="POST" action="{{ route('admin.system-reboot') }}" class="mt-3">
                             @csrf
 
                             <button
@@ -155,10 +145,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td
-                                colspan="7"
-                                class="py-12 text-center text-slate-400 font-black text-lg"
-                            >
+                            <td colspan="7" class="py-12 text-center text-slate-400 font-black text-lg">
                                 No maintenance records yet.
                             </td>
                         </tr>
@@ -195,10 +182,7 @@
                     Cancel
                 </button>
 
-                <form
-                    method="POST"
-                    action="{{ route('admin.system-update') }}"
-                >
+                <form method="POST" action="{{ route('admin.system-update') }}">
                     @csrf
 
                     <button
@@ -216,8 +200,8 @@
         id="maintenanceModal"
         class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
     >
-        <div class="w-full max-w-[1100px] h-[90vh] rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between p-6 pb-4 shrink-0">
+        <div class="w-full max-w-[1000px] max-h-[75vh] rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between p-5 pb-3 shrink-0">
                 <div>
                     <h3 class="text-3xl font-black text-slate-950 leading-none mb-2">
                         Add Maintenance Record
@@ -238,28 +222,28 @@
             </div>
 
             @if ($errors->any() && ! $errors->has('system_update'))
-                <div class="mx-6 mb-4 rounded-2xl bg-red-100 text-red-700 p-4 text-base font-black shrink-0">
+                <div class="mx-5 mb-3 rounded-2xl bg-red-100 text-red-700 p-4 text-base font-black shrink-0">
                     {{ $errors->first() }}
                 </div>
             @endif
 
-            <div class="modal-scroll flex-1 overflow-y-scroll px-6 pb-6 pr-4">
+            <div class="modal-scroll flex-1 min-h-0 overflow-y-auto px-5 pb-5 pr-4">
                 <form
                     method="POST"
                     action="{{ route('admin.maintenance.store') }}"
-                    class="grid grid-cols-2 gap-4"
+                    class="grid grid-cols-2 gap-3"
                 >
                     @csrf
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Maintenance Type
                         </label>
 
                         <select
                             name="maintenance_type"
                             required
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-black"
                         >
                             @foreach ([
                                 'Preventive Maintenance',
@@ -270,22 +254,20 @@
                                 'Hardware Replacement',
                                 'Emergency Service',
                             ] as $type)
-                                <option value="{{ $type }}">
-                                    {{ $type }}
-                                </option>
+                                <option value="{{ $type }}">{{ $type }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Status
                         </label>
 
                         <select
                             name="status"
                             required
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-black"
                         >
                             @foreach ([
                                 'Pending',
@@ -293,15 +275,13 @@
                                 'Completed',
                                 'Cancelled',
                             ] as $status)
-                                <option value="{{ $status }}">
-                                    {{ $status }}
-                                </option>
+                                <option value="{{ $status }}">{{ $status }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Performed At
                         </label>
 
@@ -309,12 +289,12 @@
                             type="date"
                             name="performed_at"
                             value="{{ old('performed_at', now()->format('Y-m-d')) }}"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Next Maintenance
                         </label>
 
@@ -322,12 +302,12 @@
                             type="date"
                             name="next_maintenance_at"
                             value="{{ old('next_maintenance_at') }}"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Cost
                         </label>
 
@@ -336,12 +316,12 @@
                             name="cost"
                             value="{{ old('cost', 0) }}"
                             min="0"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Printer Status
                         </label>
 
@@ -350,12 +330,12 @@
                             name="printer_status"
                             value="{{ old('printer_status') }}"
                             placeholder="Good / Needs cleaning / Error"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Coin Acceptor Status
                         </label>
 
@@ -364,12 +344,12 @@
                             name="coin_acceptor_status"
                             value="{{ old('coin_acceptor_status') }}"
                             placeholder="Working / Needs calibration"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Paper Stock
                         </label>
 
@@ -378,12 +358,12 @@
                             name="paper_stock"
                             value="{{ old('paper_stock') }}"
                             placeholder="Full / Half / Low"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Ink Status
                         </label>
 
@@ -392,12 +372,12 @@
                             name="ink_status"
                             value="{{ old('ink_status') }}"
                             placeholder="Good / Low / Replaced"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Network Status
                         </label>
 
@@ -406,72 +386,74 @@
                             name="network_status"
                             value="{{ old('network_status') }}"
                             placeholder="Online / Offline / Weak"
-                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-bold"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-12 text-base font-bold"
                         >
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Issue Reported
                         </label>
 
                         <textarea
                             name="issue_reported"
-                            rows="3"
-                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-lg font-bold resize-none"
+                            rows="2"
+                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-base font-bold resize-none"
                         >{{ old('issue_reported') }}</textarea>
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Action Taken
                         </label>
 
                         <textarea
                             name="action_taken"
-                            rows="3"
-                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-lg font-bold resize-none"
+                            rows="2"
+                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-base font-bold resize-none"
                         >{{ old('action_taken') }}</textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Parts Replaced
                         </label>
 
                         <textarea
                             name="parts_replaced"
-                            rows="3"
-                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-lg font-bold resize-none"
+                            rows="2"
+                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-base font-bold resize-none"
                         >{{ old('parts_replaced') }}</textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-black text-slate-700 mb-2">
+                        <label class="block text-sm font-black text-slate-700 mb-1">
                             Notes
                         </label>
 
                         <textarea
                             name="notes"
-                            rows="3"
-                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-lg font-bold resize-none"
+                            rows="2"
+                            class="w-full rounded-2xl bg-slate-100 px-4 py-3 text-base font-bold resize-none"
                         >{{ old('notes') }}</textarea>
                     </div>
 
-                    <button
-                        type="button"
-                        onclick="closeMaintenanceModal()"
-                        class="rounded-2xl bg-slate-200 text-slate-900 h-14 text-lg font-black active:scale-95 transition"
-                    >
-                        Cancel
-                    </button>
+                    <div class="col-span-2 sticky bottom-0 bg-white pt-3 grid grid-cols-2 gap-3">
+                        <button
+                            type="button"
+                            onclick="closeMaintenanceModal()"
+                            class="rounded-2xl bg-slate-200 text-slate-900 h-14 text-lg font-black active:scale-95 transition"
+                        >
+                            Cancel
+                        </button>
 
-                    <button
-                        type="submit"
-                        class="rounded-2xl bg-slate-950 text-white h-14 text-lg font-black shadow-lg active:scale-95 transition"
-                    >
-                        Save Record
-                    </button>
+                        <button
+                            type="submit"
+                            class="rounded-2xl bg-slate-950 text-white h-14 text-lg font-black shadow-lg active:scale-95 transition"
+                        >
+                            Save Record
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
