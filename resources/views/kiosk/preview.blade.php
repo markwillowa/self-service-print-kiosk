@@ -435,17 +435,11 @@
 
             if (mode === 'copies') {
                 pageKeys.forEach((button) => {
-                    button.classList.add(
-                        'opacity-40',
-                        'pointer-events-none'
-                    );
+                    button.classList.add('opacity-40', 'pointer-events-none');
                 });
             } else {
                 pageKeys.forEach((button) => {
-                    button.classList.remove(
-                        'opacity-40',
-                        'pointer-events-none'
-                    );
+                    button.classList.remove('opacity-40', 'pointer-events-none');
                 });
             }
         }
@@ -455,14 +449,12 @@
                 return;
             }
 
-            if (
-                activeKeyboardMode === 'copies' &&
-                ! /^[0-9]$/.test(value)
-            ) {
+            if (activeKeyboardMode === 'copies' && ! /^[0-9]$/.test(value)) {
                 return;
             }
 
             activeKeyboardInput.value += value;
+            normalizeActiveInput();
         }
 
         function keyboardBackspace() {
@@ -470,8 +462,8 @@
                 return;
             }
 
-            activeKeyboardInput.value =
-                activeKeyboardInput.value.slice(0, -1);
+            activeKeyboardInput.value = activeKeyboardInput.value.slice(0, -1);
+            normalizeActiveInput();
         }
 
         function keyboardClear() {
@@ -481,6 +473,53 @@
 
             activeKeyboardInput.value = '';
         }
+
+        function normalizeActiveInput() {
+            if (! activeKeyboardInput) {
+                return;
+            }
+
+            if (activeKeyboardMode === 'copies') {
+                activeKeyboardInput.value = activeKeyboardInput.value
+                    .replace(/[^0-9]/g, '')
+                    .replace(/^0+/, '');
+
+                return;
+            }
+
+            activeKeyboardInput.value = activeKeyboardInput.value
+                .replace(/[–—]/g, '-')
+                .replace(/\s+/g, '')
+                .replace(/[^0-9,\-]/g, '')
+                .replace(/,{2,}/g, ',')
+                .replace(/-{2,}/g, '-')
+                .replace(/^,/, '')
+                .replace(/,$/, '');
+        }
+
+        document
+            .querySelector('form[action="{{ route('kiosk.update-settings', $printJob) }}"]')
+            .addEventListener('submit', function () {
+                const copiesInput = document.getElementById('copiesInput');
+                const pageSelectionInput = document.getElementById('pageSelectionInput');
+
+                copiesInput.value = copiesInput.value
+                    .replace(/[^0-9]/g, '')
+                    .replace(/^0+/, '');
+
+                if (copiesInput.value === '') {
+                    copiesInput.value = '1';
+                }
+
+                pageSelectionInput.value = pageSelectionInput.value
+                    .replace(/[–—]/g, '-')
+                    .replace(/\s+/g, '')
+                    .replace(/[^0-9,\-]/g, '')
+                    .replace(/,{2,}/g, ',')
+                    .replace(/-{2,}/g, '-')
+                    .replace(/^,/, '')
+                    .replace(/,$/, '');
+            });
 
         @if ($errors->any())
         openEditModal();
