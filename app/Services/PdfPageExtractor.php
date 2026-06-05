@@ -3,30 +3,45 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 class PdfPageExtractor
 {
+    public function __construct(
+        private PageSelectionParser $pageSelectionParser
+    ) {
+    }
+
     public function extract(
         string $sourcePath,
         string $pageSelection
     ): string {
+        $pageSelection = $this->pageSelectionParser
+            ->normalize($pageSelection);
+
         if ($pageSelection === 'all') {
             return $sourcePath;
         }
 
+        $outputDirectory = storage_path(
+            'app/print-jobs/filtered'
+        );
+
+        if (! is_dir($outputDirectory)) {
+            mkdir($outputDirectory, 0777, true);
+        }
+
         $outputPath =
-            storage_path('app/print-jobs/filtered/') .
+            $outputDirectory .
+            '/' .
             Str::uuid() .
             '.pdf';
 
-        if (! is_dir(dirname($outputPath))) {
-            mkdir(dirname($outputPath), 0777, true);
-        }
-
         $process = new Process([
             'qpdf',
-            $sourcePath,
+            '--warning-exit-0',
+            '--empty',
             '--pages',
             $sourcePath,
             $pageSelection,
@@ -35,12 +50,14 @@ class PdfPageExtractor
         ]);
 
         $process->setTimeout(300);
-
         $process->run();
 
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException(
-                $process->getErrorOutput()
+        if (! file_exists($outputPath)) {
+            throw new RuntimeException(
+                trim(
+                    $process->getErrorOutput() ?:
+                        $process->getOutput()
+                ) ?: 'Failed to extract selected PDF pages.'
             );
         }
 
