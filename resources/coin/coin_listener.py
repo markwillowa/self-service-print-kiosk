@@ -6,12 +6,11 @@ PIN = 26
 
 COIN_ENDPOINT = "http://10.42.0.1:8000/coin"
 
-PULSE_GAP = 0.45
-DEBOUNCE_TIME = 0.035
-MIN_PULSE_LOW_TIME = 0.01
-COIN_COOLDOWN = 0.8
+PULSE_GAP = 0.35
+DEBOUNCE_TIME = 0.03
+MIN_PULSE_LOW_TIME = 0.008
 STARTUP_DELAY = 2
-CREDIT_SEND_DELAY = 0.03
+LOOP_SLEEP = 0.001
 
 PULSE_MAP = {
     1: 1,
@@ -28,12 +27,12 @@ GPIO.setup(
     pull_up_down=GPIO.PUD_UP,
 )
 
+session = requests.Session()
+
 pulse_count = 0
 last_pulse_time = 0
 last_valid_edge_time = 0
-last_coin_sent_time = 0
 low_started_at = None
-
 last_state = GPIO.input(PIN)
 
 
@@ -41,24 +40,25 @@ def amount_from_pulses(pulses):
     return PULSE_MAP.get(pulses, 0)
 
 
-def send_credit_pulses(amount):
-    for credit in range(amount):
-        try:
-            response = requests.post(
-                COIN_ENDPOINT,
-                json={"amount": 1},
-                timeout=2,
-            )
+def send_credit(amount):
+    try:
+        response = session.post(
+            COIN_ENDPOINT,
+            json={"amount": amount},
+            timeout=2,
+        )
 
-            print(
-                f"Sent credit {credit + 1}/{amount} | "
-                f"Status: {response.status_code}"
-            )
+        print(
+            f"Credit loaded | Amount: PHP {amount} | "
+            f"Status: {response.status_code}"
+        )
 
-            time.sleep(CREDIT_SEND_DELAY)
+        return response.status_code == 200
 
-        except Exception as error:
-            print(f"Failed to send credit: {error}")
+    except Exception as error:
+        print(f"Failed to send credit PHP {amount}: {error}")
+
+        return False
 
 
 print("Coin listener active on GPIO26")
@@ -79,7 +79,7 @@ print("Waiting for coin pulses...\n")
 try:
     while True:
         current_state = GPIO.input(PIN)
-        now = time.time()
+        now = time.monotonic()
 
         if (
             current_state == GPIO.LOW and
@@ -96,8 +96,7 @@ try:
 
                 if (
                     low_duration >= MIN_PULSE_LOW_TIME and
-                    now - last_valid_edge_time >= DEBOUNCE_TIME and
-                    now - last_coin_sent_time >= COIN_COOLDOWN
+                    now - last_valid_edge_time >= DEBOUNCE_TIME
                 ):
                     pulse_count += 1
                     last_pulse_time = now
@@ -123,18 +122,18 @@ try:
                     f"Amount: PHP {amount}"
                 )
 
-                send_credit_pulses(amount)
-
-                last_coin_sent_time = now
+                send_credit(amount)
             else:
-                print(f"Unknown pulse count: {pulse_count}")
+                print(
+                    f"Unknown pulse count ignored: {pulse_count}"
+                )
 
             pulse_count = 0
             low_started_at = None
 
         last_state = current_state
 
-        time.sleep(0.002)
+        time.sleep(LOOP_SLEEP)
 
 except KeyboardInterrupt:
     print("\nStopped.")

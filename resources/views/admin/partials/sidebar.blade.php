@@ -17,6 +17,7 @@
             ['route' => 'admin.logs', 'label' => 'Logs'],
             ['route' => 'admin.maintenance', 'label' => 'Maintenance'],
             ['route' => 'admin.profile', 'label' => 'Profile'],
+            ['route' => 'admin.vouchers', 'label' => 'Voucher'],
             ['route' => 'admin.settings', 'label' => 'Settings'],
         ] as $item)
             <a

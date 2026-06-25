@@ -6,6 +6,7 @@ use App\Jobs\ProcessPrintJob;
 use App\Models\Company;
 use App\Models\CreditTransaction;
 use App\Models\PrintJob;
+use App\Models\Voucher;
 use App\Services\FileConverter;
 use App\Services\KioskCreditService;
 use App\Services\KioskSessionLock;
@@ -171,6 +172,32 @@ class KioskController extends Controller
         $this->refreshExpiration($printJob);
 
         return view('kiosk.payment', [
+            'printJob' => $printJob,
+        ]);
+    }
+
+    public function paperCheck(PrintJob $printJob): RedirectResponse|View
+    {
+        $printJob->refresh();
+
+        if ($printJob->status === 'cancelled') {
+            return redirect()->route('kiosk.home');
+        }
+
+        if ($printJob->status !== 'paid') {
+            return redirect()->route('kiosk.payment', $printJob);
+        }
+
+        if (
+            $printJob->expires_at &&
+            now()->greaterThan($printJob->expires_at)
+        ) {
+            return redirect()->route('kiosk.home');
+        }
+
+        $this->refreshExpiration($printJob);
+
+        return view('kiosk.paper-check', [
             'printJob' => $printJob,
         ]);
     }
@@ -701,5 +728,44 @@ class KioskController extends Controller
         $kioskSessionLock->unlock();
 
         return redirect()->route('kiosk.upload');
+    }
+
+    public function redeemVoucher(
+        Request $request,
+        KioskCreditService $creditService
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'voucher_code' => [
+                'required',
+                'string',
+                'max:50',
+            ],
+        ]);
+
+        $code = strtoupper(
+            trim($validated['voucher_code'])
+        );
+
+        $voucher = Voucher::query()
+            ->where('code', $code)
+            ->where('is_used', false)
+            ->first();
+
+        if (! $voucher) {
+            return back()->withErrors([
+                'voucher_code' => 'Invalid or already used voucher.',
+            ]);
+        }
+
+        $creditService->add((int) $voucher->amount);
+
+        $voucher->update([
+            'is_used' => true,
+            'used_at' => now(),
+        ]);
+
+        return back()->with([
+            'voucher_success' => 'Voucher redeemed successfully.',
+        ]);
     }
 }

@@ -68,13 +68,11 @@
                         Printing automatically...
                     </p>
 
-                    <form
-                        id="autoPrintForm"
-                        method="POST"
-                        action="{{ route('kiosk.print', $printJob) }}"
-                    >
-                        @csrf
-                    </form>
+                    <script>
+                        setTimeout(() => {
+                            window.location.href = '{{ route('kiosk.paper-check', $printJob) }}';
+                        }, 800);
+                    </script>
                 </div>
 
                 <script>

@@ -7,6 +7,7 @@ use App\Models\CreditTransaction;
 use App\Models\Maintenance;
 use App\Models\Organization;
 use App\Models\PrintJob;
+use App\Models\Voucher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -437,5 +438,44 @@ class AdminController extends Controller
         }
 
         return back();
+    }
+
+    public function vouchers(): View
+    {
+        $vouchers = Voucher::query()
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.vouchers', [
+            'vouchers' => $vouchers,
+        ]);
+    }
+
+    public function storeVoucher(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'regex:/^[0-9]+$/',
+                'max:12',
+                'unique:vouchers,code',
+            ],
+            'amount' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:1000',
+            ],
+        ]);
+
+        Voucher::create([
+            'code' => trim($validated['code']),
+            'amount' => $validated['amount'],
+        ]);
+
+        return back()->with([
+            'success' => 'Voucher created successfully.',
+        ]);
     }
 }

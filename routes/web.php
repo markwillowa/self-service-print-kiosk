@@ -129,6 +129,16 @@ Route::middleware([
                 [AdminController::class, 'updatePricing']
             )->name('admin.profile.pricing.update');
         });
+
+        Route::get(
+            '/admin/vouchers',
+            [AdminController::class, 'vouchers']
+        )->name('admin.vouchers');
+
+        Route::post(
+            '/admin/vouchers',
+            [AdminController::class, 'storeVoucher']
+        )->name('admin.vouchers.store');
     });
 
     Route::get(
@@ -160,6 +170,11 @@ Route::middleware([
         '/payment/{printJob}',
         [KioskController::class, 'payment']
     )->name('kiosk.payment');
+
+    Route::get(
+        '/paper-check/{printJob}',
+        [KioskController::class, 'paperCheck']
+    )->name('kiosk.paper-check');
 
     Route::post(
         '/payment/{printJob}/credit/{amount}',
@@ -353,6 +368,11 @@ Route::get('/printer-status', function () {
     'kiosk.registered',
     'kiosk.local',
 ])->name('kiosk.printer-status');
+
+Route::post(
+    '/voucher/redeem',
+    [KioskController::class, 'redeemVoucher']
+)->name('kiosk.voucher.redeem');
 
 /*
 |--------------------------------------------------------------------------

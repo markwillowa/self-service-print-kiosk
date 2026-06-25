@@ -105,9 +105,13 @@
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-                <div class="rounded-2xl bg-emerald-400 text-emerald-950 px-4 py-3 font-black text-base whitespace-nowrap shadow-sm">
+                <button
+                    id="voucherUnlockCredit"
+                    type="button"
+                    class="rounded-2xl bg-emerald-400 text-emerald-950 px-4 py-3 font-black text-base whitespace-nowrap shadow-sm active:scale-95 transition"
+                >
                     Credit: ₱{{ $kioskCreditBalance ?? 0 }}
-                </div>
+                </button>
 
                 @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
                     <div class="rounded-2xl bg-slate-950 text-white px-4 py-3 font-black text-base whitespace-nowrap shadow-sm">
@@ -368,6 +372,127 @@
     </div>
 </div>
 
+<div
+    id="voucherModal"
+    class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4"
+>
+    <div class="w-full max-w-[720px] rounded-3xl bg-white p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-5">
+            <div>
+                <h2 class="text-3xl font-black text-slate-950 leading-none mb-2">
+                    Redeem Voucher
+                </h2>
+
+                <p class="text-sm font-bold text-slate-500">
+                    Enter voucher code using the keypad.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                onclick="closeVoucherModal()"
+                class="w-12 h-12 rounded-2xl bg-slate-100 text-2xl font-black text-slate-900 active:scale-95 transition"
+            >
+                ✕
+            </button>
+        </div>
+
+        @if ($errors->has('voucher_code'))
+            <div class="mb-4 rounded-2xl bg-red-100 text-red-700 p-4 text-base font-black">
+                {{ $errors->first('voucher_code') }}
+            </div>
+        @endif
+
+        @if (session('voucher_success'))
+            <div class="mb-4 rounded-2xl bg-emerald-100 text-emerald-700 p-4 text-base font-black">
+                {{ session('voucher_success') }}
+            </div>
+        @endif
+
+        <form
+            method="POST"
+            action="{{ route('kiosk.voucher.redeem') }}"
+            autocomplete="off"
+            class="grid grid-cols-[1fr_320px] gap-5"
+        >
+            @csrf
+
+            <div class="flex flex-col justify-between">
+                <div>
+                    <label class="block text-sm font-black text-slate-700 mb-2">
+                        Voucher Code
+                    </label>
+
+                    <input
+                        id="voucherCodeInput"
+                        type="text"
+                        name="voucher_code"
+                        required
+                        readonly
+                        maxlength="20"
+                        class="w-full rounded-2xl bg-slate-100 px-4 h-16 text-3xl font-black text-center uppercase border-4 border-slate-950 cursor-pointer"
+                    >
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-5">
+                    <button
+                        type="button"
+                        onclick="closeVoucherModal()"
+                        class="rounded-2xl bg-slate-200 text-slate-900 py-4 text-lg font-black active:scale-95 transition"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="rounded-2xl bg-emerald-500 text-emerald-950 py-4 text-lg font-black active:scale-95 transition"
+                    >
+                        Redeem
+                    </button>
+                </div>
+            </div>
+
+            <div class="rounded-3xl bg-slate-100 p-4">
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9] as $number)
+                        <button
+                            type="button"
+                            onclick="voucherPress('{{ $number }}')"
+                            class="rounded-2xl bg-slate-950 text-white h-16 text-2xl font-black active:scale-95 transition"
+                        >
+                            {{ $number }}
+                        </button>
+                    @endforeach
+
+                    <button
+                        type="button"
+                        onclick="voucherBackspace()"
+                        class="rounded-2xl bg-red-100 text-red-700 h-16 text-base font-black active:scale-95 transition"
+                    >
+                        Delete
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="voucherPress('0')"
+                        class="rounded-2xl bg-slate-950 text-white h-16 text-2xl font-black active:scale-95 transition"
+                    >
+                        0
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="voucherClear()"
+                        class="rounded-2xl bg-slate-300 text-slate-950 h-16 text-base font-black active:scale-95 transition"
+                    >
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     let adminTapCount = 0;
     let adminTapTimer;
@@ -601,6 +726,97 @@
             checkPrinterStatus();
         }, 15000);
     });
+</script>
+
+<script>
+    let voucherTapCount = 0;
+    let voucherTapTimer;
+
+    const voucherCreditButton = document.getElementById(
+        'voucherUnlockCredit'
+    );
+
+    voucherCreditButton?.addEventListener('click', () => {
+        voucherTapCount++;
+
+        clearTimeout(voucherTapTimer);
+
+        voucherTapTimer = setTimeout(() => {
+            voucherTapCount = 0;
+        }, 2000);
+
+        if (voucherTapCount >= 5) {
+            voucherTapCount = 0;
+
+            openVoucherModal();
+        }
+    });
+
+    function openVoucherModal() {
+        const modal = document.getElementById('voucherModal');
+        const input = document.getElementById('voucherCodeInput');
+
+        if (input) {
+            input.value = '';
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeVoucherModal() {
+        const modal = document.getElementById('voucherModal');
+        const input = document.getElementById('voucherCodeInput');
+
+        if (input) {
+            input.value = '';
+        }
+
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
+    function voucherPress(value) {
+        const input = document.getElementById('voucherCodeInput');
+
+        if (! input || input.value.length >= 20) {
+            return;
+        }
+
+        input.value += value;
+    }
+
+    function voucherBackspace() {
+        const input = document.getElementById('voucherCodeInput');
+
+        if (! input) {
+            return;
+        }
+
+        input.value = input.value.slice(0, -1);
+    }
+
+    function voucherClear() {
+        const input = document.getElementById('voucherCodeInput');
+
+        if (! input) {
+            return;
+        }
+
+        input.value = '';
+    }
+
+    document
+        .getElementById('voucherModal')
+        ?.addEventListener('click', (event) => {
+            if (event.target.id === 'voucherModal') {
+                closeVoucherModal();
+            }
+        });
+
+    @if ($errors->has('voucher_code') || session('voucher_success'))
+    openVoucherModal();
+    @endif
 </script>
 
 @include('kiosk.partials.kiosk-lockdown')
