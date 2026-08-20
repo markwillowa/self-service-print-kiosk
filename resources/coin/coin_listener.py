@@ -14,9 +14,10 @@ LOOP_SLEEP = 0.001
 
 PULSE_MAP = {
     1: 1,
-    5: 5,
+    2: 2,
     10: 10,
     20: 20,
+    5: 5,
 }
 
 GPIO.setmode(GPIO.BCM)
@@ -71,9 +72,10 @@ last_state = GPIO.input(PIN)
 print("Ready.")
 print("Pulse mapping:")
 print("1 pulse  = PHP 1")
-print("5 pulses = PHP 5")
+print("2 pulse  = PHP 2")
 print("10 pulses = PHP 10")
 print("20 pulses = PHP 20")
+print("5 pulses = PHP 5")
 print("Waiting for coin pulses...\n")
 
 try:
