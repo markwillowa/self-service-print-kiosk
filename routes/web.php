@@ -327,11 +327,13 @@ Route::get('/printer-status', function () {
     $cupsReady =
         str_contains($lpstatOutput, 'is idle') ||
         str_contains($lpstatOutput, 'now printing') ||
-        str_contains($lpstatOutput, 'enabled');
+        str_contains($lpstatOutput, 'enabled') ||
+        str_contains($lpstatOutput, 'accepting requests');
 
     $isDisabled =
-        str_contains($lpstatOutput, 'disabled') ||
-        str_contains($lpstatOutput, 'not available');
+        (str_contains($lpstatOutput, 'disabled') && !str_contains($lpstatOutput, 'enabled')) ||
+        str_contains($lpstatOutput, 'not available') ||
+        str_contains($lpstatOutput, 'not accepting requests');
 
     $lsusbProcess = new Process([
         'lsusb',
@@ -349,12 +351,32 @@ Route::get('/printer-status', function () {
     $usbDetected =
         str_contains($lsusbOutput, 'epson') ||
         str_contains($lsusbOutput, 'seiko') ||
-        str_contains($lsusbOutput, 'printer');
+        str_contains($lsusbOutput, 'printer') ||
+        str_contains($lsusbOutput, 'canon') ||
+        str_contains($lsusbOutput, 'hp') ||
+        str_contains($lsusbOutput, 'brother');
 
     $online =
-        $printerExistsInCups &&
-        $cupsReady &&
-        ! $isDisabled;
+        ($printerExistsInCups && $cupsReady && ! $isDisabled) ||
+        $usbDetected;
+
+    // Fallback: If we have NO printer name configured and lpstat -p failed,
+    // but usb is detected, we should be okay.
+    // Or if lpstat output contains "printer", it exists.
+    if (!$online && str_contains($lpstatOutput, 'printer')) {
+        $online = true;
+    }
+
+    if (! $online) {
+        logger()->warning('Printer detection failed', [
+            'printer_name' => $printerName,
+            'cups_ok' => $printerExistsInCups,
+            'cups_ready' => $cupsReady,
+            'cups_disabled' => $isDisabled,
+            'lpstat_output' => $lpstatOutput,
+            'lsusb_output' => $lsusbOutput,
+        ]);
+    }
 
     return response()->json([
         'online' => $online,

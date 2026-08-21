@@ -35,6 +35,11 @@ class PrintJobFactory
             $sanitizedFilename
         );
 
+        $storageAppPath = storage_path('app/');
+        if (str_starts_with($originalPath, $storageAppPath)) {
+            $originalPath = str_replace($storageAppPath, '', $originalPath);
+        }
+
         $originalFullPath = Storage::disk('local')
             ->path($originalPath);
 
@@ -61,6 +66,11 @@ class PrintJobFactory
             'print-jobs/original',
             $sanitizedFilename
         );
+
+        $storageAppPath = storage_path('app/');
+        if (str_starts_with($originalPath, $storageAppPath)) {
+            $originalPath = str_replace($storageAppPath, '', $originalPath);
+        }
 
         $extension = strtolower(
             pathinfo($sanitizedFilename, PATHINFO_EXTENSION)
@@ -104,6 +114,13 @@ class PrintJobFactory
         }
 
         $originalPath = $printJob->original_file_path;
+
+        // If the path is absolute (starts with storage_path), convert it to relative for the 'local' disk
+        $storageAppPath = storage_path('app/');
+        if (str_starts_with($originalPath, $storageAppPath)) {
+            $originalPath = str_replace($storageAppPath, '', $originalPath);
+        }
+
         if (!Storage::disk('local')->exists($originalPath)) {
             logger()->error('File missing in storage', [
                 'print_job_id' => $printJob->id,
