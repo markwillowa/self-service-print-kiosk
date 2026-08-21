@@ -70,8 +70,10 @@ class FileConverter
             mkdir($profilePath, 0777, true);
         }
 
+        $sofficePath = config('services.libreoffice.path', 'soffice');
+
         $process = new Process([
-            'soffice',
+            $sofficePath,
             '--headless',
             '--norestore',
             '--nodefault',

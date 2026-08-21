@@ -103,8 +103,17 @@ class PrintJobFactory
             return $printJob;
         }
 
+        $originalPath = $printJob->original_file_path;
+        if (!Storage::disk('local')->exists($originalPath)) {
+            logger()->error('File missing in storage', [
+                'print_job_id' => $printJob->id,
+                'original_file_path' => $originalPath,
+            ]);
+            throw new RuntimeException('File does not exist in storage.');
+        }
+
         $originalFullPath = Storage::disk('local')
-            ->path($printJob->original_file_path);
+            ->path($originalPath);
 
         $preparedJob = $this->createFromPath(
             path: $originalFullPath,
