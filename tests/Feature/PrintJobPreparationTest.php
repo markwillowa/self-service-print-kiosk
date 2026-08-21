@@ -70,4 +70,27 @@ class PrintJobPreparationTest extends TestCase
         $this->assertEquals('pending_payment', $preparedJob->status);
         $this->assertEquals('completed', $preparedJob->conversion_status);
     }
+
+    public function test_uploaded_files_with_same_original_name_are_stored_separately()
+    {
+        Storage::fake('local');
+
+        $firstFile = UploadedFile::fake()->image('same-name.png');
+        $secondFile = UploadedFile::fake()->image('same-name.png');
+
+        $factory = app(PrintJobFactory::class);
+
+        $firstJob = $factory->createUploadedOnly($firstFile);
+        $secondJob = $factory->createUploadedOnly($secondFile);
+
+        $this->assertSame('same-name.png', $firstJob->original_filename);
+        $this->assertSame('same-name.png', $secondJob->original_filename);
+        $this->assertNotSame(
+            $firstJob->original_file_path,
+            $secondJob->original_file_path
+        );
+
+        Storage::disk('local')->assertExists($firstJob->original_file_path);
+        Storage::disk('local')->assertExists($secondJob->original_file_path);
+    }
 }

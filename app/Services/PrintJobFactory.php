@@ -7,6 +7,7 @@ use App\Models\PrintJob;
 use App\Support\FilenameSanitizer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class PrintJobFactory
@@ -30,15 +31,10 @@ class PrintJobFactory
             $file->getClientOriginalName()
         );
 
-        $originalPath = $file->storeAs(
-            'print-jobs/original',
+        $originalPath = $this->storeOriginalFile(
+            $file,
             $sanitizedFilename
         );
-
-        $storageAppPath = storage_path('app/');
-        if (str_starts_with($originalPath, $storageAppPath)) {
-            $originalPath = str_replace($storageAppPath, '', $originalPath);
-        }
 
         $originalFullPath = Storage::disk('local')
             ->path($originalPath);
@@ -62,15 +58,10 @@ class PrintJobFactory
             $file->getClientOriginalName()
         );
 
-        $originalPath = $file->storeAs(
-            'print-jobs/original',
+        $originalPath = $this->storeOriginalFile(
+            $file,
             $sanitizedFilename
         );
-
-        $storageAppPath = storage_path('app/');
-        if (str_starts_with($originalPath, $storageAppPath)) {
-            $originalPath = str_replace($storageAppPath, '', $originalPath);
-        }
 
         $extension = strtolower(
             pathinfo($sanitizedFilename, PATHINFO_EXTENSION)
@@ -294,5 +285,25 @@ class PrintJobFactory
 
             'source' => $source,
         ]);
+    }
+
+    private function storeOriginalFile(
+        UploadedFile $file,
+        string $sanitizedFilename
+    ): string {
+        $storedFilename = Str::uuid() . '-' . $sanitizedFilename;
+
+        $originalPath = $file->storeAs(
+            'print-jobs/original',
+            $storedFilename,
+            'local'
+        );
+
+        $storageAppPath = storage_path('app/');
+        if (str_starts_with($originalPath, $storageAppPath)) {
+            return str_replace($storageAppPath, '', $originalPath);
+        }
+
+        return $originalPath;
     }
 }
