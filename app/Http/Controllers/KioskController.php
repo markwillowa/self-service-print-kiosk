@@ -282,7 +282,7 @@ class KioskController extends Controller
                 'expires_at' => null,
             ]);
 
-            ProcessPrintJob::dispatch($printJob);
+            ProcessPrintJob::dispatchSync($printJob);
         } catch (RuntimeException) {
             abort(403);
         }

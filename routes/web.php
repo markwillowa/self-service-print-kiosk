@@ -303,11 +303,16 @@ Route::post('/shutdown', function () {
 Route::get('/printer-status', function () {
     $printerName = config('services.printer.name');
 
-    $lpstatProcess = new Process([
+    $lpstatCommand = [
         'lpstat',
         '-p',
-        $printerName,
-    ]);
+    ];
+
+    if ($printerName) {
+        $lpstatCommand[] = $printerName;
+    }
+
+    $lpstatProcess = new Process($lpstatCommand);
 
     $lpstatProcess->setTimeout(3);
     $lpstatProcess->run();
@@ -349,8 +354,7 @@ Route::get('/printer-status', function () {
     $online =
         $printerExistsInCups &&
         $cupsReady &&
-        ! $isDisabled &&
-        $usbDetected;
+        ! $isDisabled;
 
     return response()->json([
         'online' => $online,
