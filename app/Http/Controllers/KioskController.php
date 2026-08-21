@@ -74,8 +74,19 @@ class KioskController extends Controller
         $printJobs = PrintJob::query()
             ->where('status', 'uploaded')
             ->latest()
+            ->take(50)
+            ->get()
+            ->filter(function (PrintJob $printJob): bool {
+                if ($this->uploadedOriginalExists($printJob)) {
+                    return true;
+                }
+
+                $this->markUploadedFileMissing($printJob);
+
+                return false;
+            })
             ->take(20)
-            ->get();
+            ->values();
 
         return view('kiosk.upload', [
             'printJobs' => $printJobs,
@@ -89,6 +100,16 @@ class KioskController extends Controller
     ): RedirectResponse {
         if ($printJob->status !== 'uploaded') {
             return redirect()->route('kiosk.upload');
+        }
+
+        if (! $this->uploadedOriginalExists($printJob)) {
+            $this->markUploadedFileMissing($printJob);
+
+            return redirect()
+                ->route('kiosk.upload')
+                ->withErrors([
+                    'document' => 'The uploaded file is no longer available. Please upload it again.',
+                ]);
         }
 
         try {
@@ -685,6 +706,45 @@ class KioskController extends Controller
         $printJob->update([
             'expires_at' => now()->addMinutes(5),
         ]);
+    }
+
+    private function uploadedOriginalExists(PrintJob $printJob): bool
+    {
+        $path = $this->relativeLocalDiskPath(
+            $printJob->original_file_path
+        );
+
+        return $path !== null &&
+            Storage::disk('local')->exists($path);
+    }
+
+    private function markUploadedFileMissing(PrintJob $printJob): void
+    {
+        logger()->warning('Uploaded file no longer exists', [
+            'print_job_id' => $printJob->id,
+            'original_file_path' => $printJob->original_file_path,
+        ]);
+
+        $printJob->update([
+            'status' => 'cancelled',
+            'cancelled_at' => now(),
+            'expires_at' => null,
+        ]);
+    }
+
+    private function relativeLocalDiskPath(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        $storageAppPath = storage_path('app') . DIRECTORY_SEPARATOR;
+
+        if (str_starts_with($path, $storageAppPath)) {
+            return substr($path, strlen($storageAppPath));
+        }
+
+        return $path;
     }
 
     private function uploadValidationRules(): array
