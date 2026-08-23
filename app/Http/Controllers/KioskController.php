@@ -482,7 +482,8 @@ class KioskController extends Controller
                 sourcePath: $pdfForPreview,
                 printMode: $validated['print_mode'],
                 orientation: $validated['orientation'],
-                paperSize: $validated['paper_size']
+                paperSize: $validated['paper_size'],
+                margin: $margin
             );
         } catch (Throwable $exception) {
             logger()->error('Preview generation failed', [

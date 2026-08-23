@@ -216,7 +216,8 @@ class PrintJobFactory
                 sourcePath: $finalPdfPath,
                 printMode: $defaultMode,
                 orientation: $defaultOrientation,
-                paperSize: $defaultPaperSize
+                paperSize: $defaultPaperSize,
+                margin: $defaultMargin
             );
 
         $relativePreviewPath =
