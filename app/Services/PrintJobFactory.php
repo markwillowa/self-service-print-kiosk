@@ -88,6 +88,7 @@ class PrintJobFactory
             'print_mode' => 'black',
             'orientation' => 'portrait',
             'paper_size' => 'short',
+            'margin' => 'normal',
             'black_price_per_page' => $company?->black_price_per_page ?? 1,
             'color_price_per_page' => $company?->color_price_per_page ?? 3,
             'price_per_page' => $company?->black_price_per_page ?? 1,
@@ -144,6 +145,7 @@ class PrintJobFactory
             'print_mode' => $preparedJob->print_mode,
             'orientation' => $preparedJob->orientation,
             'paper_size' => $preparedJob->paper_size,
+            'margin' => $preparedJob->margin ?? 'normal',
             'black_price_per_page' => $preparedJob->black_price_per_page,
             'color_price_per_page' => $preparedJob->color_price_per_page,
             'price_per_page' => $preparedJob->price_per_page,
@@ -182,6 +184,8 @@ class PrintJobFactory
 
         $defaultPaperSize = 'short';
 
+        $defaultMargin = 'normal';
+
         $defaultCopies = 1;
 
         if ($extension === 'pdf') {
@@ -193,7 +197,8 @@ class PrintJobFactory
                 ->convertToPdf(
                     path: $path,
                     orientation: $defaultOrientation,
-                    paperSize: $defaultPaperSize
+                    paperSize: $defaultPaperSize,
+                    margin: $defaultMargin
                 );
 
             $finalPdfPath = $convertedPdfPath;
@@ -270,6 +275,8 @@ class PrintJobFactory
             'orientation' => $defaultOrientation,
 
             'paper_size' => $defaultPaperSize,
+
+            'margin' => $defaultMargin,
 
             'black_price_per_page' => $blackPricePerPage,
 

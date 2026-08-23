@@ -3,7 +3,22 @@
         $currentPrintMode = $printJob->print_mode ?: 'black';
         $currentOrientation = $printJob->orientation ?: 'portrait';
         $currentPaperSize = $printJob->paper_size ?: 'short';
+        $currentMargin = $printJob->margin ?: 'normal';
         $currentPageSelection = $printJob->page_selection ?: 'all';
+
+        $marginLabel = match($currentMargin) {
+            'narrow' => 'Narrow (0.125")',
+            'wide' => 'Wide (0.50")',
+            'none', 'no_margin' => 'No Margin (0")',
+            'fit', 'fit_to_screen' => 'Fit to Screen',
+            default => 'Normal ⭐ (0.25")',
+        };
+
+        $paperLabel = match($currentPaperSize) {
+            'long' => 'Long',
+            'a4' => 'A4',
+            default => 'Short',
+        };
     @endphp
 
     <div class="h-full flex flex-col min-h-0 gap-3 py-2">
@@ -75,10 +90,11 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-5 gap-3 shrink-0">
+        <div class="grid grid-cols-6 gap-3 shrink-0">
             @foreach ([
                 ['Color', $currentPrintMode === 'color' ? 'Colored' : 'Black'],
-                ['Size', $currentPaperSize === 'long' ? 'Long' : 'Short'],
+                ['Size', $paperLabel],
+                ['Margin', $marginLabel],
                 ['Orientation', $currentOrientation === 'landscape' ? 'Landscape' : 'Portrait'],
                 ['Page', $currentPageSelection === 'all' ? 'All' : $currentPageSelection],
                 ['Charged Pages', ($printJob->selected_pages_count ?: $printJob->pages) * ($printJob->copies ?: 1)],
@@ -88,16 +104,29 @@
                         {{ $label }}
                     </div>
 
-                    <div class="text-base font-black text-slate-950 truncate">
+                    <div class="text-base font-black text-slate-950 truncate" title="{{ $value }}">
                         {{ $value }}
                     </div>
                 </div>
             @endforeach
         </div>
 
-        <div class="flex-1 min-h-0 rounded-3xl bg-white overflow-hidden shadow-xl border border-white">
+        <div id="previewContainer" class="flex-1 min-h-0 rounded-3xl bg-white overflow-hidden shadow-xl border border-white relative">
+            <button
+                type="button"
+                id="fitScreenBtn"
+                onclick="toggleFitToScreen()"
+                title="Fit to Screen"
+                class="absolute top-4 right-4 z-10 bg-slate-900/80 hover:bg-slate-950 text-white px-3.5 py-2 rounded-2xl text-xs font-black shadow-lg backdrop-blur flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+                <span id="fitScreenText">Fit to Screen</span>
+            </button>
             <iframe
-                src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0"
+                id="pdfPreviewIframe"
+                src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0&view=Fit"
                 class="w-full h-full border-0"
             ></iframe>
         </div>
@@ -171,11 +200,15 @@
                             class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
                         >
                             <option value="short" @selected(old('paper_size', $currentPaperSize) === 'short')>
-                                Short
+                                Short (Letter)
                             </option>
 
                             <option value="long" @selected(old('paper_size', $currentPaperSize) === 'long')>
-                                Long
+                                Long (Legal)
+                            </option>
+
+                            <option value="a4" @selected(old('paper_size', $currentPaperSize) === 'a4')>
+                                A4
                             </option>
                         </select>
                     </div>
@@ -201,6 +234,37 @@
 
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
+                            Margin
+                        </label>
+
+                        <select
+                            name="margin"
+                            class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
+                        >
+                            <option value="normal" @selected(old('margin', $currentMargin) === 'normal')>
+                                Normal ⭐ (0.25" / 6.35 mm)
+                            </option>
+
+                            <option value="narrow" @selected(old('margin', $currentMargin) === 'narrow')>
+                                Narrow (0.125" / 3.18 mm)
+                            </option>
+
+                            <option value="wide" @selected(old('margin', $currentMargin) === 'wide')>
+                                Wide (0.50" / 12.7 mm)
+                            </option>
+
+                            <option value="none" @selected(old('margin', $currentMargin) === 'none' || old('margin', $currentMargin) === 'no_margin')>
+                                No Margin (0")
+                            </option>
+
+                            <option value="fit" @selected(old('margin', $currentMargin) === 'fit' || old('margin', $currentMargin) === 'fit_to_screen')>
+                                Fit to Screen
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-black mb-2 text-slate-700">
                             Copies
                         </label>
 
@@ -218,7 +282,7 @@
                         >
                     </div>
 
-                    <div class="col-span-2">
+                    <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
                             Page Selection
                         </label>
@@ -236,7 +300,7 @@
                             onclick="selectKeyboardField('pageSelectionInput', 'pages')"
                         >
 
-                        <p class="mt-2 text-xs font-bold text-slate-500">
+                        <p class="mt-1 text-xs font-bold text-slate-500">
                             Leave blank for all pages. Example: 1-3,5
                         </p>
                     </div>
@@ -380,12 +444,57 @@
             document.querySelector('select[name="print_mode"]').value = 'black';
             document.querySelector('select[name="paper_size"]').value = 'short';
             document.querySelector('select[name="orientation"]').value = 'portrait';
+            document.querySelector('select[name="margin"]').value = 'normal';
 
             document.getElementById('pageSelectionInput').value = '';
             document.getElementById('copiesInput').value = '1';
 
             selectKeyboardField('copiesInput', 'copies');
         }
+
+        function toggleFitToScreen() {
+            const container = document.getElementById('previewContainer');
+            const fitText = document.getElementById('fitScreenText');
+            if (! container) return;
+
+            if (! document.fullscreenElement && ! document.webkitFullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                } else {
+                    container.classList.toggle('fixed');
+                    container.classList.toggle('inset-0');
+                    container.classList.toggle('z-50');
+                }
+                if (fitText) fitText.textContent = 'Exit Fit';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                if (fitText) fitText.textContent = 'Fit to Screen';
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            const fitText = document.getElementById('fitScreenText');
+            if (fitText) {
+                fitText.textContent = document.fullscreenElement ? 'Exit Fit' : 'Fit to Screen';
+            }
+        });
+
+        document.addEventListener('webkitfullscreenchange', () => {
+            const fitText = document.getElementById('fitScreenText');
+            if (fitText) {
+                fitText.textContent = document.webkitFullscreenElement ? 'Exit Fit' : 'Fit to Screen';
+            }
+        });
 
         function openCancelModal() {
             const modal = document.getElementById('cancelModal');

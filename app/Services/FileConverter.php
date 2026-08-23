@@ -12,7 +12,8 @@ class FileConverter
     public function convertToPdf(
         string $path,
         string $orientation = 'portrait',
-        string $paperSize = 'short'
+        string $paperSize = 'short',
+        string $margin = 'normal'
     ): string {
         $extension = strtolower(
             pathinfo($path, PATHINFO_EXTENSION)
@@ -34,7 +35,8 @@ class FileConverter
             $path = $this->prepareDocxLayout(
                 path: $path,
                 orientation: $orientation,
-                paperSize: $paperSize
+                paperSize: $paperSize,
+                margin: $margin
             );
         }
 
@@ -42,7 +44,8 @@ class FileConverter
             $path = $this->prepareTxtLayout(
                 path: $path,
                 orientation: $orientation,
-                paperSize: $paperSize
+                paperSize: $paperSize,
+                margin: $margin
             );
         }
 
@@ -120,7 +123,8 @@ class FileConverter
     private function prepareDocxLayout(
         string $path,
         string $orientation,
-        string $paperSize
+        string $paperSize,
+        string $margin = 'normal'
     ): string {
         $tempDirectory = storage_path(
             'app/docx-layout-' . Str::uuid()
@@ -155,28 +159,50 @@ class FileConverter
             paperSize: $paperSize
         );
 
+        $marginTwips = $this->marginTwips($margin);
+
+        $pgSzXml = '<w:pgSz w:w="' .
+            $width .
+            '" w:h="' .
+            $height .
+            '"' .
+            ($orientation === 'landscape' ? ' w:orient="landscape"' : '') .
+            '/>';
+
+        $pgMarXml = '<w:pgMar w:top="' .
+            $marginTwips .
+            '" w:right="' .
+            $marginTwips .
+            '" w:bottom="' .
+            $marginTwips .
+            '" w:left="' .
+            $marginTwips .
+            '" w:header="0" w:footer="0" w:gutter="0"/>';
+
         if (str_contains($documentXml, '<w:pgSz')) {
             $documentXml = preg_replace(
                 '/<w:pgSz[^>]*\/>/',
-                '<w:pgSz w:w="' .
-                $width .
-                '" w:h="' .
-                $height .
-                '"' .
-                ($orientation === 'landscape' ? ' w:orient="landscape"' : '') .
-                '/>',
+                $pgSzXml,
                 $documentXml
             );
-        } else {
+        } elseif (str_contains($documentXml, '</w:sectPr>')) {
             $documentXml = str_replace(
                 '</w:sectPr>',
-                '<w:pgSz w:w="' .
-                $width .
-                '" w:h="' .
-                $height .
-                '"' .
-                ($orientation === 'landscape' ? ' w:orient="landscape"' : '') .
-                '/></w:sectPr>',
+                $pgSzXml . '</w:sectPr>',
+                $documentXml
+            );
+        }
+
+        if (str_contains($documentXml, '<w:pgMar')) {
+            $documentXml = preg_replace(
+                '/<w:pgMar[^>]*\/>/',
+                $pgMarXml,
+                $documentXml
+            );
+        } elseif (str_contains($documentXml, '</w:sectPr>')) {
+            $documentXml = str_replace(
+                '</w:sectPr>',
+                $pgMarXml . '</w:sectPr>',
                 $documentXml
             );
         }
@@ -194,7 +220,8 @@ class FileConverter
     private function prepareTxtLayout(
         string $path,
         string $orientation,
-        string $paperSize
+        string $paperSize,
+        string $margin = 'normal'
     ): string {
         $content = file_get_contents($path);
 
@@ -204,9 +231,22 @@ class FileConverter
             );
         }
 
-        $paper = $paperSize === 'long'
-            ? 'legal'
-            : 'letter';
+        $paper = match ($paperSize) {
+            'long' => 'legal',
+            'a4' => 'a4',
+            default => 'letter',
+        };
+
+        $marginInches = match ($margin) {
+            'narrow' => '0.125in',
+            'wide' => '0.50in',
+            'none', 'no_margin', 'fit', 'fit_to_screen' => '0in',
+            default => '0.25in',
+        };
+
+        $fitStyles = ($margin === 'fit' || $margin === 'fit_to_screen')
+            ? 'width: 100vw; min-height: 100vh; margin: 0; padding: 0; box-sizing: border-box;'
+            : 'margin: ' . $marginInches . ';';
 
         $htmlPath = storage_path(
             'app/txt-layout-' . Str::uuid() . '.html'
@@ -222,8 +262,12 @@ class FileConverter
             $paper .
             ' ' .
             $orientation .
-            '; margin: 0.5in; }' .
-            'body { font-family: Arial, sans-serif; font-size: 12pt; white-space: pre-wrap; }' .
+            '; margin: ' .
+            $marginInches .
+            '; }' .
+            'body { font-family: Arial, sans-serif; font-size: 12pt; white-space: pre-wrap; ' .
+            $fitStyles .
+            ' }' .
             '</style>' .
             '</head>' .
             '<body>' .
@@ -236,20 +280,35 @@ class FileConverter
         return $htmlPath;
     }
 
-    private function pageSizeTwips(
+    public function pageSizeTwips(
         string $orientation,
         string $paperSize
     ): array {
-        $width = 12240;
-
-        $height = $paperSize === 'long'
-            ? 20160
-            : 15840;
+        if ($paperSize === 'a4') {
+            $width = 11906;
+            $height = 16838;
+        } elseif ($paperSize === 'long') {
+            $width = 12240;
+            $height = 20160;
+        } else {
+            $width = 12240;
+            $height = 15840;
+        }
 
         if ($orientation === 'landscape') {
             return [$height, $width];
         }
 
         return [$width, $height];
+    }
+
+    public function marginTwips(string $margin): int
+    {
+        return match ($margin) {
+            'narrow' => 180,
+            'wide' => 720,
+            'none', 'no_margin', 'fit', 'fit_to_screen' => 0,
+            default => 360,
+        };
     }
 }

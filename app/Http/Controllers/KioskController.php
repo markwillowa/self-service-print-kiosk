@@ -418,9 +418,17 @@ class KioskController extends Controller
             'page_selection' => ['nullable', 'string'],
             'print_mode' => ['required', 'in:black,color'],
             'orientation' => ['required', 'in:portrait,landscape'],
-            'paper_size' => ['required', 'in:short,long'],
+            'paper_size' => ['required', 'in:short,long,a4'],
+            'margin' => ['nullable', 'string', 'in:normal,narrow,wide,none,no_margin,fit,fit_to_screen'],
             'copies' => ['required', 'integer', 'min:1', 'max:99'],
         ]);
+
+        $margin = $validated['margin'] ?? $printJob->margin ?? 'normal';
+        if ($margin === 'no_margin') {
+            $margin = 'none';
+        } elseif ($margin === 'fit_to_screen') {
+            $margin = 'fit';
+        }
 
         $selection = strtolower(
             trim($validated['page_selection'] ?? '')
@@ -435,6 +443,7 @@ class KioskController extends Controller
                 printJob: $printJob,
                 orientation: $validated['orientation'],
                 paperSize: $validated['paper_size'],
+                margin: $margin,
                 fileConverter: $fileConverter
             );
 
@@ -521,6 +530,8 @@ class KioskController extends Controller
             'orientation' => $validated['orientation'],
 
             'paper_size' => $validated['paper_size'],
+
+            'margin' => $margin,
 
             'price_per_page' => $pricePerPage,
 
@@ -661,6 +672,7 @@ class KioskController extends Controller
         PrintJob $printJob,
         string $orientation,
         string $paperSize,
+        string $margin,
         FileConverter $fileConverter
     ): string {
         $extension = strtolower(
@@ -693,7 +705,8 @@ class KioskController extends Controller
             return $fileConverter->convertToPdf(
                 path: $originalPath,
                 orientation: $orientation,
-                paperSize: $paperSize
+                paperSize: $paperSize,
+                margin: $margin
             );
         }
 

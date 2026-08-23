@@ -23,6 +23,7 @@ class PrintJob extends Model
         'preview_pdf_path',
         'orientation',
         'paper_size',
+        'margin',
         'pages',
         'print_mode',
         'black_price_per_page',

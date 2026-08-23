@@ -29,6 +29,7 @@ class PdfPreviewGenerator
 
         $paper = match ($paperSize) {
             'long' => 'legal',
+            'a4' => 'a4',
             default => 'letter',
         };
 

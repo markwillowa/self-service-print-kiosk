@@ -106,10 +106,11 @@ class PrinterService
             $command[] = 'orientation-requested=4';
         }
 
-        $media =
-            $printJob->paper_size === 'long'
-                ? 'legal'
-                : 'letter';
+        $media = match ($printJob->paper_size) {
+            'long' => 'legal',
+            'a4' => 'a4',
+            default => 'letter',
+        };
 
         $command[] = '-o';
         $command[] = 'media=' . $media;

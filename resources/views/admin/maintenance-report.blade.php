@@ -44,6 +44,10 @@
         ->where('paper_size', 'short')
         ->count();
 
+    $totalA4 = $completedJobs
+        ->where('paper_size', 'a4')
+        ->count();
+
     $totalLandscape = $completedJobs
         ->where('orientation', 'landscape')
         ->count();
@@ -241,7 +245,7 @@
         <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
                 <div class="font-black text-slate-500 uppercase text-xs">
-                    School Name
+                    Client Name
                 </div>
 
                 <div class="font-bold">
@@ -373,6 +377,16 @@
 
                 <div class="font-bold">
                     {{ $totalShort }}
+                </div>
+            </div>
+
+            <div>
+                <div class="font-black text-slate-500 uppercase text-xs">
+                    Total A4
+                </div>
+
+                <div class="font-bold">
+                    {{ $totalA4 }}
                 </div>
             </div>
 
@@ -577,7 +591,7 @@
 
         <div class="text-center">
             <div class="border-t border-slate-900 pt-2 font-black">
-                School Representative
+                Representative
             </div>
         </div>
     </footer>
