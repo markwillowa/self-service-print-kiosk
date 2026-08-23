@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-6 gap-3 shrink-0">
+        <div class="flex items-center gap-3 shrink-0 w-full">
             @foreach ([
                 ['Color', $currentPrintMode === 'color' ? 'Colored' : 'Black'],
                 ['Size', $paperLabel],
@@ -99,7 +99,7 @@
                 ['Page', $currentPageSelection === 'all' ? 'All' : $currentPageSelection],
                 ['Charged Pages', ($printJob->selected_pages_count ?: $printJob->pages) * ($printJob->copies ?: 1)],
             ] as [$label, $value])
-                <div class="rounded-2xl bg-white/90 border border-white p-3 shadow-lg text-center">
+                <div class="flex-1 min-w-0 rounded-2xl bg-white/90 border border-white p-3 shadow-lg text-center">
                     <div class="text-[10px] font-black text-slate-500 uppercase leading-none mb-1">
                         {{ $label }}
                     </div>
