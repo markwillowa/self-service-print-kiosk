@@ -28,12 +28,6 @@ class PdfPreviewGenerator
             Str::uuid() .
             '.pdf';
 
-        $paper = match ($paperSize) {
-            'long' => 'legal',
-            'a4' => 'a4',
-            default => 'letter',
-        };
-
         $marginPoints = match ($margin) {
             'narrow' => 9.0,
             'wide' => 36.0,
@@ -58,9 +52,10 @@ class PdfPreviewGenerator
             '-dNOPAUSE',
             '-dQUIET',
             '-dBATCH',
+            '-dDEVICEWIDTHPOINTS=' . (int) round($wPoints),
+            '-dDEVICEHEIGHTPOINTS=' . (int) round($hPoints),
             '-dFIXEDMEDIA',
             '-dAutoRotatePages=/None',
-            '-sPAPERSIZE=' . $paper,
             '-sOutputFile=' . $outputPath,
         ];
 
@@ -77,17 +72,9 @@ class PdfPreviewGenerator
             "/PageSize [{$wPoints} {$hPoints}]",
         ];
 
-        if ($orientation === 'landscape') {
-            $postscript[] = '/Orientation 3';
-        }
-
         if ($marginPoints > 0) {
-            $scaleX = round(($wPoints - (2 * $marginPoints)) / $wPoints, 6);
-            $scaleY = round(($hPoints - (2 * $marginPoints)) / $hPoints, 6);
-            $translateX = $marginPoints;
-            $translateY = $marginPoints;
-
-            $postscript[] = "/BeginPage {{$translateX} {$translateY} translate {$scaleX} {$scaleY} scale}";
+            $marginDouble = $marginPoints * 2;
+            $postscript[] = "/Install { clippath pathbbox pop pop /H exch def /W exch def {$marginPoints} {$marginPoints} translate W {$marginDouble} sub W div H {$marginDouble} sub H div scale }";
         }
 
         $command[] = '-c';

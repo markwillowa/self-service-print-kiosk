@@ -117,7 +117,7 @@
             @endforeach
         </div>
 
-        <div id="previewContainer" class="flex-1 min-h-0 rounded-3xl bg-white overflow-hidden shadow-xl border border-white relative">
+        <div id="previewContainer" class="flex-1 min-h-0 rounded-3xl bg-slate-900/10 p-3 overflow-hidden shadow-xl border border-white relative flex items-center justify-center">
             <button
                 type="button"
                 id="fitScreenBtn"
@@ -130,11 +130,14 @@
                 </svg>
                 <span id="fitScreenText">Fit to Screen</span>
             </button>
-            <iframe
-                id="pdfPreviewIframe"
-                src="{{ $previewUrl }}?v={{ $printJob->updated_at?->timestamp ?? time() }}#toolbar=0&navpanes=0&scrollbar=0&view=Fit"
-                class="w-full h-full border-0"
-            ></iframe>
+
+            <div class="{{ $currentOrientation === 'landscape' ? 'w-full max-w-[1000px] h-full max-h-full aspect-[1.414/1]' : 'w-full h-full' }} bg-white rounded-2xl shadow-xl overflow-hidden relative">
+                <iframe
+                    id="pdfPreviewIframe"
+                    src="{{ $previewUrl }}?v={{ $printJob->updated_at?->timestamp ?? time() }}#toolbar=0&navpanes=0&scrollbar=0&view={{ $currentOrientation === 'landscape' ? 'FitH' : 'Fit' }}"
+                    class="w-full h-full border-0 bg-white"
+                ></iframe>
+            </div>
         </div>
     </div>
 
