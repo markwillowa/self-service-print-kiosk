@@ -58,12 +58,13 @@
                     <form
                         method="POST"
                         action="{{ route('kiosk.select-upload', $printJob) }}"
+                        onsubmit="handleUploadSubmit(this)"
                     >
                         @csrf
 
                         <button
                             type="submit"
-                            class="w-full text-left"
+                            class="upload-card-btn w-full text-left"
                         >
                             <div class="flex items-center justify-between rounded-3xl bg-slate-50 border border-slate-200 p-4 mb-3 active:scale-[0.99] transition shadow">
                                 <div class="flex items-center gap-4 min-w-0">
@@ -90,14 +91,16 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center gap-2 rounded-2xl bg-slate-950 text-white px-6 py-3 text-base font-black shrink-0 shadow">
-                                    @if ($printJob->conversion_status === 'completed')
-                                        Select
-                                    @else
-                                        Prepare
-                                    @endif
+                                <div class="upload-btn-badge flex items-center gap-2 rounded-2xl bg-slate-950 text-white px-6 py-3 text-base font-black shrink-0 shadow">
+                                    <span class="upload-btn-text">
+                                        @if ($printJob->conversion_status === 'completed')
+                                            Select
+                                        @else
+                                            Prepare
+                                        @endif
+                                    </span>
 
-                                    <x-heroicon-o-arrow-right class="w-5 h-5" />
+                                    <x-heroicon-o-arrow-right class="upload-btn-icon w-5 h-5" />
                                 </div>
                             </div>
                         </button>
@@ -119,6 +122,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function handleUploadSubmit(form) {
+            document.querySelectorAll('.upload-card-btn').forEach((btn) => {
+                btn.disabled = true;
+                btn.classList.add('pointer-events-none', 'opacity-50');
+            });
+
+            const badge = form.querySelector('.upload-btn-badge');
+            if (badge) {
+                badge.classList.remove('bg-slate-950');
+                badge.classList.add('bg-blue-600');
+                badge.innerHTML = `
+                    <svg class="animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Preparing...</span>
+                `;
+            }
+        }
+    </script>
 
     @include('kiosk.partials.auto-reset', ['seconds' => 90])
 </x-kiosk-layout>

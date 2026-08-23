@@ -132,7 +132,7 @@
             </button>
             <iframe
                 id="pdfPreviewIframe"
-                src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0&view=Fit"
+                src="{{ $previewUrl }}?v={{ $printJob->updated_at?->timestamp ?? time() }}#toolbar=0&navpanes=0&scrollbar=0&view=Fit"
                 class="w-full h-full border-0"
             ></iframe>
         </div>

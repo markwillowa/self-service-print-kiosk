@@ -34,24 +34,6 @@ class PdfPreviewGenerator
             default => 'letter',
         };
 
-        $command = [
-            'gs',
-            '-sDEVICE=pdfwrite',
-            '-dCompatibilityLevel=1.4',
-            '-dNOPAUSE',
-            '-dQUIET',
-            '-dBATCH',
-            '-dFIXEDMEDIA',
-            '-dPDFFitPage',
-            '-sPAPERSIZE=' . $paper,
-            '-sOutputFile=' . $outputPath,
-        ];
-
-        if ($printMode === 'black') {
-            $command[] = '-sColorConversionStrategy=Gray';
-            $command[] = '-dProcessColorModel=/DeviceGray';
-        }
-
         $marginPoints = match ($margin) {
             'narrow' => 9.0,
             'wide' => 36.0,
@@ -67,6 +49,28 @@ class PdfPreviewGenerator
 
         if ($orientation === 'landscape') {
             [$wPoints, $hPoints] = [$hPoints, $wPoints];
+        }
+
+        $command = [
+            'gs',
+            '-sDEVICE=pdfwrite',
+            '-dCompatibilityLevel=1.4',
+            '-dNOPAUSE',
+            '-dQUIET',
+            '-dBATCH',
+            '-dFIXEDMEDIA',
+            '-dAutoRotatePages=/None',
+            '-sPAPERSIZE=' . $paper,
+            '-sOutputFile=' . $outputPath,
+        ];
+
+        if ($marginPoints <= 0) {
+            $command[] = '-dPDFFitPage';
+        }
+
+        if ($printMode === 'black') {
+            $command[] = '-sColorConversionStrategy=Gray';
+            $command[] = '-dProcessColorModel=/DeviceGray';
         }
 
         $postscript = [
