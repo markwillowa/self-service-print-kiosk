@@ -1,4 +1,4 @@
-<x-kiosk-layout title="Preview Document">
+<x-kiosk-layout title="{{ __('Document Preview') }}">
     @php
         $currentPrintMode = $printJob->print_mode ?: 'black';
         $currentOrientation = $printJob->orientation ?: 'portrait';
@@ -7,17 +7,17 @@
         $currentPageSelection = $printJob->page_selection ?: 'all';
 
         $marginLabel = match($currentMargin) {
-            'narrow' => 'Narrow (0.125")',
-            'wide' => 'Wide (0.50")',
-            'none', 'no_margin' => 'No Margin (0")',
-            'fit', 'fit_to_screen' => 'Fit to Screen',
-            default => 'Normal ⭐ (0.25")',
+            'narrow' => __('Narrow (0.125")'),
+            'wide' => __('Wide (0.50")'),
+            'none', 'no_margin' => __('No Margin (0")'),
+            'fit', 'fit_to_screen' => __('Fit to Screen'),
+            default => __('Normal ⭐ (0.25")'),
         };
 
         $paperLabel = match($currentPaperSize) {
-            'long' => 'Long',
-            'a4' => 'A4',
-            default => 'Short',
+            'long' => __('Long (8.5 x 13 in)'),
+            'a4' => __('A4 (8.27 x 11.69 in)'),
+            default => __('Short (8.5 x 11 in)'),
         };
     @endphp
 
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-between shrink-0 gap-3">
             <div class="min-w-0">
                 <h2 class="text-4xl font-black text-slate-950 leading-none mb-1">
-                    Preview Document
+                    {{ __('Document Preview') }}
                 </h2>
 
                 <p class="text-base text-slate-600 truncate max-w-[480px] font-bold">
@@ -35,9 +35,9 @@
 
             <div class="flex items-center gap-2 shrink-0">
                 @foreach ([
-                    ['Pages', $printJob->selected_pages_count ?: $printJob->pages],
-                    ['Copies', $printJob->copies ?: 1],
-                    ['Total', '₱' . $printJob->total_amount],
+                    [__('Pages'), $printJob->selected_pages_count ?: $printJob->pages],
+                    [__('Copies'), $printJob->copies ?: 1],
+                    [__('Total Amount'), '₱' . $printJob->total_amount],
                 ] as [$label, $value])
                     <div class="rounded-2xl bg-white px-4 py-3 shadow-lg text-center min-w-[88px]">
                         <div class="text-[10px] font-black text-slate-500 uppercase leading-none mb-1">
@@ -57,7 +57,7 @@
                         type="submit"
                         class="rounded-2xl bg-slate-200 px-4 h-14 flex items-center justify-center text-base font-black text-slate-900 active:scale-95 transition"
                     >
-                        Back
+                        {{ __('Back') }}
                     </button>
                 </form>
 
@@ -66,7 +66,7 @@
                     onclick="openCancelModal()"
                     class="rounded-2xl bg-red-100 text-red-700 px-4 h-14 text-base font-black active:scale-95 transition"
                 >
-                    Cancel
+                    {{ __('Cancel') }}
                 </button>
 
                 <button
@@ -84,7 +84,7 @@
                         type="submit"
                         class="rounded-2xl bg-slate-950 text-white px-5 h-14 text-base font-black shadow-lg active:scale-95 transition"
                     >
-                        Continue
+                        {{ __('Continue') }}
                     </button>
                 </form>
             </div>
@@ -95,12 +95,12 @@
             style="display: flex; flex-direction: row; align-items: center; width: 100%;"
         >
             @foreach ([
-                ['Color', $currentPrintMode === 'color' ? 'Colored' : 'Black'],
-                ['Size', $paperLabel],
-                ['Margin', $marginLabel],
-                ['Orientation', $currentOrientation === 'landscape' ? 'Landscape' : 'Portrait'],
-                ['Page', $currentPageSelection === 'all' ? 'All' : $currentPageSelection],
-                ['Charged Pages', ($printJob->selected_pages_count ?: $printJob->pages) * ($printJob->copies ?: 1)],
+                [__('Print Mode'), $currentPrintMode === 'color' ? __('Color') : __('Black & White')],
+                [__('Paper Size'), $paperLabel],
+                [__('Margins'), $marginLabel],
+                [__('Orientation'), $currentOrientation === 'landscape' ? __('Landscape') : __('Portrait')],
+                [__('Pages to Print'), $currentPageSelection === 'all' ? __('All Pages') : $currentPageSelection],
+                [__('Charged Pages'), ($printJob->selected_pages_count ?: $printJob->pages) * ($printJob->copies ?: 1)],
             ] as [$label, $value])
                 <div
                     class="flex-1 min-w-0 px-2 text-center"
@@ -122,13 +122,13 @@
                 type="button"
                 id="fitScreenBtn"
                 onclick="toggleFitToScreen()"
-                title="Fit to Screen"
+                title="{{ __('Fit to Page') }}"
                 class="absolute top-4 right-4 z-10 bg-slate-900/80 hover:bg-slate-950 text-white px-3.5 py-2 rounded-2xl text-xs font-black shadow-lg backdrop-blur flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
-                <span id="fitScreenText">Fit to Screen</span>
+                <span id="fitScreenText">{{ __('Fit to Page') }}</span>
             </button>
 
             <div class="{{ $currentOrientation === 'landscape' ? 'w-full max-w-[1000px] h-full max-h-full aspect-[1.414/1]' : 'w-full h-full' }} bg-white rounded-2xl shadow-xl overflow-hidden relative">
@@ -149,11 +149,11 @@
             <div class="flex items-center justify-between mb-5">
                 <div>
                     <h3 class="text-3xl font-black text-slate-950 leading-none mb-2">
-                        Edit Print Settings
+                        {{ __('Print Settings') }}
                     </h3>
 
                     <p class="text-sm text-slate-500 font-bold">
-                        Tap Copies or Page Selection, then use the keypad.
+                        {{ __('Customize your print options') }}
                     </p>
                 </div>
 
@@ -182,7 +182,7 @@
                 <div class="grid grid-cols-2 gap-4 content-start">
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
-                            Color
+                            {{ __('Print Mode') }}
                         </label>
 
                         <select
@@ -190,18 +190,18 @@
                             class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
                         >
                             <option value="black" @selected(old('print_mode', $currentPrintMode) === 'black')>
-                                Black
+                                {{ __('Black & White') }}
                             </option>
 
                             <option value="color" @selected(old('print_mode', $currentPrintMode) === 'color')>
-                                Colored
+                                {{ __('Color') }}
                             </option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
-                            Paper Size
+                            {{ __('Paper Size') }}
                         </label>
 
                         <select
@@ -209,22 +209,22 @@
                             class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
                         >
                             <option value="short" @selected(old('paper_size', $currentPaperSize) === 'short')>
-                                Short (Letter)
+                                {{ __('Short (8.5 x 11 in)') }}
                             </option>
 
                             <option value="long" @selected(old('paper_size', $currentPaperSize) === 'long')>
-                                Long (Legal)
+                                {{ __('Long (8.5 x 13 in)') }}
                             </option>
 
                             <option value="a4" @selected(old('paper_size', $currentPaperSize) === 'a4')>
-                                A4
+                                {{ __('A4 (8.27 x 11.69 in)') }}
                             </option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
-                            Orientation
+                            {{ __('Orientation') }}
                         </label>
 
                         <select
@@ -232,18 +232,18 @@
                             class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
                         >
                             <option value="portrait" @selected(old('orientation', $currentOrientation) === 'portrait')>
-                                Portrait
+                                {{ __('Portrait') }}
                             </option>
 
                             <option value="landscape" @selected(old('orientation', $currentOrientation) === 'landscape')>
-                                Landscape
+                                {{ __('Landscape') }}
                             </option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
-                            Margin
+                            {{ __('Margins') }}
                         </label>
 
                         <select
@@ -251,30 +251,30 @@
                             class="w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black"
                         >
                             <option value="normal" @selected(old('margin', $currentMargin) === 'normal')>
-                                Normal ⭐ (0.25" / 6.35 mm)
+                                {!! __('Normal ⭐ (0.25" / 6.35 mm)') !!}
                             </option>
 
                             <option value="narrow" @selected(old('margin', $currentMargin) === 'narrow')>
-                                Narrow (0.125" / 3.18 mm)
+                                {!! __('Narrow (0.125" / 3.18 mm)') !!}
                             </option>
 
                             <option value="wide" @selected(old('margin', $currentMargin) === 'wide')>
-                                Wide (0.50" / 12.7 mm)
+                                {!! __('Wide (0.50" / 12.7 mm)') !!}
                             </option>
 
                             <option value="none" @selected(old('margin', $currentMargin) === 'none' || old('margin', $currentMargin) === 'no_margin')>
-                                No Margin (0")
+                                {!! __('No Margin (0")') !!}
                             </option>
 
                             <option value="fit" @selected(old('margin', $currentMargin) === 'fit' || old('margin', $currentMargin) === 'fit_to_screen')>
-                                Fit to Screen
+                                {!! __('Fit to Screen') !!}
                             </option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
-                            Copies
+                            {{ __('Copies') }}
                         </label>
 
                         <input
@@ -293,7 +293,7 @@
 
                     <div>
                         <label class="block text-sm font-black mb-2 text-slate-700">
-                            Page Selection
+                            {{ __('Pages to Print') }}
                         </label>
 
                         <input
@@ -301,7 +301,7 @@
                             type="text"
                             name="page_selection"
                             value="{{ old('page_selection', $currentPageSelection === 'all' ? '' : $currentPageSelection) }}"
-                            placeholder="All or 1-3,5"
+                            placeholder="{{ __('All Pages') }}"
                             readonly
                             class="keyboard-input w-full rounded-2xl bg-slate-100 px-4 h-14 text-lg font-black cursor-pointer border-4 border-transparent"
                             autocomplete="off"
@@ -310,7 +310,7 @@
                         >
 
                         <p class="mt-1 text-xs font-bold text-slate-500">
-                            Leave blank for all pages. Example: 1-3,5
+                            {{ __('Custom Range (e.g. 1-3, 5)') }}
                         </p>
                     </div>
 
@@ -319,14 +319,14 @@
                         onclick="resetDefaultSettings()"
                         class="rounded-2xl bg-slate-200 text-slate-900 h-14 text-lg font-black active:scale-95 transition"
                     >
-                        Reset Default
+                        Reset
                     </button>
 
                     <button
                         type="submit"
                         class="rounded-2xl bg-slate-950 text-white h-14 text-lg font-black shadow-lg active:scale-95 transition"
                     >
-                        Apply Settings
+                        {{ __('Apply Settings') }}
                     </button>
                 </div>
 
@@ -371,7 +371,7 @@
                             onclick="keyboardBackspace()"
                             class="rounded-2xl bg-red-100 text-red-700 h-16 text-base font-black active:scale-95 transition"
                         >
-                            Delete
+                            {{ __('Delete') }}
                         </button>
 
                         <button
@@ -379,7 +379,7 @@
                             onclick="keyboardClear()"
                             class="col-span-2 rounded-2xl bg-slate-300 text-slate-950 h-16 text-base font-black active:scale-95 transition"
                         >
-                            Clear
+                            {{ __('Clear') }}
                         </button>
                     </div>
                 </div>
@@ -397,11 +397,11 @@
             </div>
 
             <h3 class="text-3xl font-black text-slate-950 mb-3">
-                Cancel Print Job?
+                {{ __('Cancel Print Job?') }}
             </h3>
 
             <p class="text-base text-slate-500 font-bold mb-6">
-                This will cancel the current print session and return to the home screen.
+                {{ __('This will cancel the current print session and return to the home screen.') }}
             </p>
 
             <div class="grid grid-cols-2 gap-3">
@@ -420,7 +420,7 @@
                         type="submit"
                         class="w-full rounded-2xl bg-red-500 text-white px-4 py-4 text-base font-black active:scale-95 transition"
                     >
-                        Yes, Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </form>
             </div>

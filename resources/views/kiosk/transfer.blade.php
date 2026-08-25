@@ -1,4 +1,4 @@
-<x-kiosk-layout title="Upload Your File">
+<x-kiosk-layout title="{{ __('Transfer Your Document') }}">
     <div class="h-full grid grid-cols-[0.95fr_1.05fr] gap-5 items-center py-4">
         <div class="min-w-0">
             <div class="flex items-center gap-4 mb-5">
@@ -8,18 +8,18 @@
 
                 <div>
                     <h2 class="text-[3rem] font-black text-slate-950 leading-none mb-2">
-                        Upload Your File
+                        {{ __('Transfer Your Document') }}
                     </h2>
 
                     <p class="text-lg text-slate-500 font-bold">
-                        Open the upload page on your phone
+                        {{ __('Scan QR or visit link on your phone') }}
                     </p>
                 </div>
             </div>
 
             <div class="rounded-3xl bg-white border border-white p-5 shadow-lg mb-4">
                 <div class="text-xs font-black text-slate-500 uppercase mb-2">
-                    Upload URL
+                    {{ __('Upload Link') }}
                 </div>
 
                 <div class="text-lg font-black text-slate-900 break-all leading-snug">
@@ -33,15 +33,15 @@
 
                     <div>
                         <h3 class="text-xl font-black text-blue-900 mb-2">
-                            Instructions
+                            {{ __('Instructions') }}
                         </h3>
 
-                        <ol class="text-base text-blue-800 space-y-1 list-decimal pl-5 font-bold leading-snug">
-                            <li>Scan the QR code</li>
-                            <li>Open the upload page</li>
-                            <li>Select your document</li>
-                            <li>Upload from your phone</li>
-                            <li>Continue on the kiosk</li>
+                        <ol class="text-base text-blue-800 space-y-1.5 list-decimal pl-5 font-bold leading-snug">
+                            <li>{{ __('Stay connected to kiosk Wi-Fi') }}</li>
+                            <li>{{ __('Scan the QR code using your phone camera') }}</li>
+                            <li>{{ __('If scanning is not working, open Chrome or any browser on your phone and manually type the Upload Link above') }}</li>
+                            <li>{{ __('Choose and upload your document') }}</li>
+                            <li>{{ __('Tap Next to select your file') }}</li>
                         </ol>
                     </div>
                 </div>
@@ -49,10 +49,10 @@
 
             <div class="grid grid-cols-3 gap-3">
                 <a
-                    href="{{ route('kiosk.home') }}"
+                    href="{{ route('kiosk.language') }}"
                     class="flex items-center justify-center rounded-2xl bg-red-100 text-red-700 text-lg font-black py-4 active:scale-95 transition"
                 >
-                    Cancel
+                    {{ __('Cancel') }}
                 </a>
 
                 <a
@@ -60,14 +60,14 @@
                     class="flex items-center justify-center gap-2 rounded-2xl bg-slate-200 text-slate-900 text-lg font-black py-4 active:scale-95 transition"
                 >
                     <x-heroicon-o-arrow-left class="w-5 h-5" />
-                    Back
+                    {{ __('Back') }}
                 </a>
 
                 <a
                     href="{{ route('kiosk.upload') }}"
                     class="flex items-center justify-center gap-2 rounded-2xl bg-slate-950 text-white text-lg font-black py-4 shadow-xl active:scale-95 transition"
                 >
-                    Continue
+                    {{ __('Next') }}
                     <x-heroicon-o-arrow-right class="w-5 h-5" />
                 </a>
             </div>

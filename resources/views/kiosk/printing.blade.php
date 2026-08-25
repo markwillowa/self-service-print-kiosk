@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
 
@@ -8,7 +8,7 @@
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     >
 
-    <title>Printing</title>
+    <title>{{ __('Printing Your Document') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -37,17 +37,16 @@
             <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
 
             <span class="text-lg font-black text-emerald-900">
-                Print Queue Active
+                {{ __('Printing Your Document') }}
             </span>
         </div>
 
         <h1 class="text-6xl font-black text-slate-950 leading-none mb-5">
-            Queued for Printing
+            {{ __('Printing Your Document') }}
         </h1>
 
         <p class="text-2xl text-slate-600 leading-snug max-w-2xl mb-8 font-bold">
-            Please wait while your document is being prepared
-            and sent to the printer.
+            {{ __('Please wait while your document is being printed...') }}
         </p>
 
         <div class="flex items-center gap-4">

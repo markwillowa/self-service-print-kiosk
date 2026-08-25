@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
 
@@ -8,7 +8,7 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>Upload Complete</title>
+    <title>{{ __('Upload Complete') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -27,12 +27,12 @@
     </div>
 
     <h1 class="text-4xl font-black text-slate-950 mb-4">
-        Upload Complete
+        {{ __('Upload Complete') }}
     </h1>
 
     <p class="text-base text-slate-600 leading-relaxed mb-6">
-        Your file has been uploaded successfully.
-        Please continue on the {{ $globalKioskName ?? 'Piso Print' }} kiosk.
+        {{ __('Your file has been uploaded successfully.') }}
+        {{ __('Please continue on the') }} {{ $globalKioskName ?? 'Piso Print' }} {{ __('kiosk.') }}
     </p>
 
     <div class="rounded-[1.5rem] bg-emerald-50 border border-emerald-200 p-5">
@@ -40,12 +40,12 @@
             <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
 
             <span class="text-sm font-black text-emerald-900">
-                    Upload Successful
+                    {{ __('Upload Successful') }}
                 </span>
         </div>
 
         <p class="text-sm font-bold text-emerald-800 leading-relaxed">
-            Returning to upload page in 5 seconds...
+            {{ __('Returning to upload page in 5 seconds...') }}
         </p>
     </div>
 </main>

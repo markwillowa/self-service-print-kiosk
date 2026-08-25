@@ -1,10 +1,10 @@
-<x-kiosk-layout title="Print Status">
+<x-kiosk-layout title="{{ __('Print Status') }}">
     @if (in_array($printJob->status, ['queued', 'printing'], true))
         <meta http-equiv="refresh" content="2">
     @endif
 
     @if ($printJob->status === 'completed')
-        <meta http-equiv="refresh" content="5;url={{ route('kiosk.home') }}">
+        <meta http-equiv="refresh" content="5;url={{ route('kiosk.language') }}">
     @endif
 
     <div class="h-full flex items-center justify-center py-4">
@@ -15,11 +15,11 @@
                 </div>
 
                 <h2 class="text-6xl font-black text-slate-950 leading-none mb-4">
-                    Queued
+                    {{ __('Queued') }}
                 </h2>
 
                 <p class="text-2xl text-slate-600 leading-snug max-w-2xl mx-auto mb-8 font-bold">
-                    Your document is waiting for the printer.
+                    {{ __('Your document is waiting for the printer.') }}
                 </p>
 
                 <form method="POST" action="{{ route('kiosk.cancel', $printJob) }}">
@@ -29,7 +29,7 @@
                         type="submit"
                         class="inline-flex items-center justify-center rounded-3xl bg-red-100 text-red-700 text-2xl font-black px-10 py-5 shadow-lg active:scale-95 transition"
                     >
-                        Cancel Print Job
+                        {{ __('Cancel Print Job') }}
                     </button>
                 </form>
             @elseif ($printJob->status === 'printing')
@@ -38,11 +38,11 @@
                 </div>
 
                 <h2 class="text-6xl font-black text-slate-950 leading-none mb-4">
-                    Printing...
+                    {{ __('Printing...') }}
                 </h2>
 
                 <p class="text-2xl text-slate-600 leading-snug max-w-2xl mx-auto font-bold">
-                    Please wait while your document is being printed.
+                    {{ __('Please wait while your document is being printed.') }}
                 </p>
             @elseif ($printJob->status === 'completed')
                 <div class="w-32 h-32 rounded-[2rem] bg-emerald-100 text-emerald-900 flex items-center justify-center shadow-lg mx-auto mb-6">
@@ -50,19 +50,19 @@
                 </div>
 
                 <h2 class="text-6xl font-black text-slate-950 leading-none mb-4">
-                    Done
+                    {{ __('Done') }}
                 </h2>
 
                 <p class="text-2xl text-slate-600 leading-snug max-w-2xl mx-auto mb-6 font-bold">
-                    Your document has been printed successfully.
-                    Thank you for using {{ $globalKioskName ?? 'Piso Print' }}.
+                    {{ __('Your document has been printed successfully.') }}
+                    {{ __('Thank you for using Piso Print.') }}
                 </p>
 
                 <div class="inline-flex items-center gap-3 rounded-full bg-emerald-100 border border-emerald-200 px-6 py-3">
                     <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
 
                     <span class="text-lg font-black text-emerald-900">
-                        Returning to home screen...
+                        {{ __('Returning to home screen...') }}
                     </span>
                 </div>
             @elseif ($printJob->status === 'failed')
@@ -71,19 +71,18 @@
                 </div>
 
                 <h2 class="text-6xl font-black text-slate-950 leading-none mb-4">
-                    Print Failed
+                    {{ __('Print Failed') }}
                 </h2>
 
                 <p class="text-2xl text-slate-600 leading-snug max-w-2xl mx-auto mb-8 font-bold">
-                    Something went wrong while printing your document.
-                    Please contact the operator.
+                    {{ __('Something went wrong while printing your document. Please contact the operator.') }}
                 </p>
 
                 <a
-                    href="{{ route('kiosk.home') }}"
+                    href="{{ route('kiosk.language') }}"
                     class="inline-flex items-center justify-center rounded-3xl bg-slate-950 text-white text-2xl font-black px-10 py-5 shadow-lg active:scale-95 transition"
                 >
-                    Back to Home
+                    {{ __('Done / Return Home') }}
                 </a>
             @endif
         </div>

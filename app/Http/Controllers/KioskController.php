@@ -69,6 +69,28 @@ class KioskController extends Controller
         return view('kiosk.home');
     }
 
+    public function language(): View
+    {
+        return view('kiosk.language');
+    }
+
+    public function setLanguage(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'locale' => ['required', 'in:en,tl'],
+            'redirect' => ['nullable', 'string'],
+        ]);
+
+        session(['kiosk_locale' => $validated['locale']]);
+        app()->setLocale($validated['locale']);
+
+        if (! empty($validated['redirect']) && str_starts_with($validated['redirect'], '/')) {
+            return redirect($validated['redirect']);
+        }
+
+        return redirect()->route('kiosk.home');
+    }
+
     public function upload(): View
     {
         $printJobs = PrintJob::query()
@@ -183,7 +205,7 @@ class KioskController extends Controller
                 now()->greaterThan($printJob->expires_at)
             )
         ) {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         $creditService->useFor($printJob);
@@ -202,7 +224,7 @@ class KioskController extends Controller
         $printJob->refresh();
 
         if ($printJob->status === 'cancelled') {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         if ($printJob->status !== 'paid') {
@@ -213,7 +235,7 @@ class KioskController extends Controller
             $printJob->expires_at &&
             now()->greaterThan($printJob->expires_at)
         ) {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         $this->refreshExpiration($printJob);
@@ -323,7 +345,7 @@ class KioskController extends Controller
         $printJob->refresh();
 
         if ($printJob->status === 'cancelled') {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         if (
@@ -335,7 +357,7 @@ class KioskController extends Controller
             $printJob->expires_at &&
             now()->greaterThan($printJob->expires_at)
         ) {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         if (! in_array($printJob->status, [
@@ -356,7 +378,7 @@ class KioskController extends Controller
         $printJob->refresh();
 
         if ($printJob->status === 'cancelled') {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         if (in_array($printJob->status, [
@@ -371,7 +393,7 @@ class KioskController extends Controller
             $printJob->expires_at &&
             now()->greaterThan($printJob->expires_at)
         ) {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         $this->refreshExpiration($printJob);
@@ -581,7 +603,7 @@ class KioskController extends Controller
             'pending_payment',
             'paid',
         ], true)) {
-            return redirect()->route('kiosk.home');
+            return redirect()->route('kiosk.language');
         }
 
         if ($printJob->status === 'pending_payment') {
@@ -596,7 +618,7 @@ class KioskController extends Controller
 
         $kioskSessionLock->unlock();
 
-        return redirect()->route('kiosk.home');
+        return redirect()->route('kiosk.language');
     }
 
     public function connect(): View

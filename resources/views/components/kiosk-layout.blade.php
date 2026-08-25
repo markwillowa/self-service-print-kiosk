@@ -93,7 +93,7 @@
         <header class="h-[64px] shrink-0 flex items-center justify-between mb-3 gap-3">
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500 font-black leading-none mb-1">
-                    Self-Service Kiosk
+                    {{ __('Self-Service Kiosk') }}
                 </p>
 
                 <h1
@@ -105,12 +105,21 @@
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
+                <a
+                    href="{{ route('kiosk.language') }}"
+                    class="flex items-center gap-1.5 rounded-2xl bg-indigo-100 text-indigo-950 px-3.5 py-3 font-black text-sm shadow-sm active:scale-95 transition"
+                    title="{{ __('Select Language') }}"
+                >
+                    <x-heroicon-o-language class="w-5 h-5 text-indigo-700" />
+                    <span>{{ app()->getLocale() === 'tl' ? '🇵🇭 Tagalog' : '🇬🇧 English' }}</span>
+                </a>
+
                 <button
                     id="voucherUnlockCredit"
                     type="button"
                     class="rounded-2xl bg-emerald-400 text-emerald-950 px-4 py-3 font-black text-base whitespace-nowrap shadow-sm active:scale-95 transition"
                 >
-                    Credit: ₱{{ $kioskCreditBalance ?? 0 }}
+                    {{ __('Credit: ₱') }}{{ $kioskCreditBalance ?? 0 }}
                 </button>
 
                 @if (($globalCompany?->kiosk_name ?? 'Piso Print') === 'Piso Print')
@@ -119,9 +128,9 @@
                     </div>
                 @else
                     <div class="rounded-2xl bg-slate-950 text-white px-4 py-3 font-black text-base whitespace-nowrap shadow-sm">
-                        Black: ₱{{ $globalCompany?->black_price_per_page ?? 1 }}
+                        {{ __('Black: ₱') }}{{ $globalCompany?->black_price_per_page ?? 1 }}
                         |
-                        Colored: ₱{{ $globalCompany?->color_price_per_page ?? 3 }}
+                        {{ __('Colored: ₱') }}{{ $globalCompany?->color_price_per_page ?? 3 }}
                     </div>
                 @endif
 
@@ -157,11 +166,11 @@
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h2 class="text-3xl font-black text-slate-950 leading-none mb-2">
-                    Admin Access
+                    {{ __('Admin Access') }}
                 </h2>
 
                 <p class="text-sm font-bold text-slate-500">
-                    Enter admin PIN using the keypad.
+                    {{ __('Enter admin PIN using the keypad.') }}
                 </p>
             </div>
 
@@ -185,14 +194,14 @@
             <div class="flex flex-col justify-between">
                 <div>
                     <label class="block text-sm font-black text-slate-700 mb-2">
-                        PIN Code
+                        {{ __('PIN Code') }}
                     </label>
 
                     <input
                         id="adminPinInput"
                         type="password"
                         name="pin_code"
-                        placeholder="Enter PIN"
+                        placeholder="{{ __('PIN Code') }}"
                         required
                         readonly
                         maxlength="6"
@@ -206,14 +215,14 @@
                         onclick="closeAdminModal()"
                         class="rounded-2xl bg-slate-200 text-slate-900 py-4 text-lg font-black active:scale-95 transition"
                     >
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
 
                     <button
                         type="submit"
                         class="rounded-2xl bg-slate-950 text-white py-4 text-lg font-black active:scale-95 transition"
                     >
-                        Unlock
+                        {{ __('Unlock') }}
                     </button>
                 </div>
             </div>
@@ -235,7 +244,7 @@
                         onclick="adminPinBackspace()"
                         class="rounded-2xl bg-red-100 text-red-700 h-16 text-base font-black active:scale-95 transition"
                     >
-                        Delete
+                        {{ __('Delete') }}
                     </button>
 
                     <button
@@ -251,7 +260,7 @@
                         onclick="adminPinClear()"
                         class="rounded-2xl bg-slate-300 text-slate-950 h-16 text-base font-black active:scale-95 transition"
                     >
-                        Clear
+                        {{ __('Clear') }}
                     </button>
                 </div>
             </div>
@@ -269,11 +278,11 @@
         </div>
 
         <h3 class="text-3xl font-black text-slate-950 mb-3">
-            Restart Device?
+            {{ __('Restart Device?') }}
         </h3>
 
         <p class="text-base text-slate-500 font-bold mb-6">
-            This will safely reboot the Raspberry Pi.
+            {{ __('This will safely reboot the Raspberry Pi.') }}
         </p>
 
         <div class="grid grid-cols-2 gap-3">
@@ -282,7 +291,7 @@
                 onclick="closeRebootModal()"
                 class="rounded-2xl bg-slate-200 text-slate-900 px-4 py-4 text-base font-black active:scale-95 transition"
             >
-                Cancel
+                {{ __('Cancel') }}
             </button>
 
             <form
@@ -312,11 +321,11 @@
         </div>
 
         <h3 class="text-3xl font-black text-slate-950 mb-3">
-            Turn Off Device?
+            {{ __('Turn Off Device?') }}
         </h3>
 
         <p class="text-base text-slate-500 font-bold mb-6">
-            This will safely shut down the Raspberry Pi.
+            {{ __('This will safely shut down the Raspberry Pi.') }}
         </p>
 
         <div class="grid grid-cols-2 gap-3">
@@ -325,7 +334,7 @@
                 onclick="closeShutdownModal()"
                 class="rounded-2xl bg-slate-200 text-slate-900 px-4 py-4 text-base font-black active:scale-95 transition"
             >
-                Cancel
+                {{ __('Cancel') }}
             </button>
 
             <form
@@ -355,11 +364,11 @@
         </div>
 
         <h3 class="text-3xl font-black text-slate-950 mb-3">
-            Printer Offline
+            {{ __('Printer Offline') }}
         </h3>
 
         <p class="text-base text-slate-500 font-bold mb-6">
-            Please turn on the printer or contact the operator.
+            {{ __('Please turn on the printer or contact the operator.') }}
         </p>
 
         <button
@@ -367,7 +376,7 @@
             onclick="closePrinterOfflineModal()"
             class="w-full rounded-2xl bg-slate-950 text-white px-4 py-4 text-base font-black active:scale-95 transition"
         >
-            OK
+            {{ __('OK') }}
         </button>
     </div>
 </div>
@@ -380,11 +389,11 @@
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h2 class="text-3xl font-black text-slate-950 leading-none mb-2">
-                    Redeem Voucher
+                    {{ __('Redeem Voucher') }}
                 </h2>
 
                 <p class="text-sm font-bold text-slate-500">
-                    Enter voucher code using the keypad.
+                    {{ __('Enter voucher code using the keypad.') }}
                 </p>
             </div>
 
@@ -420,7 +429,7 @@
             <div class="flex flex-col justify-between">
                 <div>
                     <label class="block text-sm font-black text-slate-700 mb-2">
-                        Voucher Code
+                        {{ __('Voucher Code') }}
                     </label>
 
                     <input
@@ -440,14 +449,14 @@
                         onclick="closeVoucherModal()"
                         class="rounded-2xl bg-slate-200 text-slate-900 py-4 text-lg font-black active:scale-95 transition"
                     >
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
 
                     <button
                         type="submit"
                         class="rounded-2xl bg-emerald-500 text-emerald-950 py-4 text-lg font-black active:scale-95 transition"
                     >
-                        Redeem
+                        {{ __('Redeem') }}
                     </button>
                 </div>
             </div>

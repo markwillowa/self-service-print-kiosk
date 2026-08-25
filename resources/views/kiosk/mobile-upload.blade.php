@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
 
@@ -8,7 +8,7 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>Upload File</title>
+    <title>{{ __('Upload File') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -23,11 +23,11 @@
         </div>
 
         <h1 class="text-3xl font-black text-slate-950 mb-2">
-            Upload File
+            {{ __('Upload File') }}
         </h1>
 
         <p class="text-sm text-slate-500">
-            Upload your document to {{ $globalKioskName ?? 'Piso Print' }}
+            {{ __('Upload your document to') }} {{ $globalKioskName ?? 'Piso Print' }}
         </p>
     </div>
 
@@ -47,7 +47,7 @@
 
         <label class="block">
                 <span class="block text-sm font-black text-slate-600 mb-2">
-                    Select Document
+                    {{ __('Select Document') }}
                 </span>
 
             <input
@@ -63,12 +63,12 @@
             type="submit"
             class="w-full rounded-2xl bg-slate-950 text-white text-base font-black py-4 active:scale-95 transition"
         >
-            Upload File
+            {{ __('Upload File') }}
         </button>
     </form>
 
     <p class="text-center text-xs text-slate-400 mt-5 leading-relaxed">
-        After uploading, return to the kiosk screen and tap Refresh.
+        {{ __('After uploading, return to the kiosk screen and tap Refresh.') }}
     </p>
 </main>
 </body>

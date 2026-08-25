@@ -1,11 +1,11 @@
-<x-kiosk-layout title="Insert Coins">
+<x-kiosk-layout title="{{ __('Insert Coins') }}">
     <meta http-equiv="refresh" content="1">
 
     <div class="h-full flex flex-col min-h-0 gap-4 py-2">
         <div class="flex justify-between items-start shrink-0">
             <div class="min-w-0">
                 <h2 class="text-4xl font-black text-slate-950 leading-none mb-2">
-                    Insert Coins
+                    {{ __('Insert Coins') }}
                 </h2>
 
                 <p class="text-base text-slate-600 truncate max-w-[600px] font-bold">
@@ -18,7 +18,7 @@
                     href="{{ route('kiosk.preview', $printJob) }}"
                     class="rounded-2xl bg-slate-200 px-5 h-14 flex items-center justify-center text-base font-black text-slate-900 shadow-lg active:scale-95 transition"
                 >
-                    Back
+                    {{ __('Back') }}
                 </a>
 
                 <form method="POST" action="{{ route('kiosk.cancel', $printJob) }}">
@@ -28,7 +28,7 @@
                         type="submit"
                         class="rounded-2xl bg-red-100 px-5 h-14 text-base font-black text-red-700 shadow-lg active:scale-95 transition"
                     >
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </form>
             </div>
@@ -36,10 +36,10 @@
 
         <div class="grid grid-cols-4 gap-4 shrink-0">
             @foreach ([
-                ['Pages', $printJob->selected_pages_count],
-                ['Total', '₱' . $printJob->total_amount],
-                ['Paid', '₱' . $printJob->paid_amount],
-                ['Credit', '₱' . ($kioskCreditBalance ?? 0)],
+                [__('Pages'), $printJob->selected_pages_count],
+                [__('Total Amount'), '₱' . $printJob->total_amount],
+                [__('Paid Amount'), '₱' . $printJob->paid_amount],
+                [__('Credit'), '₱' . ($kioskCreditBalance ?? 0)],
             ] as [$label, $value])
                 <div class="rounded-3xl bg-white border border-white p-5 shadow-lg text-center">
                     <div class="text-xs text-slate-500 font-black uppercase mb-2">
@@ -61,11 +61,11 @@
                     </div>
 
                     <p class="text-6xl font-black text-emerald-800 mb-4 leading-none">
-                        Payment Complete
+                        {{ __('Payment Complete') }}
                     </p>
 
                     <p class="text-2xl font-black text-emerald-700">
-                        Printing automatically...
+                        {{ __('Printing automatically...') }}
                     </p>
 
                     <script>
@@ -74,12 +74,6 @@
                         }, 800);
                     </script>
                 </div>
-
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('autoPrintForm')?.submit();
-                    }, 800);
-                </script>
             @else
                 <div class="h-full rounded-3xl bg-white border border-white p-8 shadow-xl flex flex-col items-center justify-center text-center">
                     <div class="w-28 h-28 rounded-3xl bg-slate-950 text-white flex items-center justify-center shadow-xl mb-6 animate-pulse">
@@ -87,11 +81,11 @@
                     </div>
 
                     <p class="text-5xl font-black text-slate-950 mb-4 leading-none">
-                        Please Insert Coins
+                        {{ __('Please Insert Coins') }}
                     </p>
 
                     <p class="text-4xl font-black text-slate-700 mb-6">
-                        Remaining:
+                        {{ __('Remaining Balance') }}:
                         <span class="text-emerald-700">
                             ₱{{ max($printJob->total_amount - $printJob->paid_amount, 0) }}
                         </span>
@@ -101,7 +95,7 @@
                         <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
 
                         <span class="text-lg font-black text-emerald-900">
-                            Waiting for coin slot payment...
+                            {{ __('Waiting for coin slot payment...') }}
                         </span>
                     </div>
                 </div>

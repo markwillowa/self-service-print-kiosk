@@ -1,15 +1,15 @@
-<x-kiosk-layout title="Uploaded Files">
+<x-kiosk-layout title="{{ __('Select Document') }}">
     <meta http-equiv="refresh" content="5">
 
     <div class="h-full flex flex-col min-h-0 gap-4 py-2">
         <div class="flex items-center justify-between shrink-0 gap-4">
             <div class="min-w-0">
                 <h1 class="text-4xl font-black text-slate-950 mb-2 leading-none">
-                    Uploaded Files
+                    {{ __('Select Document') }}
                 </h1>
 
                 <p class="text-base text-slate-500 font-bold">
-                    Select a file uploaded from your phone
+                    {{ __('Choose an uploaded file to print or upload directly') }}
                 </p>
             </div>
 
@@ -36,10 +36,10 @@
                 </button>
 
                 <a
-                    href="{{ route('kiosk.home') }}"
+                    href="{{ route('kiosk.language') }}"
                     class="flex items-center justify-center rounded-2xl bg-red-100 px-5 h-14 text-base font-black text-red-700 active:scale-95 transition shadow-lg"
                 >
-                    Cancel
+                    {{ __('Cancel') }}
                 </a>
 
                 <a
@@ -47,7 +47,7 @@
                     class="flex items-center justify-center gap-2 rounded-2xl bg-slate-200 px-5 h-14 text-base font-black text-slate-900 active:scale-95 transition shadow-lg"
                 >
                     <x-heroicon-o-arrow-left class="w-5 h-5" />
-                    Back
+                    {{ __('Back') }}
                 </a>
             </div>
         </div>
@@ -79,7 +79,7 @@
 
                                         <div class="text-base text-slate-500 mt-1 font-bold">
                                             @if ($printJob->conversion_status === 'completed')
-                                                {{ $printJob->pages }} pages
+                                                {{ $printJob->pages }} {{ __('Pages') }}
                                                 •
                                                 {{ strtoupper($printJob->original_extension) }}
                                             @else
@@ -94,7 +94,7 @@
                                 <div class="upload-btn-badge flex items-center gap-2 rounded-2xl bg-slate-950 text-white px-6 py-3 text-base font-black shrink-0 shadow">
                                     <span class="upload-btn-text">
                                         @if ($printJob->conversion_status === 'completed')
-                                            Select
+                                            {{ __('Select & Preview') }}
                                         @else
                                             Prepare
                                         @endif
@@ -110,12 +110,11 @@
                         <x-heroicon-o-inbox class="w-28 h-28 text-slate-300 mb-5" />
 
                         <h2 class="text-5xl font-black text-slate-700 mb-4">
-                            No Uploaded Files
+                            {{ __('No files uploaded yet') }}
                         </h2>
 
                         <p class="text-xl text-slate-500 max-w-2xl leading-snug font-bold">
-                            Upload a document from your phone first
-                            using the {{ $globalKioskName ?? 'Piso Print' }} Wi-Fi upload page.
+                            {{ __('Upload your document using your phone or drag and drop here.') }}
                         </p>
                     </div>
                 @endforelse
@@ -139,7 +138,7 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span>Preparing...</span>
+                    <span>${'{{ __("Applying Settings...") }}'}</span>
                 `;
             }
         }

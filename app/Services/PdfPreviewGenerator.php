@@ -45,6 +45,9 @@ class PdfPreviewGenerator
             [$wPoints, $hPoints] = [$hPoints, $wPoints];
         }
 
+        $wPrintable = max(1.0, $wPoints - (2 * $marginPoints));
+        $hPrintable = max(1.0, $hPoints - (2 * $marginPoints));
+
         $command = [
             'gs',
             '-sDEVICE=pdfwrite',
@@ -55,13 +58,10 @@ class PdfPreviewGenerator
             '-dDEVICEWIDTHPOINTS=' . (int) round($wPoints),
             '-dDEVICEHEIGHTPOINTS=' . (int) round($hPoints),
             '-dFIXEDMEDIA',
+            '-dPDFFitPage',
             '-dAutoRotatePages=/None',
             '-sOutputFile=' . $outputPath,
         ];
-
-        if ($marginPoints <= 0) {
-            $command[] = '-dPDFFitPage';
-        }
 
         if ($printMode === 'black') {
             $command[] = '-sColorConversionStrategy=Gray';
@@ -69,13 +69,9 @@ class PdfPreviewGenerator
         }
 
         $postscript = [
-            "/PageSize [{$wPoints} {$hPoints}]",
+            "/PageSize [{$wPrintable} {$hPrintable}]",
+            "/PageOffset [{$marginPoints} {$marginPoints}]",
         ];
-
-        if ($marginPoints > 0) {
-            $marginDouble = $marginPoints * 2;
-            $postscript[] = "/Install { clippath pathbbox pop pop /H exch def /W exch def {$marginPoints} {$marginPoints} translate W {$marginDouble} sub W div H {$marginDouble} sub H div scale }";
-        }
 
         $command[] = '-c';
         $command[] = '<<' . implode(' ', $postscript) . '>> setpagedevice';

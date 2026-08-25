@@ -1,9 +1,9 @@
-<x-kiosk-layout title="Paper Check">
+<x-kiosk-layout title="{{ __('Paper Check') }}">
     <div class="h-full flex flex-col min-h-0 gap-4 py-2">
         <div class="flex justify-between items-start shrink-0">
             <div class="min-w-0">
                 <h2 class="text-4xl font-black text-slate-950 leading-none mb-2">
-                    Paper Check
+                    {{ __('Paper Check') }}
                 </h2>
 
                 <p class="text-base text-slate-600 truncate max-w-[600px] font-bold">
@@ -18,7 +18,7 @@
                     type="submit"
                     class="rounded-2xl bg-red-100 px-5 h-14 text-base font-black text-red-700 shadow-lg active:scale-95 transition"
                 >
-                    Cancel
+                    {{ __('Cancel') }}
                 </button>
             </form>
         </div>
@@ -29,17 +29,17 @@
             </div>
 
             <p class="text-6xl font-black text-slate-950 mb-5 leading-none">
-                Please Check Paper
+                {{ __('Paper Check Required') }}
             </p>
 
             <p class="text-3xl font-black text-slate-700 mb-4">
-                Make sure paper is properly inserted before printing.
+                {{ __('Please ensure the correct paper size is loaded in the printer.') }}
             </p>
 
             <div class="grid grid-cols-3 gap-4 w-full max-w-3xl mb-8">
                 <div class="rounded-3xl bg-slate-100 p-5">
                     <div class="text-xs text-slate-500 font-black uppercase mb-2">
-                        Pages
+                        {{ __('Pages') }}
                     </div>
 
                     <div class="text-4xl font-black text-slate-950">
@@ -49,7 +49,7 @@
 
                 <div class="rounded-3xl bg-slate-100 p-5">
                     <div class="text-xs text-slate-500 font-black uppercase mb-2">
-                        Copies
+                        {{ __('Copies') }}
                     </div>
 
                     <div class="text-4xl font-black text-slate-950">
@@ -59,7 +59,7 @@
 
                 <div class="rounded-3xl bg-slate-100 p-5">
                     <div class="text-xs text-slate-500 font-black uppercase mb-2">
-                        Total
+                        {{ __('Total Amount') }}
                     </div>
 
                     <div class="text-4xl font-black text-emerald-700">
@@ -79,7 +79,7 @@
                     type="submit"
                     class="w-full rounded-3xl bg-slate-950 text-white h-20 text-3xl font-black shadow-xl active:scale-95 transition"
                 >
-                    Continue Printing
+                    {{ __('Proceed to Print') }}
                 </button>
             </form>
         </div>

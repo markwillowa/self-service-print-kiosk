@@ -5,7 +5,7 @@
         clearTimeout(resetTimer);
 
         resetTimer = setTimeout(() => {
-            window.location.href = "{{ route('kiosk.home') }}";
+            window.location.href = "{{ route('kiosk.language') }}";
         }, {{ $seconds * 1000 }});
     }
 

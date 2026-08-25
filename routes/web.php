@@ -143,6 +143,16 @@ Route::middleware([
 
     Route::get(
         '/',
+        [KioskController::class, 'language']
+    )->name('kiosk.language');
+
+    Route::post(
+        '/language',
+        [KioskController::class, 'setLanguage']
+    )->name('kiosk.set-language');
+
+    Route::get(
+        '/home',
         [KioskController::class, 'home']
     )->name('kiosk.home');
 
@@ -219,7 +229,11 @@ Route::middleware([
                     ?: $printJob->converted_pdf_path;
 
             return response()->file(
-                Storage::disk('local')->path($path)
+                Storage::disk('local')->path($path),
+                [
+                    'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                    'Pragma' => 'no-cache',
+                ]
             );
         }
     )->name('kiosk.preview-file');
