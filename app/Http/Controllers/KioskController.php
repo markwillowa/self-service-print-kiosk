@@ -402,10 +402,12 @@ class KioskController extends Controller
 
         $previewUrl = URL::temporarySignedRoute(
             'kiosk.preview-file',
-            now()->addMinutes(5),
+            now()->addMinutes(15),
             [
                 'printJob' => $printJob,
-            ]
+                'v' => $printJob->updated_at?->timestamp ?? time(),
+            ],
+            absolute: false
         );
 
         return view('kiosk.preview', [

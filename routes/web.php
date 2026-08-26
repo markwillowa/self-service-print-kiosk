@@ -219,7 +219,7 @@ Route::middleware([
     Route::get(
         '/preview-file/{printJob}',
         function (PrintJob $printJob) {
-            if (! request()->hasValidSignature()) {
+            if (! request()->hasValidSignature(false)) {
                 abort(403);
             }
 
@@ -227,6 +227,10 @@ Route::middleware([
                 $printJob->preview_pdf_path
                     ?: $printJob->filtered_pdf_path
                     ?: $printJob->converted_pdf_path;
+
+            if (! $path || ! Storage::disk('local')->exists($path)) {
+                abort(404);
+            }
 
             return response()->file(
                 Storage::disk('local')->path($path),

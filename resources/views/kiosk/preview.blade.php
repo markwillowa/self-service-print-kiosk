@@ -134,7 +134,7 @@
             <div class="{{ $currentOrientation === 'landscape' ? 'w-full max-w-[1000px] h-full max-h-full aspect-[1.414/1]' : 'w-full h-full' }} bg-white rounded-2xl shadow-xl overflow-hidden relative">
                 <iframe
                     id="pdfPreviewIframe"
-                    src="{{ $previewUrl }}?v={{ $printJob->updated_at?->timestamp ?? time() }}#toolbar=0&navpanes=0&scrollbar=0&view={{ $currentOrientation === 'landscape' ? 'FitH' : 'Fit' }}"
+                    src="{{ $previewUrl }}#toolbar=0&navpanes=0&scrollbar=0&view={{ $currentOrientation === 'landscape' ? 'FitH' : 'Fit' }}"
                     class="w-full h-full border-0 bg-white"
                 ></iframe>
             </div>

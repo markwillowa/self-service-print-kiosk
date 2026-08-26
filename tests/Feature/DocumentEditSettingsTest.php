@@ -224,4 +224,41 @@ class DocumentEditSettingsTest extends TestCase
         $printJob->refresh();
         $this->assertSame('fit', $printJob->margin);
     }
+
+    public function test_preview_file_serves_pdf_with_valid_signed_url(): void
+    {
+        Storage::fake('local');
+        Storage::disk('local')->put('print-jobs/previews/sample.pdf', '%PDF-1.4 test preview');
+
+        $printJob = PrintJob::create([
+            'original_filename' => 'sample.pdf',
+            'original_file_path' => 'print-jobs/original/sample.pdf',
+            'preview_pdf_path' => 'print-jobs/previews/sample.pdf',
+            'file_path' => 'print-jobs/original/sample.pdf',
+            'original_extension' => 'pdf',
+            'conversion_status' => 'completed',
+            'pages' => 1,
+            'status' => 'uploaded',
+            'source' => 'usb',
+        ]);
+
+        $previewUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'kiosk.preview-file',
+            now()->addMinutes(15),
+            [
+                'printJob' => $printJob,
+                'v' => time(),
+            ],
+            absolute: false
+        );
+
+        $response = $this->get($previewUrl);
+        $response->assertStatus(200);
+
+        // Accessing without signature should return 403
+        $unsignedUrl = route('kiosk.preview-file', $printJob);
+        $unsignedResponse = $this->get($unsignedUrl);
+        $unsignedResponse->assertStatus(403);
+    }
 }
+
