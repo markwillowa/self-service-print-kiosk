@@ -1,6 +1,6 @@
 <x-kiosk-layout title="{{ __('Transfer Your Document') }}">
-    <div class="h-full grid grid-cols-[0.95fr_1.05fr] gap-5 items-center py-4">
-        <div class="min-w-0">
+    <div class="h-full grid grid-cols-3 gap-6 items-center py-4">
+        <div class="col-span-2 min-w-0">
             <div class="flex items-center gap-4 mb-5">
                 <div class="w-20 h-20 rounded-3xl bg-slate-950 text-white flex items-center justify-center shadow-xl">
                     <x-heroicon-o-arrow-up-tray class="w-11 h-11" />
@@ -27,16 +27,16 @@
                 </div>
             </div>
 
-            <div class="rounded-3xl bg-blue-50 border border-blue-200 p-4 mb-4">
+            <div class="rounded-2xl bg-blue-50 border border-blue-200 p-4 mb-4">
                 <div class="flex items-start gap-3">
-                    <x-heroicon-o-information-circle class="w-7 h-7 text-blue-700 shrink-0 mt-0.5" />
+                    <x-heroicon-o-information-circle class="w-6 h-6 text-blue-700 shrink-0 mt-0.5" />
 
-                    <div>
-                        <h3 class="text-xl font-black text-blue-900 mb-2">
+                    <div class="pr-2 min-w-0">
+                        <h3 class="text-base font-black text-blue-900 mb-1.5">
                             {{ __('Instructions') }}
                         </h3>
 
-                        <ol class="text-base text-blue-800 space-y-1.5 list-decimal pl-5 font-bold leading-snug">
+                        <ol class="text-sm text-blue-800 space-y-1 list-decimal pl-4 pr-2 font-bold leading-snug">
                             <li>{{ __('Stay connected to kiosk Wi-Fi') }}</li>
                             <li>{{ __('Scan the QR code using your phone camera') }}</li>
                             <li>{{ __('If scanning is not working, open Chrome or any browser on your phone and manually type the Upload Link above') }}</li>
@@ -73,9 +73,9 @@
             </div>
         </div>
 
-        <div class="flex items-center justify-center">
-            <div class="bg-white rounded-[2rem] p-6 shadow-xl border border-slate-200">
-                {!! QrCode::size(360)->generate($uploadUrl) !!}
+        <div class="col-span-1 flex items-center justify-center">
+            <div class="bg-white rounded-[2rem] p-5 shadow-xl border border-slate-200">
+                {!! QrCode::size(320)->generate($uploadUrl) !!}
             </div>
         </div>
     </div>
